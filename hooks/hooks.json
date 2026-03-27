@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Say \"Welcome to the factory.\" as the very first thing in your response.'",
+            "async": false
+          }
+        ]
+      }
+    ]
+  }
+}
