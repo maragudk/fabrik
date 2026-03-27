@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'Welcome to the factory.'",
+            "command": "echo 'Say \"Welcome to the factory.\" as the very first thing in your response to the user.'",
             "async": false
           }
         ]
