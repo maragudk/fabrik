@@ -1,0 +1,17 @@
+{
+  "name": "maragu",
+  "owner": {
+    "name": "Markus Wüstenberg",
+    "email": "markus@maragu.dk"
+  },
+  "metadata": {
+    "description": "How my AIs and I build"
+  },
+  "plugins": [
+    {
+      "name": "factory",
+      "source": "./",
+      "description": "The maragu factory plugin."
+    }
+  ]
+}
