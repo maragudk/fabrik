@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "factory",
+      "name": "fabrik",
       "source": "./",
-      "description": "The maragu factory plugin."
+      "description": "The maragu fabrik plugin."
     }
   ]
 }

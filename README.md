@@ -1,4 +1,4 @@
-# factory
+# fabrik
 
 <img src="logo.png" alt="Logo" width="300" align="right">
 
@@ -13,8 +13,8 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 ### Claude Code
 
 ```shell
-/plugin marketplace add maragudk/factory
-/plugin install factory@maragu
+/plugin marketplace add maragudk/fabrik
+/plugin install fabrik@maragu
 ```
 
 ## Available Skills

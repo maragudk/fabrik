@@ -11,7 +11,7 @@ AGENTS_CONTENT=$(cat "$SCRIPT_DIR/AGENTS.md")
 
 cat <<EOF
 {
-  "systemMessage": "Welcome to the factory v${VERSION}.",
+  "systemMessage": "Welcome to the fabrik v${VERSION}.",
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
     "additionalContext": $(printf '%s' "$AGENTS_CONTENT" | jq -Rs .)

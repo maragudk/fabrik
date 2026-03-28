@@ -1,6 +1,6 @@
-# factory
+# fabrik
 
-A Claude Code plugin marketplace (`maragu`) with a plugin (`factory`) that bundles skills, hooks, and agents.
+A Claude Code plugin marketplace (`maragu`) with a plugin (`fabrik`) that bundles skills, hooks, and agents.
 
 ## Structure
 
