@@ -1,0 +1,1 @@
+../../skills/gomponents/SKILL.md

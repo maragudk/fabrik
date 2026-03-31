@@ -1,0 +1,1 @@
+../../skills/dad-joke/SKILL.md

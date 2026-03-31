@@ -1,0 +1,1 @@
+../../skills/diary/SKILL.md

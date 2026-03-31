@@ -1,0 +1,1 @@
+../../skills/sql/SKILL.md

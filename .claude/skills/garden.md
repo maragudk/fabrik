@@ -1,0 +1,1 @@
+../../skills/garden/skill.md

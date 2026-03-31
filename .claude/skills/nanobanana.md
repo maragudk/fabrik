@@ -1,0 +1,1 @@
+../../skills/nanobanana/SKILL.md

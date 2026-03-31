@@ -1,0 +1,1 @@
+../../skills/datastar/SKILL.md
