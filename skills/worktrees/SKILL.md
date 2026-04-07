@@ -1,79 +1,76 @@
 ---
 name: worktrees
-description: Guide for using git worktrees to parallelize development with coding agents. Use this skill when the user requests to work in a new worktree or wants to work on a separate feature in isolation (e.g., "Work in a new worktree", "Create a worktree for feature X").
+description: Project-specific worktree setup for applications with services (port allocation, service startup/shutdown). Use alongside Claude Code's built-in worktree support when the project runs web servers, docker-compose, or other services that need unique ports per worktree.
 ---
 
-# Git Worktrees for Parallel Development
+# Worktrees for Applications with Services
 
-## Overview
+Claude Code has built-in worktree support (`--worktree`, `EnterWorktree`, `isolation: "worktree"`) that handles creating worktrees, branch management, cleanup, and copying gitignored files (via `.worktreeinclude`).
 
-This skill enables parallel development by using git worktrees. Each worktree provides an isolated working directory with its own branch, allowing multiple agents to work on different features simultaneously without conflicts.
+This skill covers the **project-specific** parts: allocating ports, starting services, and stopping them -- so multiple worktrees can run the same app in parallel without port conflicts.
 
 ## When to Use This Skill
 
-Use this skill when:
-- User explicitly requests to work in a new worktree (e.g., "Work in a new worktree")
-- User wants to develop a feature in isolation while preserving the main working directory
-- Multiple agents need to work on different tasks in parallel
+Use these instructions after entering a worktree **only if**:
+- The project has `.env*` files (should be listed in `.worktreeinclude` so they get copied automatically)
+- The project runs services like web servers, databases, or docker-compose
 
-## Workflow
+If the project is a library or CLI tool without services, skip this entirely.
 
-### 1. Determine Branch Name
+## Port Allocation
 
-Choose a descriptive branch name for the feature or task to be worked on. The branch name should follow standard git naming conventions (lowercase, hyphen-separated, e.g., `add-user-authentication`, `fix-login-bug`).
+To avoid conflicts when running multiple instances, each worktree needs its own set of ports.
 
-### 2. Create Worktree
+### Required Ports
 
-Create a new worktree in the `.worktrees/` directory within the current project:
+Allocate 4 available ports for:
+1. `SERVER_ADDRESS` - Main HTTP server port (also used for `BASE_URL`)
+2. `MINIO_PORT` - MinIO S3 API endpoint (also used for `AWS_ENDPOINT_URL`)
+3. `MINIO_CONSOLE_PORT` - MinIO web console
+4. `MINIO_TEST_PORT` - MinIO test instance
 
-```bash
-git worktree add .worktrees/<branch-name> -b <branch-name>
-```
-
-This command:
-- Creates a new directory at `.worktrees/<branch-name>`
-- Creates and checks out a new branch named `<branch-name>`
-- Links the worktree to the current repository
-
-### 3. Switch to Worktree
-
-Change the working directory to the newly created worktree:
+### Allocate and Update .env
 
 ```bash
-cd .worktrees/<branch-name>
+# Find 4 available ports
+ports=($(bash scripts/allocate-ports.sh))
+SERVER_PORT=${ports[1]}
+MINIO_PORT=${ports[2]}
+MINIO_CONSOLE_PORT=${ports[3]}
+MINIO_TEST_PORT=${ports[4]}
+
+# Update .env with allocated ports
+sed -i '' "s|^SERVER_ADDRESS=.*|SERVER_ADDRESS=:${SERVER_PORT}|" .env
+sed -i '' "s|^BASE_URL=.*|BASE_URL=http://localhost:${SERVER_PORT}|" .env
+sed -i '' "s|^AWS_ENDPOINT_URL=.*|AWS_ENDPOINT_URL=http://localhost:${MINIO_PORT}|" .env
+sed -i '' "s|^MINIO_PORT=.*|MINIO_PORT=${MINIO_PORT}|" .env
+sed -i '' "s|^MINIO_CONSOLE_PORT=.*|MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT}|" .env
+sed -i '' "s|^MINIO_TEST_PORT=.*|MINIO_TEST_PORT=${MINIO_TEST_PORT}|" .env
 ```
 
-### 4. Work in Isolation
+**Note:** The `scripts/` directory is part of this skill, not the project repository. Array uses 1-based indexing (zsh).
 
-Proceed with development tasks in the worktree. This environment is completely isolated from the main working directory, allowing independent work without interference.
+## Starting Services
 
-All standard git operations (commit, push, pull, etc.) work normally within the worktree.
-
-**Note:** If this project runs services (web apps, docker-compose, etc.), see [apps.md](apps.md) for setup steps including environment file copying, port allocation, and service startup.
-
-### 5. List Active Worktrees (Optional)
-
-To view all active worktrees:
+After updating `.env`:
 
 ```bash
-git worktree list
+# 1. Start docker-compose (if docker-compose.yml exists)
+docker compose up -d
+
+# 2. Start the app with file watching (if Makefile has a watch target)
+make watch &
 ```
 
-This displays all worktrees, their paths, and the branches they're on.
+Report back to the user with the worktree path and allocated ports:
+- App URL: `http://localhost:${SERVER_PORT}`
+- MinIO S3: `http://localhost:${MINIO_PORT}`
+- MinIO Console: `http://localhost:${MINIO_CONSOLE_PORT}`
 
-### 6. Remove Worktree (Optional)
-
-When you're done with a worktree, you can remove it:
+## Stopping Services
 
 ```bash
-git worktree remove .worktrees/<branch-name>
+bash scripts/shutdown-services.sh
 ```
 
-**Note:** Don't automatically remove worktrees. Leave that decision to the user. If the worktree is running services (see [apps.md](apps.md)), make sure to stop those services first before removing the worktree.
-
-## Important Notes
-
-- The `.worktrees/` directory should be added to `.gitignore` if not already present
-- Each worktree maintains its own working directory but shares the same git repository
-- Worktrees enable true parallel development without the need for stashing or branch switching
-- After creating and switching to a worktree, inform the user of the new working directory path
+This stops docker compose services and kills the app server process by port. **Always stop services before removing a worktree.**
