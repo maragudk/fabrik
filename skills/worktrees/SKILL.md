@@ -58,14 +58,8 @@ After updating `.env`:
 # 1. Start docker-compose (if docker-compose.yml exists)
 docker compose up -d
 
-# 2. Download Tailwind CSS (if needed)
-make tailwindcss
-
-# 3. Start Tailwind CSS watch (if tailwindcss exists)
-./tailwindcss -i tailwind.css -o public/styles/app.css --watch &
-
-# 4. Start watch.sh (if it exists)
-./watch.sh &
+# 2. Start the app with file watching (if Makefile has a watch target)
+make watch &
 ```
 
 Report back to the user with the worktree path and allocated ports:
