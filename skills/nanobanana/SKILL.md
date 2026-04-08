@@ -32,15 +32,21 @@ nanobanana generate output.png "a beautiful sunset over mountains"
 
 The output can be either a `.png` or `.jpg` file.
 
+## Using version 2 (preferred)
+
+Always use the `-v2` flag unless the user specifically requests the pro model. Version 2 offers improved quality and aspect ratio support:
+
+```bash
+nanobanana generate -v2 output.png "a beautiful sunset over mountains"
+```
+
 ## Using the pro model
 
-To use the higher-quality pro model for generation:
+To use the highest-quality pro model (only when explicitly requested):
 
 ```bash
 nanobanana generate -pro output.png "a beautiful sunset over mountains"
 ```
-
-The `-pro` flag enables Google's premium generative AI model, which typically produces higher quality results but may take slightly longer to generate.
 
 ## Editing existing images
 
