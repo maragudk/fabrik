@@ -1,12 +1,12 @@
 ---
 name: spec
-description: Write and iterate on a project spec (docs/spec.md) that defines what the product is and should be. Use this skill when the user asks to create or update a spec, says "let's spec this out", or when a product decision comes up in conversation that should be captured in the spec. Also use proactively when the user is about to start building something that doesn't have a spec yet.
+description: Write and iterate on a project spec (docs/spec.md) that defines what the product is and why it exists. Use this skill when the user asks to create or update a spec, says "let's spec this out", or when a product decision comes up in conversation that should be captured in the spec. Also use proactively when the user is about to start building something that doesn't have a spec yet.
 license: MIT
 ---
 
 # Spec
 
-The spec is the living product document. It defines _what_ to build. It complements CLAUDE.md, which defines _how_ to work.
+The spec is the living product document. It defines _what_ to build and _why_. It does not define _how_ -- that belongs in CLAUDE.md, skills, and the code itself.
 
 The spec lives at `docs/spec.md`. Create the `docs/` directory if it doesn't exist.
 
@@ -21,23 +21,11 @@ Follow the brainstorm pattern: one question at a time, multiple choice where pos
 
 ### Flow
 
-1. Start with the project-specific sections that need real conversation:
-   - **Objective**: What is this project? Who is it for? What problem does it solve?
-   - **Boundaries**: What should agents and contributors never touch?
+1. Walk through the spec sections one at a time. For each section, ask focused questions to draw out what the user actually wants. Don't assume -- even for projects that sound straightforward, the interesting constraints are the ones the user hasn't said yet.
 
-2. For sections with known defaults, propose them for confirmation rather than asking from scratch:
-   - **Tech stack**: Go, SQLite/Postgres, server-side HTML with gomponents and Datastar.
-   - **Project structure**: Standard Go project layout as described in the Go skill.
-   - **Commands**: `go build`, `go test`, `go run .`, etc.
-   - **Code style**: Conventions from the Go skill.
-   - **Testing**: Go testing patterns from the Go skill.
-   - **Git workflow**: Conventions from the git skill.
+2. Once all sections are covered, write the spec section by section, asking for approval after each before moving to the next.
 
-   Present each as a proposal: "For tech stack, I'll go with your usual defaults — Go, SQLite, gomponents, Datastar. Any changes for this project?" One section per message.
-
-3. Once all sections are covered, write the spec section by section (200-300 words each), asking for approval after each before moving to the next.
-
-4. Assemble approved sections into `docs/spec.md`.
+3. Assemble approved sections into `docs/spec.md`.
 
 ## Updating an existing spec
 
@@ -58,33 +46,40 @@ The spec always has these sections in this order:
 # [Project Name]
 
 ## Objective
-What the project is, who it's for, why it exists.
+What is this? One paragraph. Name the problem, the audience, and the core value proposition.
 
-## Tech Stack
-Languages, frameworks, databases, infrastructure.
+## Users
+Who uses this and what do they care about? Describe distinct user types or personas if there are more than one.
 
-## Project Structure
-Directory layout and where things live.
+## Features
+What can users do? Organize by area. Each feature is a short description of observable behavior, not implementation detail.
 
-## Commands
-Full executable commands for build, test, lint, run, deploy.
+## Non-goals
+What this project deliberately does not do. Explicit non-goals prevent scope creep and give contributors permission to say no.
 
-## Code Style
-Naming conventions, formatting, patterns.
+## Constraints
+Hard requirements that shape decisions: regulatory, performance, compatibility, data residency, budget, etc. Only include real constraints, not preferences.
 
-## Testing
-Framework, where tests live, how to run them.
+## Success criteria
+How do we know this is working? Concrete, observable indicators -- not vanity metrics. "Users can complete X without Y" is better than "increase engagement".
 
-## Git Workflow
-Branch naming, commit format, PR process.
-
-## Boundaries
-What agents and contributors should never touch.
+## Open questions
+Decisions not yet made. Each entry should state the question and why it matters. Remove entries as they get resolved into other sections.
 ```
+
+## What does NOT belong in the spec
+
+Implementation details belong elsewhere:
+
+- **Tech stack, project structure, commands, code style, testing, git workflow** -- these go in CLAUDE.md or in skills. The spec should not duplicate them.
+- **Architecture and system design** -- if needed, use a design doc (see the design-doc skill).
+- **Task lists and timelines** -- these are project management, not product definition.
+
+If you find yourself writing about _how_ something is built rather than _what_ it does or _why_ it matters, it doesn't belong here.
 
 ## Writing guidelines
 
 - Be concise and specific. The spec is a reference document, not prose.
-- Use concrete values, not vague descriptions. "SQLite for local development, Postgres for production" not "a relational database".
-- Commands should be copy-pasteable. Include flags and arguments.
-- Boundaries should be explicit. Name specific files, directories, or patterns.
+- Describe behavior from the user's perspective, not the system's internals.
+- Use concrete examples over abstract descriptions. "A user searches by company name and sees matching results within 200ms" not "fast full-text search".
+- Non-goals and constraints are as important as features. Spend real time on them.
