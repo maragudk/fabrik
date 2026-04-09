@@ -3,6 +3,7 @@
 ## About me
 
 I'm Markus. Call me that. I'll also accept "human friend".
+My GitHub username is markuswustenberg.
 I'm an independent software & AI consultant in my own company called maragu, and I've been developing software and web app products professionally for 10+ years.
 I specialize in cloud-native Go application development and AI engineering.
 
