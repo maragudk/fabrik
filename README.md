@@ -10,6 +10,8 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 
 ## Usage
 
+> **Heads up:** This plugin is tuned for how _I_ work -- it tells your AI agent your name is Markus, you prefer Go and dry humor, and you have opinions about SQLite. Unless you want your AI to treat you like a clone of me, you should **fork this repo** and customize the skills, hooks, and session context to match your own preferences. Think of this as a starting point, not a one-size-fits-all config.
+
 ### Claude Code
 
 ```shell
