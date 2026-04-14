@@ -3,5 +3,5 @@
 
 set -euo pipefail
 
-find . -type f \
+find . -not -path './.git/*' -type f \
   | awk -v seed="$RANDOM" 'BEGIN{srand(seed)} {lines[NR]=$0} END{print lines[int(rand()*NR)+1]}'
