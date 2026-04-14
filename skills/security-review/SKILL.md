@@ -16,19 +16,14 @@ bash scripts/random-file.sh
 
 The `scripts/` directory is part of this skill, not the project repository.
 
-Read the file the script returned. From there, follow one promising path -- a single thread of connections (imports, callers, callees, data flow) that looks like it could harbor a security issue. Go deep on that one path rather than trying to survey everything. Think of it as pulling one thread per visit.
+The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. The idea is to run this skill multiple times over the life of a project, each time pulling one thread from a different starting point.
 
-The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. Run this multiple times over the life of a project, each time exploring from a different starting point, to build up coverage.
+Read the file the script returned. From there, follow one promising path -- a single thread of connections (imports, callers, callees, data flow) that looks like it could harbor a security issue. Go deep on that one path rather than trying to survey everything.
 
 ## Reporting
 
-Report what you found along the path you followed:
+Report exactly one finding -- the single most significant security issue you discovered along the path. Not two, not a list, just one. If nothing concerning was found, say so -- that's a valid outcome. Resist the temptation to pad the report with minor observations or informational notes.
 
 1. **Starting point**: which file the review began from
 2. **Path followed**: the chain of files you traced and why you chose that direction
-3. **Finding**: the most significant security issue you found, including:
-   - Severity (critical / high / medium / low / informational)
-   - File and line number
-   - Description of the issue
-   - Suggested fix
-4. If nothing concerning was found along the path, say so -- that's a valid outcome.
+3. **Finding**: severity, file and line number, description, and suggested fix
