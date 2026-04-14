@@ -16,9 +16,9 @@ bash scripts/random-file.sh
 
 The `scripts/` directory is part of this skill, not the project repository.
 
-Read the file the script returned. From there, follow one promising path -- a single thread of connections (imports, callers, callees, data flow) that looks like it could harbor a security issue. Go deep on that one path rather than trying to survey everything. Think of it as pulling one thread per visit.
+The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. The idea is to run this skill multiple times over the life of a project, each time pulling one thread from a different starting point.
 
-The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. Run this multiple times over the life of a project, each time exploring from a different starting point, to build up coverage.
+Read the file the script returned. From there, follow one promising path -- a single thread of connections (imports, callers, callees, data flow) that looks like it could harbor a security issue. Go deep on that one path rather than trying to survey everything.
 
 ## Reporting
 
