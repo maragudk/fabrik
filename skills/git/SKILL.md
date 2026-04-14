@@ -16,7 +16,7 @@ Just name the branch a short sentence seperated with dashes. Example: `add-some-
 
 - Always enclose code identifiers with backticks. Example: "Add `html.UserPage` component"
 - Always refer to Go code identifiers including the package name, like in `html.UserPage` above. Fields and methods on structs can be referred with `model.User.Name`.
-- Ask me about any Github issues that should be referenced. Reference them at the end of the commit message like this: "See #123, #234". If the commit fixes one or more issues, use "Fixes #123, fixes #234" instead (the double "fixes" is important for Github to actually close the issue).
+- Ask me about any Github issues that should be referenced, and wait for my response before committing. Reference them at the end of the commit message like this: "See #123, #234". If the commit fixes one or more issues, use "Fixes #123, fixes #234" instead (the double "fixes" is important for Github to actually close the issue).
 - Don't mention that you've updated tests, that's assumed.
 
 ## Committing
