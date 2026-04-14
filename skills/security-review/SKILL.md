@@ -16,23 +16,19 @@ bash scripts/random-file.sh
 
 The `scripts/` directory is part of this skill, not the project repository.
 
-Then begin a thorough security review starting from the file the script returned. The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked in a targeted review.
+Read the file the script returned. From there, follow one promising path -- a single thread of connections (imports, callers, callees, data flow) that looks like it could harbor a security issue. Go deep on that one path rather than trying to survey everything. Think of it as pulling one thread per visit.
 
-## Review process
-
-Read the starting file and follow its connections (imports, callers, callees, data flow) outward. Look for security issues of any kind -- use your judgment about what matters given the codebase and technology stack.
+The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. Run this multiple times over the life of a project, each time exploring from a different starting point, to build up coverage.
 
 ## Reporting
 
-After the review, produce a summary structured as:
+Report what you found along the path you followed:
 
 1. **Starting point**: which file the review began from
-2. **Files reviewed**: list of files examined during the review
-3. **Findings**: each finding should include:
+2. **Path followed**: the chain of files you traced and why you chose that direction
+3. **Finding**: the most significant security issue you found, including:
    - Severity (critical / high / medium / low / informational)
    - File and line number
    - Description of the issue
    - Suggested fix
-4. **Areas not covered**: parts of the codebase that were not reached from the starting point, as a reminder for future reviews
-
-Be honest about the scope. A single random-entry review will not cover the entire codebase -- that is by design. The idea is to run this multiple times over the life of a project, each time exploring from a different starting point.
+4. If nothing concerning was found along the path, say so -- that's a valid outcome.
