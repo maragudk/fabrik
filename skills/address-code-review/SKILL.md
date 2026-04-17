@@ -7,6 +7,8 @@ description: Address code review feedback by walking through comments one at a t
 
 Work through code review comments with the user, one comment at a time. Never present multiple comments at once.
 
+**Critical rule:** Do not make any code changes — not a single edit — until every comment has been triaged with the user. Triage and implementation are strictly separate phases. Implementation only begins after the final comment has been discussed and a decision recorded.
+
 ## Input sources
 
 Comments may come from:
@@ -20,35 +22,43 @@ When no explicit source is specified, check for `review.jsonl` at the repo root 
 
 ## Process
 
-### 1. Collect feedback
+### 1. Pull latest
+
+Always run `git pull` first. The `review.jsonl` file (or other review artifacts) may have been pushed from elsewhere and not yet present locally.
+
+### 2. Collect feedback
 
 - **`review.jsonl`**: Read the file. Each line is one comment. Parse the JSON to get the file path, line range, and comment text. Use `base` and `compare` SHAs for context if needed.
 - **GitHub PR**: Use GraphQL to fetch all comments in one go. Fetch inline review comments via `pullRequest.reviewThreads` and general PR comments via `pullRequest.comments`. Skip already-resolved threads (`isResolved`). Still present outdated but unresolved comments (`isOutdated`), noting to the user that the code has changed since the comment was left.
 - **Document**: Read the file and extract review items.
 - **Conversation**: Use the comments as provided.
 
-### 2. Triage one at a time
+### 3. Triage all comments
 
-For each comment, strictly one at a time:
+Walk through every comment, strictly one at a time. **No code changes during this phase.** No edits, no commits, no file writes for the fixes themselves. Only discussion and decision-recording.
+
+For each comment:
 
 1. Present the comment to the user.
 2. Share your own assessment: agree, disagree, or propose an alternative. Explain your reasoning briefly.
 3. Wait for the user to decide what to do (apply, skip, modify, etc.).
-4. Record the agreed-upon action. Do not apply code changes yet.
+4. Record the agreed-upon action in your working notes. Do not touch the code.
 
-For GitHub PR inline comments: immediately reply to the comment on GitHub and resolve the thread after discussion.
+For GitHub PR inline comments: immediately reply to the comment on GitHub and resolve the thread after discussion. (Replies and resolutions are not code changes — they are part of triage.)
 
-### 3. Apply changes
+Only after the last comment has been triaged, move on to step 4.
 
-After each comment is addressed (code change applied or explicitly skipped):
+### 4. Apply changes
 
-For `review.jsonl` sources:
+Now — and only now — implement the agreed-upon changes.
+
+For `review.jsonl` sources, for each addressed comment:
 1. Apply the code change.
 2. Remove the addressed line from `review.jsonl`.
 3. If `review.jsonl` is now empty, delete the file.
-4. Commit both the code fix and the `review.jsonl` update together.
+4. Commit the code fix and the `review.jsonl` update together.
 
-For other sources, apply all agreed-upon code changes in one batch:
+For other sources, apply all agreed-upon code changes in one batch.
 
 For GitHub PR general comments (which may contain multiple issues in one comment): post a single summary reply after all issues in that comment are addressed.
 
