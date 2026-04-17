@@ -1,6 +1,6 @@
 ---
 name: diary
-description: Write and maintain an implementation diary capturing what changed, why, what worked, what failed (with exact errors and commands), what was tricky, and how to review and validate. Activates proactively during non-trivial implementation work (new features, bug fixes, refactors, research spikes). Does not activate for trivial tasks like one-line fixes, config tweaks, or quick questions.
+description: Write and maintain an implementation diary capturing what changed, why, what worked, what failed (with exact errors and commands), what was tricky, and how to review and validate. Activates proactively during non-trivial implementation work (new features, bug fixes, refactors, research spikes) and at natural session-end moments -- after a PR merges, a feature ships, or a work chunk wraps up -- to capture the narrative while it's still fresh. Does not activate for trivial tasks like one-line fixes, config tweaks, or quick questions.
 license: MIT
 ---
 
