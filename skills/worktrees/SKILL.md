@@ -1,6 +1,7 @@
 ---
 name: worktrees
 description: Project-specific worktree setup for applications with services (port allocation, service startup/shutdown). Use alongside Claude Code's built-in worktree support when the project runs web servers, docker-compose, or other services that need unique ports per worktree.
+license: MIT
 ---
 
 # Worktrees for Applications with Services

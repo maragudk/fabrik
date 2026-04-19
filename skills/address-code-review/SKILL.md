@@ -1,6 +1,7 @@
 ---
 name: address-code-review
 description: Address code review feedback by walking through comments one at a time with the user. Use when the user has received code review comments — on a GitHub PR, in a document in the repo, in review.jsonl, or directly in conversation — and wants to work through them methodically. Also trigger when the user mentions "address review", "review comments", "PR feedback", "review.jsonl", or wants to respond to code review feedback.
+license: MIT
 ---
 
 # Address Code Review
