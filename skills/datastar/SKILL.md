@@ -406,7 +406,7 @@ func CounterPage() Node {
         Head: []Node{
             Script(
                 Type("module"),
-                Src("https://cdn.jsdelivr.net/gh/starfederation/[email protected]/bundles/datastar.js"),
+                Src("https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0-RC.7/bundles/datastar.js"),
             ),
         },
         Body: []Node{
