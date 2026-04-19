@@ -185,7 +185,7 @@ In tests, use `t.Context()` instead of `context.Background()`, and always use it
 - All HTML buttons need the `cursor-pointer` CSS class
 - SQLite time format is always a string returned by `strftime('%Y-%m-%dT%H:%M:%fZ')`. Use `maragu.dev/glue/model.Time` (usually aliased in `model.Time` in the project) instead of stdlib `time.Time` when working with the database.
 - Remember that private functions in Go are package-level, so you can use them across files in the same package
-- Documentation must follow the Go style of having the identifier name be the first word of the sentence, and then completing the sentence without repeating itself. Example: "// SearchProducts using the given search query and result limit." NOT: "// SearchProducts searches products using the given search query and result label."
+- Documentation must follow the Go style of having the identifier name be the first word of the sentence, and then completing the sentence without repeating itself. Example: "// SearchProducts using the given search query and result limit." NOT: "// SearchProducts searches products using the given search query and result limit."
 - Package-level identifiers must begin with lowercase by default, i.e. have package-level visibility, to make the API surface area towards other packages smaller.
 - Use `fmt.Sprint` when converting arbitrary values to strings, instead of functions from `strconv`.
 - Use `new()` (available since Go 1.26) instead of any pointer functions for making pointers to literals.
