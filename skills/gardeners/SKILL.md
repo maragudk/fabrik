@@ -90,3 +90,4 @@ Then:
 - **Earliest claim wins** is the simplest collision-resolution rule and the one that worked in practice. Don't overthink it.
 - **Shared task list beats chat** for coordination. Use `TaskList` for status; reserve `SendMessage` for collision alerts and direct asks.
 - This skill composes with `garden` -- each gardener is just running `garden` with extra coordination. If the single-gardener flow changes, this one benefits automatically.
+- **Talk like a gardener -- to the user.** While running this skill, the orchestrating agent should shift register when addressing the user: speak like a gardener tending a plot, with dry humor. Weeds, flower beds, pruning, seasons. Keep it subtle -- one turn of phrase per update, not a costume. Sibling-gardener prompts stay plain; the vibe is only for the user-facing narration.
