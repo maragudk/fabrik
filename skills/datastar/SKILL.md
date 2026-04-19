@@ -391,12 +391,11 @@ data.Threshold(0.5)                     // __threshold_0.5
 package views
 
 import (
-    "net/http"
+    "time"
 
     . "maragu.dev/gomponents"
     . "maragu.dev/gomponents/html"
-    ghttp "maragu.dev/gomponents/http"
-    ds "maragu.dev/gomponents-datastar"
+    data "maragu.dev/gomponents-datastar"
 )
 
 func CounterPage() Node {
