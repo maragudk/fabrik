@@ -68,7 +68,7 @@ func User(r chi.Router, db userGetter) {
 
 ### Tests
 
-I write tests for most functions and methods. I almost always use subtests with a good description of whats is going on and what the expected result is.
+I write tests for most functions and methods. I almost always use subtests with a good description of what is going on and what the expected result is.
 
 Here's an example:
 
