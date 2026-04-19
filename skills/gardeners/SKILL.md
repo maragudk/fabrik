@@ -59,10 +59,10 @@ The coordination rules (include these verbatim in every gardener prompt):
 ```
 1. Before scanning, call TaskList to see what other gardeners have already claimed or completed. Avoid duplicating their work.
 2. When you pick an issue, immediately call TaskCreate with a specific subject (e.g. "Fix typo X in file Y") and TaskUpdate to set yourself as owner and status=in_progress. This tells siblings what you're working on.
-3. If your scan surfaces additional issues beyond the one you pick, TaskCreate them as pending (no owner) so siblings can claim them.
-4. If another gardener has already claimed the issue you'd have picked, scan for a different one -- don't open a duplicate PR.
-5. On collision (two gardeners on the same issue), earliest claim wins. The later claimer stands down and picks something else.
-6. When done, TaskUpdate status=completed and include the PR URL.
+3. If another gardener has already claimed the issue you'd have picked, scan for a different one -- don't open a duplicate PR.
+4. On collision (two gardeners on the same issue), earliest claim wins. The later claimer stands down and picks something else.
+5. When done, TaskUpdate status=completed and include the PR URL.
+6. You fix exactly one issue. If the scan surfaces others, leave them for the next gardening pass -- don't spin up more tasks or expand scope.
 ```
 
 Run gardeners in the background (`run_in_background: true`) so they work in parallel. You'll get a notification as each reports in.
@@ -73,7 +73,6 @@ Gardeners will:
 
 - Post a claim to the task list when they pick an issue
 - Broadcast (via `SendMessage`) if they detect a collision, citing earliest-claim-wins
-- Surface additional findings from their scan as pending tasks for siblings
 - Open a PR and mark their task completed
 
 You generally don't need to intervene. If a gardener seems stuck, send them a message or check the task list for blocked tasks.
