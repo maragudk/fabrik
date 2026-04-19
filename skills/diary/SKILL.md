@@ -89,6 +89,7 @@ Brief description of the goal and context for this task.
 - **Absolute paths from project root.** All file paths referenced in the diary are absolute relative to the project root (e.g., `/src/handler.go`).
 - **Prompt Context is verbatim.** Copy the user's prompt exactly as given. Don't paraphrase the verbatim section.
 - **Identify sub-agent authorship.** If you are a named sub-agent, put your agent name in the `**Author:**` line right under the title so it's obvious who wrote the entry. Omit the line entirely when written by the main agent.
+- **Don't modify old diary entries.** Only edit a diary file if it was created in the current session. Subsequent work should create a new diary file rather than revising earlier entries -- diaries are a historical narrative, not a living document.
 
 ## When to Activate
 

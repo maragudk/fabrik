@@ -135,3 +135,4 @@ Wait for user confirmation before recording.
 - Don't create duplicate entries for the same decision
 - Create `docs/` directory if it doesn't exist
 - Avoid recording trivial decisions that don't have long-term architectural impact
+- Don't modify old decision entries. Only edit an entry if it was created in the current session. If a previous decision is revisited or changed, record it as a new entry rather than rewriting the old one -- the decision log is a historical record.
