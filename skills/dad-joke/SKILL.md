@@ -1,6 +1,7 @@
 ---
 name: dad-joke
 description: Tell the user a dad joke. Use this skill when the user asks for a dad joke, wants to hear something funny, needs cheering up, or says /dad-joke.
+license: MIT
 ---
 
 # Dad Joke
