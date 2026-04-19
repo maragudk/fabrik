@@ -33,6 +33,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **design-doc** - Guide for writing design documents and specifications, especially after brainstorm or feature design sessions
 - **diary** - Implementation diary that captures the narrative of your work: what changed, why, what worked, what failed, and what was tricky
 - **garden** - Autonomous project gardening: scans for maintenance issues, picks one, fixes it in a worktree with self-review, and opens a PR
+- **gardeners** - Team version of `garden`: spawns a coordinated team of gardeners that each fix a different issue in parallel, sharing a task list to avoid duplicate work
 - **git** - Guide for using git according to preferences (branch naming, commit messages, issue references)
 - **go** - Guide for developing Go apps and modules/libraries (code style, testing, dependency injection, package structure)
 - **gomponents** - Guide for working with gomponents, a pure Go HTML component library for building HTML views
