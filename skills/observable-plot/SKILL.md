@@ -1,3 +1,9 @@
+---
+name: observable-plot
+description: Guide for using Observable Plot, a JavaScript library for exploratory data visualization built on D3. Use this skill when creating charts, exploring data, or building visualizations with marks, scales, and transforms.
+license: MIT
+---
+
 # Observable Plot Skill
 
 Observable Plot is a JavaScript library for exploratory data visualization. It's built on D3 and provides a concise, declarative API for creating charts.
