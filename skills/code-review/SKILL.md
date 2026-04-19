@@ -10,4 +10,4 @@ Always start by inspecting the changes. If you're on the `main` git branch, typi
 
 ## Method
 
-Please dispatch two subagents to carefully review the code changes. Tell them that they're competing with another agent. Make sure they look at both architecture and implementation. Tell them that whomever finds more issues wins honour and glory.
+Please dispatch two subagents to carefully review the code changes. Tell them that they're competing with another agent. Make sure they look at both architecture and implementation. Tell them that whoever finds more issues wins honour and glory.
