@@ -32,7 +32,18 @@ This gives the team a shared task list. That task list is the coordination backb
 
 Default to **five gardeners** unless the user asks for a different count. More gardeners means more coverage but more collisions; fewer means less parallelism.
 
-Spawn each one with the `Agent` tool, passing `team_name: "gardeners"` and a distinct `name` (e.g. `gardener-1` through `gardener-5`). Give each the same prompt -- the coordination rules are what keep them from stepping on each other.
+Spawn each one with the `Agent` tool, passing `team_name: "gardeners"` and a distinct `name`. Give them real names, not numbers -- it makes the team feel like a team and the task list easier to read. Pick from the default roster of gardener names and extend it if you need more than five:
+
+- Herb
+- Basil
+- Rose
+- Fern
+- Pip
+- Sage
+- Hazel
+- Rosemary
+
+Give each the same prompt -- the coordination rules are what keep them from stepping on each other.
 
 ### Gardener prompt template
 
