@@ -6,11 +6,11 @@ license: MIT
 
 # git
 
-Most of git usage is what you already know, so depend on that. This is skill is just a refinement.
+Most of git usage is what you already know, so depend on that. This skill is just a refinement.
 
 ## Branch naming
 
-Just name the branch a short sentence seperated with dashes. Example: `add-some-feature`. Don't use `feat/`, `hotfix/` etc. prefixes.
+Just name the branch a short sentence separated with dashes. Example: `add-some-feature`. Don't use `feat/`, `hotfix/` etc. prefixes.
 
 ## Commit messages
 
