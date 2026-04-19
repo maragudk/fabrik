@@ -394,6 +394,7 @@ import (
     "time"
 
     . "maragu.dev/gomponents"
+    . "maragu.dev/gomponents/components"
     . "maragu.dev/gomponents/html"
     data "maragu.dev/gomponents-datastar"
 )
