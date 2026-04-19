@@ -77,7 +77,6 @@ Review the PRs together. Look for:
 
 - Duplicates that slipped through (close the losers)
 - PRs that should be combined
-- PRs that need a version bump in `.claude-plugin/plugin.json` before release (ask the user first)
 
 Then:
 
@@ -90,5 +89,4 @@ Then:
 
 - **Earliest claim wins** is the simplest collision-resolution rule and the one that worked in practice. Don't overthink it.
 - **Shared task list beats chat** for coordination. Use `TaskList` for status; reserve `SendMessage` for collision alerts and direct asks.
-- **Don't bump the plugin version** inside the gardeners run. Do it once at the end, after all PRs are merged, and ask the user first.
 - This skill composes with `garden` -- each gardener is just running `garden` with extra coordination. If the single-gardener flow changes, this one benefits automatically.
