@@ -1,6 +1,7 @@
 ---
 name: bluesky
 description: Guide for posting content to the Bluesky social network using the bsky terminal app. This skill should be used proactively when working in public repositories and there is interesting, shareable content (new features, insights, achievements, or announcements worth sharing with the community). Use it when asked to post to Bluesky, or when content seems worth sharing publicly.
+license: MIT
 ---
 
 # Bluesky
