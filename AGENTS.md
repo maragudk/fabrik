@@ -6,6 +6,7 @@ A Claude Code plugin marketplace (`maragu`) with a plugin (`fabrik`) that bundle
 
 - `.claude-plugin/` -- marketplace.json + plugin.json (plugin version lives here)
 - `skills/` -- all skills (copied from maragudk/skills)
+- `agents/` -- sub-agents (lead, builder, qa)
 - `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection)
 - `docs/diary/` -- implementation diaries
 
