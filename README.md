@@ -38,7 +38,6 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **gomponents** - Guide for working with gomponents, a pure Go HTML component library for building HTML views
 - **marimo** - Guide for creating and working with marimo notebooks, the reactive Python notebook that stores as pure .py files
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
-- **observable-plot** - Guide for using Observable Plot, a JavaScript library for exploratory data visualization with marks, scales, and transforms
 - **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
