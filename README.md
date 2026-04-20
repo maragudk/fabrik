@@ -23,6 +23,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 
 - **address-code-review** - Address code review feedback by walking through comments one at a time (GitHub PR, document, or conversation)
 - **autoresearch** - Autonomous experiment loop that iteratively improves a measurable metric through branching, measuring, and keeping or discarding changes
+- **blog-post-interview** - Interview the user about a new blog post before writing it, sharpening the angle and challenging weak claims
 - **bluesky** - Guide for posting content to the Bluesky social network using the bsky terminal app
 - **brainstorm** - Guide for brainstorming ideas and turning them into fully formed designs through iterative questioning
 - **code-review** - Guide for making code reviews using competing agents to find architecture and implementation issues
