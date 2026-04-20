@@ -10,6 +10,10 @@ A Claude Code plugin marketplace (`maragu`) with a plugin (`fabrik`) that bundle
 - `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection)
 - `docs/diary/` -- implementation diaries
 
+## Adding a new skill, sub-agent, or hook
+
+When adding a new skill, sub-agent, or hook, you MUST also add a one-line entry to the "Available Skills" list in `README.md`, in the same commit/PR. The list is alphabetical and uses the format `- **name** - one-line description`. A new skill that isn't in the README is invisible to anyone browsing the repo.
+
 ## Versioning
 
 Bump the version in `.claude-plugin/plugin.json` after any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
