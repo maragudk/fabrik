@@ -45,6 +45,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
+- **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
 - **worktrees** - Project-specific worktree setup for applications with services (port allocation, service startup/shutdown), complementing Claude Code's built-in worktree support
 
 ## Available Sub-agents
