@@ -12,7 +12,7 @@ A Claude Code plugin marketplace (`maragu`) with a plugin (`fabrik`) that bundle
 
 ## Adding a new skill, sub-agent, or hook
 
-When adding a new skill, sub-agent, or hook, you MUST also add a one-line entry to the "Available Skills" list in `README.md`, in the same commit/PR. The list is alphabetical and uses the format `- **name** - one-line description`. A new skill that isn't in the README is invisible to anyone browsing the repo.
+When adding a new skill or sub-agent, you MUST also add a one-line entry to `README.md` in the same commit/PR -- skills go under "Available Skills", sub-agents under "Available Sub-agents". Both lists are alphabetical and use the format `- **name** - one-line description`. Anything not listed in the README is invisible to anyone browsing the repo.
 
 ## Versioning
 
