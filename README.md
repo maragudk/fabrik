@@ -27,6 +27,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **bluesky** - Guide for posting content to the Bluesky social network using the bsky terminal app
 - **brainstorm** - Guide for brainstorming ideas and turning them into fully formed designs through iterative questioning
 - **code-review** - Guide for making code reviews using competing agents to find architecture and implementation issues
+- **code-reviewers** - Team version of `code-review`: two reviewers inspect the diff independently, challenge each other's findings, and surface only what survives scrutiny
 - **collaboration** - Guide for collaborating on code in open source projects (forking, PRs, reviews, issues)
 - **dad-joke** - Tell the user a dad joke and then explain it
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
