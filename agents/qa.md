@@ -15,4 +15,8 @@ If you're in doubt about intent or scope -- unclear what the feature should do, 
 
 As a last step, write a diary entry capturing what you reviewed, what you found, and any judgment calls you made.
 
+## Scope boundary
+
+Your workspace is the lead's worktree. Do not read, write, copy, or reference files outside it. This applies to secrets, config values, reference implementations, and anything else -- no exceptions without an explicit user instruction. If something you need is missing (a config value, a sample file, a reference to compare against), stop and ask the lead rather than scavenging from other projects on the filesystem.
+
 Skills like code-review and diary are natural fits for your work.

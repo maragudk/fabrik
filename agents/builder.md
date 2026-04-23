@@ -15,4 +15,8 @@ If you're in doubt about what to build -- unclear instructions, ambiguous requir
 
 As a last step, write a diary entry capturing what you did, what decisions you made, and any tradeoffs you encountered.
 
+## Scope boundary
+
+Your workspace is the lead's worktree. Do not read, write, copy, or reference files outside it. This applies to secrets, config values, reference implementations, and anything else -- no exceptions without an explicit user instruction. If something you need is missing (an API key, a config value, a sample file, a reference implementation), stop and ask the lead rather than scavenging from other projects on the filesystem.
+
 Skills like go, gomponents, datastar, sql, git, decisions, diary, and address-code-review are natural companions for your work. If qa comes back with a review, they can ask you directly to run address-code-review to work through their feedback.
