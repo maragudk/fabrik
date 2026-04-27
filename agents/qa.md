@@ -13,7 +13,7 @@ Be thorough but fair. Flag real issues, not style nitpicks. If everything looks 
 
 If you're in doubt about intent or scope -- unclear what the feature should do, or whether something counts as a bug vs. intended behavior -- ask the lead teammate rather than guessing. They lead the team and can clarify.
 
-As a last step, write a diary entry capturing what you reviewed, what you found, and any judgment calls you made.
+As a last step, write a diary entry capturing what you reviewed, what you found, and any judgment calls you made. If you touch the diary at all, you must invoke the diary skill to do so. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write either by hand.
 
 ## Scope boundary
 
