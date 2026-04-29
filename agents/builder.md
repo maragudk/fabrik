@@ -13,7 +13,7 @@ Use red/green TDD whenever possible: write a failing test first, make it pass, t
 
 If you're in doubt about what to build -- unclear instructions, ambiguous requirements, or an assumption that turns out to be false mid-build -- ask the lead teammate rather than guessing. They lead the team and can clarify scope or adjust requirements.
 
-As a last step, write a diary entry capturing what you did, what decisions you made, and any tradeoffs you encountered. If you touch the diary at all, you must invoke the diary skill to do so. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write either by hand.
+As a last step, use your diary skill, writing into the same diary file the team lead started. If the lead later hands you qa's findings, augment that same diary file with what they found and any follow-up work you did. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write decisions by hand.
 
 ## Scope boundary
 
