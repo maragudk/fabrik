@@ -41,6 +41,8 @@ Brief description of the goal and context for this task.
 
 ## Step 1: <short description>
 
+**Author:** <sub-agent name, or omit this line if written by the main agent>
+
 ### Prompt Context
 
 **Verbatim prompt:** <the exact user prompt that initiated this step>
@@ -83,6 +85,7 @@ Brief description of the goal and context for this task.
 - **Failures are gold.** Record them immediately with verbatim error messages and the exact commands that produced them. These are the most valuable parts of the diary.
 - **Absolute paths from project root.** All file paths referenced in the diary are absolute relative to the project root (e.g., `/src/handler.go`).
 - **Prompt Context is verbatim.** Copy the user's prompt exactly as given. Don't paraphrase the verbatim section.
+- **Identify sub-agent authorship.** If you are a named sub-agent, put your agent name in the `**Author:**` line right under each step heading you write so it's obvious who wrote it. Omit the line entirely when written by the main agent.
 - **Don't modify old diary entries.** Only edit a diary file if it was created in the current session. Subsequent work should create a new diary file rather than revising earlier entries -- diaries are a historical narrative, not a living document.
 
 ## When to Activate
