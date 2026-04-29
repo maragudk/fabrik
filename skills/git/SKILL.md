@@ -1,6 +1,6 @@
 ---
 name: git
-description: Guide for using git according to my preferences. Use it when you're asked to commit something.
+description: Guide for using git with specific preferences -- branch names without `feat/`/`hotfix/` prefixes, backticks around code identifiers in commit messages, asking about GitHub issues to reference before committing. Use this whenever you branch, commit, or write a commit message -- not just when explicitly asked to "commit". These conventions aren't in your default knowledge and you'll get them wrong without consulting this skill.
 license: MIT
 ---
 
