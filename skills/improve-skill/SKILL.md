@@ -85,11 +85,11 @@ The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case d
 
 **Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, version bumping, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
 
-## Step 5: Draft PR and issue bodies
+## Step 5: Ship it
 
-Draft the commit message and the PR / issue body. Don't pause to ask the user "here's the body, approve?" -- the gate was already passed in Step 2, when they said yes to acting on the finding. A second approval round on the prose just slows the loop down. Write a reasonable body, push, and open. Only check in mid-step if you hit something genuinely uncertain (scope changed, framing is unclear) -- not for routine prose.
+Commit, push, and open the PR or issue using your normal git/PR conventions (the system prompt already covers the mechanics). What's specific to this skill is the body shape: instead of the default Summary + Test plan, use the templates below because the framing is "findings from a conversation", not "feature work".
 
-**PR body** structure:
+**PR body:**
 
 ```markdown
 ## What was observed
@@ -105,9 +105,7 @@ Draft the commit message and the PR / issue body. Don't pause to ask the user "h
 <the reasoning, so a future reader can judge whether the change still makes sense>
 ```
 
-Apply any conventions from `AGENTS.md` to the PR (for example, README entries, version-bump reminders) so the PR is mergeable as-is, not a half-finished draft.
-
-**Issue body** structure:
+**Issue body:**
 
 ```markdown
 ## What was observed
@@ -125,17 +123,7 @@ Apply any conventions from `AGENTS.md` to the PR (for example, README entries, v
 
 One issue per fuzzy / redesign finding. Title clearly: `improve-skill: <skill-name> <one-line summary>`.
 
-## Step 6: Push and open
-
-Once approved:
-
-- Commit the edits in the worktree / clone with a clear message.
-- Push the branch.
-- `gh pr create` for the PR (if any).
-- `gh issue create` for each issue (if any).
-- Report all URLs back to the user.
-
-That's the run. The skill stops once URLs are reported. Follow-up review feedback, version bumps, and merging are the user's call.
+Report URLs back when done. Follow-up review feedback, version bumps, and merging are the user's call.
 
 ## Notes on tone
 
