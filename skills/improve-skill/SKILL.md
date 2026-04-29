@@ -85,9 +85,9 @@ The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case d
 
 **Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, version bumping, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
 
-## Step 5: Draft PR and issue bodies, get approval
+## Step 5: Draft PR and issue bodies
 
-Before pushing anything or calling `gh`, draft the bodies in chat for the user to review. PRs and issues are visible shared-state actions; don't create them without an explicit yes.
+Draft the commit message and the PR / issue body. Don't pause to ask the user "here's the body, approve?" -- the gate was already passed in Step 2, when they said yes to acting on the finding. A second approval round on the prose just slows the loop down. Write a reasonable body, push, and open. Only check in mid-step if you hit something genuinely uncertain (scope changed, framing is unclear) -- not for routine prose.
 
 **PR body** structure:
 
