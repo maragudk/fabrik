@@ -21,4 +21,4 @@ Just name the branch a short sentence separated with dashes. Example: `add-some-
 
 ## Committing
 
-- Don't amend previous commits unless instructed to. When committing after the first commit on a branch, just commit with a simple message (e.g. "fixing …"), because the branch will most times be squashed on Github anyway.
+- Don't amend previous commits unless instructed to.
