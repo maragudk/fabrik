@@ -64,9 +64,9 @@ If after the pass there are no findings, say so plainly and stop. Don't manufact
 Classify each finding the user wants to act on as one of:
 
 - **Concrete fix** -- the right change is clear (description tweak, added example, rule clarification, missing cross-reference, fixing a stale fact). Goes into a PR.
-- **Fuzzy / redesign** -- the signal is real but the right fix isn't obvious, or the change is structural enough to deserve discussion before code ("split this skill in two", "the trigger model is wrong"). Goes into an issue.
+- **Fuzzy / redesign** -- the signal is real but the right fix isn't obvious, or the change is structural enough to deserve discussion before code ("split this skill in two", "the trigger model is wrong"). Discuss in chat first; if the discussion converges on a concrete change, ship as a PR; if it doesn't, file an issue so the thinking isn't lost. Don't default to "issue" just because the finding started fuzzy.
 
-A single invocation may produce one PR (covering several concrete fixes across one or more skills) plus one or more issues (for the redesign / fuzzy ones). That's fine.
+A single invocation may produce one PR (covering several concrete fixes across one or more skills) plus one or more issues (for the genuinely unresolved ones). That's fine.
 
 ## Step 4: Prepare a working copy of fabrik
 
@@ -81,15 +81,15 @@ The skill almost always runs outside the fabrik repo. To edit `skills/*/SKILL.md
    - Do all edits in the worktree, push from the worktree, open the PR from the worktree.
 2. **Otherwise**, clone `maragudk/fabrik` to a temp directory, branch, edit there, push, open the PR. Report the path back to the user so follow-ups are easy.
 
-The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case description of the change (e.g. `improve-skill/brainstorm-one-question`). One PR per `improve-skill` invocation, even when several skills are touched -- keeps review batched.
+The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case description of the change (e.g. `improve-skill/brainstorm-one-question`). By default, one PR per `improve-skill` invocation, even when several skills are touched -- keeps review batched. But if the user wants to act on findings one at a time (e.g. "let's take those one at a time"), a PR per finding is fine; follow the user's preference.
 
 **Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, version bumping, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
 
-## Step 5: Draft PR and issue bodies, get approval
+## Step 5: Ship it
 
-Before pushing anything or calling `gh`, draft the bodies in chat for the user to review. PRs and issues are visible shared-state actions; don't create them without an explicit yes.
+Commit, push, and open the PR or issue using your normal git/PR conventions (the system prompt already covers the mechanics). What's specific to this skill is the body shape: instead of the default Summary + Test plan, use the templates below because the framing is "findings from a conversation", not "feature work".
 
-**PR body** structure:
+**PR body:**
 
 ```markdown
 ## What was observed
@@ -105,9 +105,7 @@ Before pushing anything or calling `gh`, draft the bodies in chat for the user t
 <the reasoning, so a future reader can judge whether the change still makes sense>
 ```
 
-Apply any conventions from `AGENTS.md` to the PR (for example, README entries, version-bump reminders) so the PR is mergeable as-is, not a half-finished draft.
-
-**Issue body** structure:
+**Issue body:**
 
 ```markdown
 ## What was observed
@@ -125,17 +123,7 @@ Apply any conventions from `AGENTS.md` to the PR (for example, README entries, v
 
 One issue per fuzzy / redesign finding. Title clearly: `improve-skill: <skill-name> <one-line summary>`.
 
-## Step 6: Push and open
-
-Once approved:
-
-- Commit the edits in the worktree / clone with a clear message.
-- Push the branch.
-- `gh pr create` for the PR (if any).
-- `gh issue create` for each issue (if any).
-- Report all URLs back to the user.
-
-That's the run. The skill stops once URLs are reported. Follow-up review feedback, version bumps, and merging are the user's call.
+Report URLs back when done. Follow-up review feedback, version bumps, and merging are the user's call.
 
 ## Notes on tone
 
