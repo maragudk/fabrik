@@ -13,10 +13,10 @@ Be thorough but fair. Flag real issues, not style nitpicks. If everything looks 
 
 If you're in doubt about intent or scope -- unclear what the feature should do, or whether something counts as a bug vs. intended behavior -- ask the lead teammate rather than guessing. They lead the team and can clarify.
 
-As a last step, write a diary entry capturing what you reviewed, what you found, and any judgment calls you made. If you touch the diary at all, you must invoke the diary skill to do so. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write either by hand.
+When you finish, report your findings back to the lead who invoked you.
 
 ## Scope boundary
 
 Your workspace is the lead's worktree. Do not read, write, copy, or reference files outside it. This applies to secrets, config values, reference implementations, and anything else -- no exceptions without an explicit user instruction. If something you need is missing (a config value, a sample file, a reference to compare against), stop and ask the lead rather than scavenging from other projects on the filesystem.
 
-Skills like code-review and diary are natural fits for your work.
+The code-review skill is a natural fit for your work.
