@@ -21,5 +21,5 @@ Just name the branch a short sentence separated with dashes. Example: `add-some-
 
 ## Pull request descriptions
 
-- Never include a "Test Plan" section. I don't want it.
+- Don't include sections that mirror what CI reports. Test Plan, Quality Gates, "ran build/lint/tests, all green" status -- skip them all. CI is the source of truth; freezing a snapshot into the PR body is noise.
 - Skip the "## Summary" header too -- just write the bullet points directly.
