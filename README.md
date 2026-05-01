@@ -22,6 +22,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 ## Available Skills
 
 - **address-code-review** - Address code review feedback by walking through comments one at a time (GitHub PR, document, or conversation)
+- **atproto** - Guide for building on the AT Protocol (the "atmosphere"): authoring Lexicons, building app views, identity, repositories, XRPC, OAuth, the firehose, with Go (indigo) examples first-class
 - **autoresearch** - Autonomous experiment loop that iteratively improves a measurable metric through branching, measuring, and keeping or discarding changes
 - **blog-post-interview** - Interview the user about a new blog post before writing it, sharpening the angle and challenging weak claims
 - **bluesky** - Guide for posting content to the Bluesky social network using the bsky terminal app
