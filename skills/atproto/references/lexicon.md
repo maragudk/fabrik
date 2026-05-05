@@ -123,7 +123,9 @@ You **cannot**:
 - Tighten a constraint (`maxLength: 500` -> `maxLength: 280`).
 - Loosen a constraint (`maxLength: 280` -> `maxLength: 500`).
 
-Anything in the second list means a new NSID. Plan accordingly: name experimental schemas with `experimental` in the path (`com.example.experimental.foo`) until they're stable.
+Anything in the second list means a new NSID. Plan accordingly: name experimental schemas with `.temp.` or `.unspecced.` in the path (`com.example.temp.foo`) until they're stable. Major breaking redesigns conventionally get a `V2`/`V3` suffix.
+
+Conventions and design patterns (pagination, hydrated views, sidecars, naming) live in [`lexicon-style.md`](lexicon-style.md).
 
 ## Authoring tips
 
