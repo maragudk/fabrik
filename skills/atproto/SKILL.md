@@ -36,6 +36,7 @@ This SKILL.md is intentionally thin. For anything beyond a high-level question, 
 | You are doing | Read |
 |---|---|
 | Authoring a Lexicon (records, queries, procedures, subscriptions) | [`references/lexicon.md`](references/lexicon.md) |
+| Lexicon style guide -- naming, conventions, design patterns | [`references/lexicon-style.md`](references/lexicon-style.md) |
 | Working with DIDs, handles, AT URIs, NSIDs, TIDs, record keys | [`references/identity.md`](references/identity.md) |
 | Calling XRPC endpoints, handling errors, auth, proxying | [`references/xrpc.md`](references/xrpc.md) |
 | Reading repos, commits, MSTs, CAR files, the data model | [`references/repository.md`](references/repository.md) |
