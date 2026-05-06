@@ -14,7 +14,7 @@ Follow this cycle for each meaningful unit of progress:
 
 1. **Implement** -- make the code change
 2. **Update diary** -- add or update the current step in the diary file
-3. **Commit** -- commit the code and diary together
+3. **Commit together (when asked)** -- when the user asks for a commit, include the diary file alongside the code it documents. Invoking this skill is **not** itself a commit request -- wait for the user to ask before running `git commit`.
 
 A "step" is a logical chunk of work, not necessarily a single commit. Examples: "wire up the API endpoint", "debug the flaky test", "research how the auth middleware works".
 
