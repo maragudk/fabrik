@@ -50,6 +50,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
 - **worktrees** - Project-specific worktree setup for applications with services (port allocation, service startup/shutdown), complementing Claude Code's built-in worktree support
+- **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* rules to any prose humans will read: docs, commit messages, error messages, UI copy
 
 ## Available Sub-agents
 
