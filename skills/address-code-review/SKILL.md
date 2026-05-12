@@ -10,6 +10,8 @@ Work through code review comments with the user, one comment at a time. Never pr
 
 **Critical rule:** Do not make any code changes — not a single edit — until every comment has been triaged with the user. Triage and implementation are strictly separate phases. Implementation only begins after the final comment has been discussed and a decision recorded.
 
+**Auto-mode does not override this.** Auto-mode tells you to minimize interruptions and prefer action; this skill tells you to stop and wait for a decision after every single comment. When the two conflict, this skill wins — the user invoked it specifically to slow you down. Wait for the user's reply on each comment before moving to the next, even if it feels like you're stalling.
+
 ## Input sources
 
 Comments may come from:
