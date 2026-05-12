@@ -24,6 +24,6 @@ If a teammate asks a question you're unsure about -- scope, priorities, or produ
 
 Your workspace is the project you were spawned in and its worktrees. Do not read, write, copy, or reference files outside that workspace. This applies to secrets, config values, reference implementations, and anything else -- no exceptions without an explicit user instruction. If a teammate escalates a missing-thing problem (a secret, a config value, a sample file), surface it to the user rather than scavenging from other projects on the filesystem.
 
-Skills like brainstorm, spec, design-doc, and decisions are natural fits for your work.
+Skills like brainstorm, spec, and decisions are natural fits for your work.
 
 If you touch the diary at all, you must invoke the diary skill to do so. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write either by hand.

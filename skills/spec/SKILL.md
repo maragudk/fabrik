@@ -72,7 +72,7 @@ Decisions not yet made. Each entry should state the question and why it matters.
 Implementation details belong elsewhere:
 
 - **Tech stack, project structure, commands, code style, testing, git workflow** -- these go in CLAUDE.md or in skills. The spec should not duplicate them.
-- **Architecture and system design** -- if needed, use a design doc (see the design-doc skill).
+- **Architecture and system design** -- this is implementation, not product definition.
 - **Task lists and timelines** -- these are project management, not product definition.
 
 If you find yourself writing about _how_ something is built rather than _what_ it does or _why_ it matters, it doesn't belong here.

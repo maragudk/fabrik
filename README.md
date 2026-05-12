@@ -32,7 +32,6 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **dad-joke** - Tell the user a dad joke and then explain it
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
 - **decisions** - Guide for recording significant architectural and design decisions in `docs/decisions.md`
-- **design-doc** - Guide for writing design documents and specifications, especially after brainstorm or feature design sessions
 - **diary** - Implementation diary that captures the narrative of your work: what changed, why, what worked, what failed, and what was tricky
 - **garden** - Autonomous project gardening: scans for maintenance issues, picks one, fixes it in a worktree with self-review, and opens a PR
 - **gardeners** - Team version of `garden`: spawns a coordinated team of gardeners that each fix a different issue in parallel, sharing a task list to avoid duplicate work
