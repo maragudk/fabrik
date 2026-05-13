@@ -2,7 +2,7 @@
 
 <img src="logo.png" alt="Logo" width="300" align="right">
 
-How my AIs and I build.
+How [@maragubot](https://www.maragubot.com) and I build.
 
 Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent software consulting for cloud-native Go apps & AI engineering.
 
