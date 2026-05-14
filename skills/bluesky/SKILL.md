@@ -110,6 +110,33 @@ Quote an existing post using the `-q` flag:
 bsky post "Great point about Go modules!" -q at://did:plc:xyz/app.bsky.feed.post/abc123
 ```
 
+### 6. Threads
+
+You can build a thread by replying to your *own* posts. Each `bsky post` command prints the AT protocol URI of the post it created -- feed that URI into the `-r` flag of the next post to chain them together.
+
+```bash
+# First post in the thread -- note the at:// URI in the output
+bsky post "Building a new feature today: a streaming CSV parser. I'll post progress as I go."
+
+# Reply to that post's URI to continue the thread
+echo "Step 1 done: tokenizer handles quoted fields and embedded newlines correctly." \
+  | bsky post --stdin -r "at://did:plc:xyz/app.bsky.feed.post/abc123"
+
+# Keep chaining -- reply to the most recent post's URI each time
+echo "Step 2 done: streaming transformation layer, constant memory regardless of file size." \
+  | bsky post --stdin -r "at://did:plc:xyz/app.bsky.feed.post/def456"
+```
+
+Threads are useful for two things:
+
+- **Going beyond the 300 character limit** -- split a longer thought across multiple linked posts instead of cramming it into one
+- **Posting running progress** -- when building something, post an opening message and then reply to it with updates as you hit milestones, keeping the whole story in one readable thread
+
+**Best practices:**
+- Always reply to the *most recent* post in the thread so replies stay in order
+- Capture the `at://` URI from each post's output before making the next reply
+- Keep each post in a thread self-contained enough to make sense, but let the thread tell the full story
+
 ## Workflow Guidelines
 
 When creating a post:
