@@ -56,4 +56,3 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **builder** - Builder that takes requirements and ships code in the lead's worktree
 - **lead** - Team lead that refines ideas into concrete requirements, challenges assumptions, and manages scope
 - **overseer** - Read-only observer that surveys active feature worktrees and reports progress back to the user
-- **qa** - QA critic that reviews code and runs automated checks in the lead's worktree
