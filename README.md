@@ -33,6 +33,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
 - **decisions** - Guide for recording significant architectural and design decisions in `docs/decisions.md`
 - **diary** - Implementation diary that captures the narrative of your work: what changed, why, what worked, what failed, and what was tricky
+- **distill-book** - Distill a long book in any format (PDF, EPUB, Markdown, HTML...) into concise, structured learnings by processing it chapter by chapter with parallel subagents, then synthesizing -- optionally into a skill
 - **garden** - Autonomous project gardening: scans for maintenance issues, picks one, fixes it in a worktree with self-review, and opens a PR
 - **gardeners** - Team version of `garden`: spawns a coordinated team of gardeners that each fix a different issue in parallel, sharing a task list to avoid duplicate work
 - **git** - Guide for using git according to preferences (branch naming, commit messages, issue references)
