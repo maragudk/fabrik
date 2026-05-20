@@ -15,6 +15,7 @@ Just name the branch a short sentence separated with dashes. Example: `add-some-
 ## Commit messages
 
 - Always enclose code identifiers with backticks. Example: "Add `html.UserPage` component"
+- Backticks are command substitution in the shell, so a backtick in a double-quoted `git commit -m "..."` gets *executed* and silently dropped from the message -- e.g. ``-m "Add `html.UserPage`"`` tries to run `html.UserPage` and commits "Add ". Protect them: write the message with a single-quoted here-doc (`-F -` reading a `<<'EOF'` block), pass a single-quoted `-m '...'`, or escape each backtick as `` \` ``. The here-doc is the most reliable for multi-line messages.
 - Always refer to Go code identifiers including the package name, like in `html.UserPage` above. Fields and methods on structs can be referred with `model.User.Name`.
 - Ask me about any Github issues that should be referenced, and wait for my response before committing. Reference them at the end of the commit message like this: "See #123, #234". If the commit fixes one or more issues, use "Fixes #123, fixes #234" instead (the double "fixes" is important for Github to actually close the issue).
 - Don't mention that you've updated tests, that's assumed.
