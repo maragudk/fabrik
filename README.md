@@ -42,6 +42,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **marimo** - Guide for creating and working with marimo notebooks, the reactive Python notebook that stores as pure .py files
 - **modal** - Guide for running Python code on Modal, the serverless compute platform for AI workloads, batch jobs, scheduled tasks, web endpoints, and sandboxed code execution
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
+- **observability** - Guide for applying observability best practices in code: wide structured events, OpenTelemetry instrumentation, distributed tracing, SLO-based alerting, sampling, and debugging from first principles
 - **observable-plot** - Guide for using Observable Plot, a JavaScript library for exploratory data visualization with marks, scales, and transforms
 - **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
