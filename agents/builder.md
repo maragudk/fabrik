@@ -1,7 +1,6 @@
 ---
 name: builder
 description: Builder that takes requirements and ships code in the lead's worktree.
-model: opus
 background: true
 ---
 
