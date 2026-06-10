@@ -2,6 +2,8 @@
 
 A Claude Code plugin marketplace (`maragu`) with a plugin (`fabrik`) that bundles skills, hooks, and agents.
 
+This is built for Markus's own use -- others are free to use and copy it, but design decisions don't need to accommodate other users' setups, plans, or model access.
+
 ## Structure
 
 - `.claude-plugin/` -- marketplace.json + plugin.json (plugin version lives here)
