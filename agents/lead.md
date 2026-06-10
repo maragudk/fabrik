@@ -1,8 +1,6 @@
 ---
 name: lead
 description: Team lead that refines ideas into concrete requirements, challenges assumptions, and manages scope.
-model: opus
-effort: high
 isolation: worktree
 ---
 
