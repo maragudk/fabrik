@@ -42,6 +42,8 @@ Capture data from all three phases:
 
 Think like a debugger that records every variable's value and every (possibly remote) function call's timing -- then ships that snapshot somewhere queryable.
 
+See `references/attributes.md` for a menu of suggested attributes -- identity, tenancy, build/deploy, feature flags, timing rollups, and more -- with OTel semantic convention names. They're suggestions to pick from, not a schema to complete.
+
 ### 2. Maximize cardinality and dimensionality
 
 These two properties are what make events useful for finding unknown-unknowns:
@@ -104,6 +106,7 @@ See `references/instrumentation.md` for sampling strategies and code.
 
 ## Reference files
 
+- `references/attributes.md` -- suggested attributes for wide events (identity, tenancy, build/deploy, errors, timing rollups, feature flags, ...), OTel semconv naming guidance, and staged adoption.
 - `references/instrumentation.md` -- OpenTelemetry concepts, structured event construction, span fields and tracing mechanics, context propagation, and sampling, with Go code patterns.
 - `references/slos.md` -- SLOs, SLIs (prefer event-based), error budgets, and predictive burn alerts (lookahead/baseline windows).
 - `references/adoption.md` -- the core analysis loop, the monitoring-vs-observability boundary (system vs software), build-vs-buy, and rolling observability out across a team.
