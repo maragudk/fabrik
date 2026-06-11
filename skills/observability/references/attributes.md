@@ -1,6 +1,6 @@
 # Attributes for wide events
 
-A working checklist of attributes to put on the main span / wide event, grouped by concern. Treat it as a menu, not a mandate: copy, prune what doesn't apply, and lean toward "add the attribute" when unsure -- columnar stores compress repeated values to near zero, and questions you can't ask cost more than dimensions you don't use. Well-instrumented services typically carry 50-300 dimensions per event.
+A menu of suggested attributes for the main span / wide event, grouped by concern. **These are suggestions, not rules**: nothing here is required, no group is complete, and the highest-value attributes are the ones unique to your domain that no list can anticipate. Copy what fits, prune what doesn't, rename freely -- and lean toward "add the attribute" when unsure, because columnar stores compress repeated values to near zero, and questions you can't ask cost more than dimensions you don't use. Well-instrumented services typically carry 50-300 dimensions per event.
 
 Synthesized from Jeremy Morrell's "A Practitioner's Guide to Wide Events", Brandur Leach's "Canonical Log Lines" (Stripe), Charity Majors / Honeycomb, and the OpenTelemetry semantic conventions.
 
