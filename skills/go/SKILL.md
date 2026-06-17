@@ -1,6 +1,6 @@
 ---
 name: go
-description: Guide for how to develop Go apps and modules/libraries. Always use this skill when reading or writing Go code.
+description: ALWAYS invoke this skill as your FIRST action — before any Read, Write, Edit, or Bash — whenever a task involves Go in any way — creating or editing any `.go` file, `go.mod`, or `go test`; adding or changing handlers, structs, methods, interfaces, error handling, goroutines, channels, sqlc/database code, or gomponents views; or refactoring, reviewing, debugging, or testing Go. This is a hard requirement, not a suggestion — the user develops all Go through this skill, which encodes project-specific conventions (structure, error handling, testing, naming) that default Go habits violate. Do not start editing Go and consult it later — load it first. Skip only when no Go code is read or written (pure Python, shell, SQL, Dockerfiles, CI config, or conceptual Go questions with no code).
 license: MIT
 ---
 
