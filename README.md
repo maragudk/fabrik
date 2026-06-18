@@ -45,6 +45,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
 - **observability** - Guide for instrumenting and operating observable systems (wide structured events, OpenTelemetry, the core analysis loop, SLOs, sampling, and observability for AI/LLMs)
 - **observable-plot** - Guide for using Observable Plot, a JavaScript library for exploratory data visualization with marks, scales, and transforms
+- **one-at-a-time** - Output-pacing discipline that presents one unit at a time instead of dumping a list or wall of text
 - **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
