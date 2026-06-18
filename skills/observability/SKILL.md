@@ -1,14 +1,14 @@
 ---
 name: observability
-description: Guide for instrumenting and operating observable software systems, distilled from "Observability Engineering" (2nd ed). Use this skill whenever the user is adding or reviewing telemetry, instrumenting code with OpenTelemetry, working with traces/spans/metrics/logs/structured events, debugging production behavior, designing SLOs or alerts, setting up sampling or telemetry pipelines, choosing observability storage, or making code observable for humans or AI agents -- even if they don't say the word "observability". Triggers include "add tracing", "instrument this", "OTel/OpenTelemetry", "why is this slow in prod", "set up an SLO", "alert fatigue", "high cardinality", "structured logging", "wide events", and observability for LLM/agent applications.
+description: Guide for instrumenting and operating observable software systems. Use this skill whenever the user is adding or reviewing telemetry, instrumenting code with OpenTelemetry, working with traces/spans/metrics/logs/structured events, debugging production behavior, designing SLOs or alerts, setting up sampling or telemetry pipelines, choosing observability storage, or making code observable for humans or AI agents -- even if they don't say the word "observability". Triggers include "add tracing", "instrument this", "OTel/OpenTelemetry", "why is this slow in prod", "set up an SLO", "alert fatigue", "high cardinality", "structured logging", "wide events", and observability for LLM/agent applications.
 license: MIT
 ---
 
-# Observability Engineering
+# Observability
 
 ## Overview
 
-This skill distills the practices in *Observability Engineering, 2nd Edition* (Majors, Fong-Jones, Miranda, Parker; O'Reilly) into actionable guidance. The aim is not to summarize the book but to help you instrument code, debug production, and design reliability mechanisms well.
+This skill turns modern observability practice into actionable guidance. The aim is not a survey of the field but to help you instrument code, debug production, and design reliability mechanisms well.
 
 The throughline: **observability is the ability to understand any state your system can reach -- including ones you have never seen before -- by interrogating its outputs, without shipping new code to capture them first.** In the AI era the bottleneck is no longer writing code; it is validating and understanding the code you (or an agent) just shipped. Observability is the feedback loop that closes that gap.
 
@@ -102,7 +102,7 @@ For sampling code patterns, pipeline architecture, and the transferable storage-
 
 ## Observability for AI: agents and LLM applications
 
-This is where the 2nd edition's emphasis lands, and it's directly relevant to AI engineering work.
+This is a major emphasis of modern observability practice, and it's directly relevant to AI engineering work.
 
 - **Agents are only as good as the context they're given.** A senior engineer carries an implicit mental model (topology, naming chaos, what "normal" looks like) that an agent querying telemetry cold does not have. The biggest differentiator in agent effectiveness is not the model -- it's a maintained, machine-readable **context layer** (service topology, naming map, deploy context, known issues, recent incidents, business criticality).
 - **Encode senior intuition into the telemetry,** or it effectively doesn't exist. Consistent semantic attributes and human-readable field descriptions let both humans and agents reason. Agents aren't usually hallucinating -- they're optimized for confidence and reason rationally from incomplete context; the dominant failure mode is *inferring meaning incorrectly* (e.g. reading a calculated `is_slow` column as a feature flag). Fix it with clear descriptions, not more prompting.
@@ -113,7 +113,7 @@ For the full agent context layer, LLM telemetry design, the eval flywheel, and o
 
 ## Strategy, decisions, and organizational change
 
-Most of the back third of the book is about the organizational side -- valuable when you're advising on observability strategy, not just writing instrumentation.
+The organizational side matters when you're advising on observability strategy, not just writing instrumentation.
 
 - **Build vs buy is an economic bet on engineering cycles, not a technical choice.** Buy commodity (logging, identity, the observability platform itself); build only what's a genuine *revenue/market-share* differentiator. The winning default: **buy the platform, build the integration layer** (wrappers, naming standards, abstractions) owned by an observability team. Default to OTel + exporters so instrumentation survives a vendor migration. "Free" in-house stacks rarely are.
 - **An observability team's job is governing the shared language of telemetry** (semantic conventions, schemas, paved paths), not handing out dashboards. The right way and the fastest way must be the same way -- embed OTel into the service framework so adoption is a library bump.
