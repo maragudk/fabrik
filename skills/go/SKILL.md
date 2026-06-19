@@ -70,6 +70,8 @@ func User(r chi.Router, db userGetter) {
 
 I write tests for most functions and methods. I almost always use subtests with a good description of what is going on and what the expected result is.
 
+Tests for a given file always go in one test file: for `example.go`, the test file is always `example_test.go`, never `example_this_feature_test.go`. The one exception is when the test package needs to change, for internal tests, in which case the file is `example_internal_test.go`.
+
 Here's an example:
 
 ```go example.go
