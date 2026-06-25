@@ -51,7 +51,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
-- **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* rules to any prose humans will read: docs, commit messages, error messages, UI copy
+- **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)
 
 ## Available Sub-agents
 
