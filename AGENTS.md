@@ -18,7 +18,7 @@ When adding a new skill or sub-agent, you MUST also add a one-line entry to `REA
 
 ## Versioning
 
-Bump the version in `.claude-plugin/plugin.json` after any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
+Bump the version in `.claude-plugin/plugin.json` together with any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
 
 New functionality (a new skill, sub-agent, hook, etc.) is a minor version bump. Changes to existing functionality are a patch version bump.
 
