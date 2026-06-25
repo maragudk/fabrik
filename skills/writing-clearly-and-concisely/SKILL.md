@@ -1,6 +1,6 @@
 ---
 name: writing-clearly-and-concisely
-description: Apply Strunk's timeless writing rules to ANY prose humans will read—documentation, commit messages, error messages, explanations, reports, or UI text. Makes your writing clearer, stronger, and more professional.
+description: Use when you write or revise a long-form document an audience will read—documentation, a README, a how-to or user guide, a spec, a design or decision doc, a blog post, a proposal, an announcement, or a standalone report or summary written for a person. Such writing should be clear, concrete, and tight, so draft it from the start by Strunk's Elements of Style (active voice; definite, specific, concrete words; omit needless words) instead of first-draft sprawl. Do NOT fire for short or code-adjacent text—commit messages, PR descriptions, release notes or changelogs, error messages, UI strings, code comments, config, version bumps, quick internal scratch notes, or the implementation diary. These exclusions win even when the text reaches an audience: a release note, changelog, or PR description is a working artifact, not a document drafted for readers.
 ---
 
 # Writing Clearly and Concisely
@@ -13,15 +13,27 @@ William Strunk Jr.'s *The Elements of Style* (1918) teaches you to write clearly
 
 ## When to Use This Skill
 
-Use this skill whenever you write prose for humans:
+Use this skill when you write or revise a long-form document an audience will read:
 
-- Documentation, README files, technical explanations
-- Commit messages, pull request descriptions
-- Error messages, UI copy, help text, comments
-- Reports, summaries, or any explanation
-- Editing to improve clarity
+- Documentation, README files, how-to and user guides
+- Specs, design docs, decision docs
+- Blog posts, proposals, announcements
+- A standalone report or summary written for a person
+- Editing any of the above to improve clarity
 
-**If you're writing sentences for a human to read, use this skill.**
+**If you're drafting a document an audience will read, use this skill.**
+
+## When NOT to Use This Skill
+
+Skip it for short or code-adjacent text—these aren't prose written for an audience:
+
+- Commit messages, PR descriptions, release notes or changelogs
+- Error messages, UI strings, code comments
+- Config, version bumps, code, tests
+- Quick internal scratch notes
+- The implementation diary—it's agent context memory, not a document for readers
+
+These exclusions win even when the text reaches an audience. A release note, changelog, or PR description is a working artifact, not a document drafted for readers—don't fire just because someone will read it.
 
 ## Limited Context Strategy
 
@@ -59,4 +71,4 @@ Alphabetical reference for usage questions
 
 ## Bottom Line
 
-Writing for humans? Read `elements-of-style.md` and apply the rules. Low on tokens? Dispatch a subagent to copyedit with the guide.
+Drafting a document an audience will read? Read `elements-of-style.md` and apply the rules. Low on tokens? Dispatch a subagent to copyedit with the guide.
