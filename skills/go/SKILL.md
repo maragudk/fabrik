@@ -177,6 +177,8 @@ Test helper functions should call `testing.T.Helper()`.
 
 In tests, use `t.Context()` instead of `context.Background()`, and always use it inline instead of pulling out into a `ctx` variable.
 
+Tests that exercise timing -- timeouts, retries, tickers, anything sleeping or waiting on a clock -- should use the `testing/synctest` package (stable since Go 1.25). It runs the test against a fake clock, making timing tests fast and deterministic instead of slow and flaky.
+
 ### Miscellaneous
 
 - Variable naming:
