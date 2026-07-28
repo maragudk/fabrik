@@ -26,8 +26,9 @@ Create a worktree and branch:
 
 ```bash
 git worktree add .worktrees/garden-$(date +%Y%m%d-%H%M%S) -b garden/<descriptive-slug>
-cd .worktrees/garden-*
 ```
+
+Note the exact path `git worktree add` reports, then `cd` into it and use that literal path for the rest of the run. Never expand a `garden-*` glob: the `gardeners` skill runs several gardeners at once, so a glob matches your siblings' worktrees too, and both `cd` and `git worktree remove` take a single path.
 
 The branch name should reflect the issue you end up fixing (you can rename it after the scan). Use the `garden/` prefix always.
 
@@ -121,5 +122,5 @@ After opening the PR, remove the worktree and stop.
 
 ```bash
 cd /path/to/original/repo
-git worktree remove .worktrees/garden-*
+git worktree remove <the-worktree-path-from-step-1>
 ```
