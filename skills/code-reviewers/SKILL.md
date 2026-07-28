@@ -39,7 +39,7 @@ Default roster (extend if you need more than three):
 - Stack-Tracy
 - Dee-Bug
 
-Pass those hyphenated forms verbatim -- the `Agent` tool's `name` rejects spaces. In prose, their own prompts and your report, they can still go by Seymour Bugs, Stack Tracy, and Dee Bug.
+Pass those hyphenated forms verbatim -- the `Agent` tool's `name` rejects spaces. Use them in the prompt template's `<name>` and `<counterpart>` fields too, since those are the strings the reviewers address each other by via `SendMessage`. Only your final report to the user is free to call them Seymour Bugs, Stack Tracy, and Dee Bug.
 
 Default pair for a fresh run: **Seymour-Bugs** and **Stack-Tracy**.
 
