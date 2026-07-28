@@ -16,24 +16,22 @@ Inspect the changes yourself first, so you can brief the reviewers. On the `main
 
 ## Flow
 
-1. **Create a team** called `code-reviewers`.
+1. **Use the session's team** -- it forms when the first reviewer is spawned; there's nothing to set up.
 2. **Spawn two reviewers** from the roster, both in the background, both with the shared prompt below.
 3. **Reviewers run three phases**: independent review, then challenge, then defend or concede. All coordination is via `SendMessage`.
 4. **Collect self-reports** from each reviewer.
 5. **Consolidate** into a four-bucket report for the user.
-6. **Clean up** the team.
+6. **Clean up** by shutting down the reviewers.
 
-## Step 1: Create the team
+## Step 1: Use the session's team
 
-```
-TeamCreate({team_name: "code-reviewers", description: "Two reviewers debating a diff"})
-```
+There's no team to create: the session has a single implicit team, formed automatically when the first reviewer is spawned.
 
-The team exists only for this review. Delete it at the end.
+The reviewers exist only for this review. Shut them down at the end.
 
 ## Step 2: Spawn two reviewers
 
-Spawn two agents with the `Agent` tool, `team_name: "code-reviewers"`, `run_in_background: true`, distinct `name`s from the roster, and identical prompts (see template below). Real names rather than numbers keep the transcript readable and set the tone.
+Spawn two agents with the `Agent` tool, `run_in_background: true`, distinct `name`s from the roster, and identical prompts (see template below). Real names rather than numbers keep the transcript readable and set the tone.
 
 Default roster (extend if you need more than three):
 
@@ -107,7 +105,7 @@ No scoreboard, no "who won". Competition was internal motivation; the report is 
 ## Step 6: Clean up
 
 - `SendMessage` a `shutdown_request` to each reviewer.
-- `TeamDelete` the team.
+- The team itself needs no teardown -- its shared state is cleaned up automatically when the session ends.
 
 ## Notes
 
