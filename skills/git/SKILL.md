@@ -26,3 +26,7 @@ Just name the branch a short sentence separated with dashes. Example: `add-some-
 - Don't include sections that mirror what CI reports. Test Plan, Quality Gates, "ran build/lint/tests, all green" status -- skip them all. CI is the source of truth; freezing a snapshot into the PR body is noise.
 - Skip the "## Summary" header too -- just write the bullet points directly.
 - Before merging, refresh the PR title and description so they match what actually shipped. A branch drifts as review feedback lands, leaving a title or body written for the first commit stale.
+
+## Merging pull requests
+
+- Prefer merge commits: `gh pr merge --merge`. Merge settings vary by repo -- some disallow squash merging entirely, some still use it -- so don't reach for `--squash` by default; if a merge method is rejected, check the repo's recent history for what it actually uses.
