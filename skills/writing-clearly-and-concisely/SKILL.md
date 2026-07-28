@@ -1,6 +1,7 @@
 ---
 name: writing-clearly-and-concisely
 description: "Use when you write or revise a long-form document an audience will read—documentation, a README, a how-to or user guide, a spec, a design or decision doc, a blog post, a proposal, an announcement, or a standalone report or summary written for a person. Such writing should be clear, concrete, and tight, so draft it from the start by Strunk's Elements of Style (active voice; definite, specific, concrete words; omit needless words) instead of first-draft sprawl. Do NOT fire for short or code-adjacent text—commit messages, PR descriptions, release notes or changelogs, error messages, UI strings, code comments, config, version bumps, quick internal scratch notes, or the implementation diary. These exclusions win even when the text reaches an audience: a release note, changelog, or PR description is a working artifact, not a document drafted for readers."
+license: Public Domain
 ---
 
 # Writing Clearly and Concisely
