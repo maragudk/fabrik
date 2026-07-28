@@ -35,11 +35,13 @@ Spawn two agents with the `Agent` tool, `run_in_background: true`, distinct `nam
 
 Default roster (extend if you need more than three):
 
-- Seymour Bugs
-- Stack Tracy
-- Dee Bug
+- Seymour-Bugs
+- Stack-Tracy
+- Dee-Bug
 
-Default pair for a fresh run: **Seymour Bugs** and **Stack Tracy**.
+Pass those hyphenated forms verbatim -- the `Agent` tool's `name` rejects spaces. Use them in the prompt template's `<name>` and `<counterpart>` fields too, since those are the strings the reviewers address each other by via `SendMessage`. Only your final report to the user is free to call them Seymour Bugs, Stack Tracy, and Dee Bug.
+
+Default pair for a fresh run: **Seymour-Bugs** and **Stack-Tracy**.
 
 No worktree -- the review is read-only and both reviewers need to see the same repo state.
 
