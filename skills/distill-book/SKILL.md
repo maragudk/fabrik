@@ -24,7 +24,7 @@ Use it when someone wants the core learnings out of a long document (book, manua
 
 2. **Break it into chapters (or natural sections).** Read the book's own structure -- table of contents, headings -- to find the boundaries. Conventions vary wildly between books, so this is a judgment call, not a fixed rule; verify the split looks sane before spending tokens on it. If there are no clear chapters, fall back to Parts, sections, or sensible chunks, and say what you did. Usually skip front/back matter (preface, index, appendices) unless it's worth distilling.
 
-3. **Distill each chapter in parallel.** Spawn one subagent per chapter, all in a single batch so they run concurrently. Each subagent prompt must be self-contained, and should include:
+3. **Distill each chapter in parallel.** Spawn one subagent per chapter with `model: "opus"` -- per-chapter distillation doesn't need the most expensive model; the judgment lives in the synthesis step. Spawn all in a single batch so they run concurrently. Each subagent prompt must be self-contained, and should include:
    - which chapter to read and the book/chapter title for context;
    - a **focus lens matched to the end goal** -- this matters more than anything else. For a coding skill, ask for principles and practices an engineer can actually apply (definitions, the why, concrete techniques, anti-patterns, rules of thumb), not a flat summary. For a book report, ask for narrative takeaways. The lens shapes everything downstream.
    - an instruction to **write its overview to a file and reply with only a short token** (e.g. "done ch5"). Writing to files keeps the overviews out of the orchestrator's context until you choose to read them.
