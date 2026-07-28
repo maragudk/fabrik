@@ -25,14 +25,18 @@ Inspired by the "doc-gardening" and "garbage collection" concepts from agent-fir
 Create a worktree and branch:
 
 ```bash
-WORKTREE="$PWD/.worktrees/garden-$(date +%Y%m%d-%H%M%S)"
+REPO="$(git rev-parse --show-toplevel)"
+WORKTREE="$REPO/.worktrees/garden-$(date +%Y%m%d-%H%M%S)"
 git worktree add "$WORKTREE" -b garden/<descriptive-slug>
-cd "$WORKTREE" && pwd
+echo "repo: $REPO"
+echo "worktree: $WORKTREE"
 ```
 
-The branch name should reflect the issue you end up fixing (you can rename it after the scan). Use the `garden/` prefix always.
+Record both paths the block echoes -- `git worktree add` prints neither. Shell state doesn't survive to your next command: the variables are gone, and in a sub-agent thread the working directory resets too. So pass the worktree path explicitly from here on. Prefix later commands with `cd <worktree> &&`, hand the path to the reviewers you dispatch in Step 5, and reuse both paths in Step 7.
 
-Record the absolute path `pwd` prints and reuse it verbatim in Step 7. `git worktree add` never prints the path itself, and the variable is gone by your next command. Don't re-derive it with a `garden-*` glob either -- the `gardeners` skill runs several gardeners at once, so the glob matches your siblings' worktrees too: `git worktree remove` errors out on that, and `cd` silently drops you into whichever sibling sorts first.
+Don't re-derive the worktree path with a `garden-*` glob. The `gardeners` skill runs several gardeners at once, so the glob matches your siblings' worktrees, and both `cd` and `git worktree remove` fail when it matches more than one.
+
+The branch name should reflect the issue you end up fixing (you can rename it after the scan). Use the `garden/` prefix always.
 
 ## Step 2: Scan
 
@@ -123,6 +127,6 @@ Open a PR against the main branch. The PR description should have this structure
 After opening the PR, remove the worktree and stop.
 
 ```bash
-cd /path/to/original/repo
-git worktree remove <the-absolute-path-from-step-1>
+cd <the-repo-path-from-step-1>
+git worktree remove <the-worktree-path-from-step-1>
 ```
