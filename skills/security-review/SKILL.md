@@ -8,13 +8,13 @@ license: MIT
 
 ## Getting started
 
-Pick a random starting point by running the bundled script:
+Pick a random starting point by running the bundled script. Prefix `scripts/random-file.sh` with this skill's base directory, the absolute path stated when the skill loads:
 
 ```bash
-bash scripts/random-file.sh
+bash /path/to/skill/scripts/random-file.sh
 ```
 
-The `scripts/` directory is part of this skill, not the project repository.
+Run it from the project root: the script samples whatever directory it runs in, and `scripts/` belongs to this skill rather than the project.
 
 The random entry point is intentional: it forces exploration of parts of the codebase that might otherwise be overlooked. The idea is to run this skill multiple times over the life of a project, each time pulling one thread from a different starting point.
 
