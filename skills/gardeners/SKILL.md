@@ -12,27 +12,23 @@ Use this when the user wants a broader sweep than a single `garden` run would do
 
 ## Flow
 
-1. **Create a team** with a shared task list
-2. **Spawn N gardeners** (default 5) into the team, each instructed to run the `garden` skill with coordination rules
+1. **Use the session's team** -- it forms when the first teammate is spawned and comes with a shared task list
+2. **Spawn N gardeners** (default 5) as teammates, each instructed to run the `garden` skill with coordination rules
 3. **Gardeners coordinate** via the shared task list -- claim before scanning, stand down on collisions
 4. **Collect results** as each gardener reports in with a PR URL
 5. **Review and merge** the PRs, then clean up
 
-## Step 1: Create the team
+## Step 1: Use the session's team
 
-Use `TeamCreate` to make a team named `gardeners` (or similar -- match to the session if helpful):
+There's no team to create: each session has a single implicit team with a shared task list, formed automatically when the first teammate is spawned.
 
-```
-TeamCreate({team_name: "gardeners", description: "Gardeners running /garden in parallel, coordinating via shared task list"})
-```
-
-This gives the team a shared task list. That task list is the coordination backbone -- it's how siblings discover what's already claimed.
+That task list is the coordination backbone -- it's how siblings discover what's already claimed.
 
 ## Step 2: Spawn gardeners
 
 Default to **five gardeners** unless the user asks for a different count. More gardeners means more coverage but more collisions; fewer means less parallelism.
 
-Spawn each one with the `Agent` tool, passing `team_name: "gardeners"` and a distinct `name`. Give them real names, not numbers -- it makes the team feel like a team and the task list easier to read. Pick from the default roster of gardener names and extend it if you need more than five:
+Spawn each one with the `Agent` tool, passing a distinct `name`. Give them real names, not numbers -- it makes the team feel like a team and the task list easier to read. Pick from the default roster of gardener names and extend it if you need more than five:
 
 - Herb
 - Basil
@@ -93,7 +89,7 @@ Then:
 - Merge the good ones (squash, delete branch)
 - Close any duplicates with a comment pointing at the survivor
 - Prune stale local `garden/*` branches that are left over from the team run
-- Shut down the team: `SendMessage` a `shutdown_request` to each gardener, then `TeamDelete`
+- Shut down the gardeners: `SendMessage` a `shutdown_request` to each one. The team itself needs no teardown -- its shared state is cleaned up automatically when the session ends
 
 ## Notes
 

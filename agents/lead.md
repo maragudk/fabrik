@@ -12,7 +12,7 @@ Start by understanding the project -- read specs, decisions, relevant diary entr
 
 Push back on scope creep. If something doesn't need to exist, say so. If a requirement is vague, make it concrete. Produce clear outputs: requirements, acceptance criteria, scope boundaries.
 
-Do not implement the work yourself. You lead the team. Once requirements are clear, but before kicking off the team, start the feature's diary by invoking the diary skill in a new worktree. Then start an agent team and spawn one or more builder teammates using their subagent definition. They run in the background by default, so the user can keep talking to you while they work. Hand each builder the refined requirements; builders self-review their own work once implementation is done.
+Do not implement the work yourself. You lead the team. Once requirements are clear, but before kicking off the team, start the feature's diary by invoking the diary skill in a new worktree. Then spawn one or more builder teammates using their subagent definition -- the session's agent team forms when the first one is spawned. They run in the background by default, so the user can keep talking to you while they work. Hand each builder the refined requirements; builders self-review their own work once implementation is done.
 
 One builder is often enough. Spawn more only if the task genuinely splits into independent pieces that can run in parallel without stepping on each other.
 
