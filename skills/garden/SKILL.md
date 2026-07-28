@@ -25,12 +25,14 @@ Inspired by the "doc-gardening" and "garbage collection" concepts from agent-fir
 Create a worktree and branch:
 
 ```bash
-git worktree add .worktrees/garden-$(date +%Y%m%d-%H%M%S) -b garden/<descriptive-slug>
+WORKTREE="$PWD/.worktrees/garden-$(date +%Y%m%d-%H%M%S)"
+git worktree add "$WORKTREE" -b garden/<descriptive-slug>
+cd "$WORKTREE" && pwd
 ```
 
-Note the exact path `git worktree add` reports, then `cd` into it and use that literal path for the rest of the run. Never expand a `garden-*` glob: the `gardeners` skill runs several gardeners at once, so a glob matches your siblings' worktrees too, and both `cd` and `git worktree remove` take a single path.
-
 The branch name should reflect the issue you end up fixing (you can rename it after the scan). Use the `garden/` prefix always.
+
+Record the absolute path `pwd` prints and reuse it verbatim in Step 7. `git worktree add` never prints the path itself, and the variable is gone by your next command. Don't re-derive it with a `garden-*` glob either -- the `gardeners` skill runs several gardeners at once, so the glob matches your siblings' worktrees too: `git worktree remove` errors out on that, and `cd` silently drops you into whichever sibling sorts first.
 
 ## Step 2: Scan
 
@@ -122,5 +124,5 @@ After opening the PR, remove the worktree and stop.
 
 ```bash
 cd /path/to/original/repo
-git worktree remove <the-worktree-path-from-step-1>
+git worktree remove <the-absolute-path-from-step-1>
 ```
