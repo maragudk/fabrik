@@ -82,7 +82,7 @@ Commit the change with a clear message.
 
 ## Step 5: Self-review
 
-Dispatch two sub-agents to review the change. Tell them:
+Dispatch two sub-agents to review the change, passing `model: "opus"` -- reviewing a small, focused maintenance diff doesn't need the most expensive model. Tell them:
 
 - They are competing with another agent to find issues
 - They should review both correctness and whether the fix introduces new problems (e.g., updating a doc reference that accidentally breaks another cross-reference)

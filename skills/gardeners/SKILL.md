@@ -28,7 +28,7 @@ That task list is the coordination backbone -- it's how siblings discover what's
 
 Default to **five gardeners** unless the user asks for a different count. More gardeners means more coverage but more collisions; fewer means less parallelism.
 
-Spawn each one with the `Agent` tool, passing a distinct `name`. Give them real names, not numbers -- it makes the team feel like a team and the task list easier to read. Pick from the default roster of gardener names and extend it if you need more than five:
+Spawn each one with the `Agent` tool, passing a distinct `name` and `model: "opus"` -- gardening tasks are small and well-scoped, so they don't need the most expensive model. Sub-agents a gardener spawns (like its self-reviewers) inherit the model automatically. Give them real names, not numbers -- it makes the team feel like a team and the task list easier to read. Pick from the default roster of gardener names and extend it if you need more than five:
 
 - Herb
 - Basil
