@@ -51,7 +51,7 @@ OTel is the vendor-neutral standard for creating, transmitting, and naming telem
 - **Naming and schema discipline:** descriptive dot-namespaced snake_case names; no IDs or variable route segments in span names (`/users/{user.id}`, move the ID to an attribute); units and type in metadata, not the name. Drive consistency with a checked-in schema (e.g. OTel Weaver) -- one canonical key per concept. Conflicting attribute keys cripple incident response and mislead AI agents.
 - **PII defense in depth:** redact/allowlist via SDK and Collector processors; use stable hashes for identifiers you need to correlate but not expose; apply residency/retention rules early in the pipeline.
 
-For the full what-to-capture catalog, per-architecture patterns (streaming, async fan-out, long-running jobs, serverless, eBPF), span-link usage, and ontology design, read `references/instrumentation.md`.
+For the full what-to-capture catalog, per-architecture patterns (streaming, async fan-out, long-running jobs, serverless, eBPF), span-link usage, and ontology design, read `references/instrumentation.md`. For a concrete attribute-by-attribute catalog for wide events (names, example values, and the question each answers), read `references/wide-event-attributes.md`.
 
 ## Analysis: debug from first principles
 
