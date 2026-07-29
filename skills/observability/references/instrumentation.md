@@ -13,7 +13,7 @@ Companion to the "Instrumenting with OpenTelemetry" section of SKILL.md. Covers 
 
 ## What to capture on a wide event
 
-Aim for hundreds of attributes. Categories (not exhaustive):
+Aim for hundreds of attributes. Categories (not exhaustive) below; for the full attribute-by-attribute catalog with concrete names, example values, and the question each answers, read `wide-event-attributes.md`.
 
 - **Service / code context:** `service.name`, environment, owning team and Slack channel; instance specs (memory, CPU, type); orchestration (k8s pod/cluster, cloud region/AZ).
 - **Build info:** `service.version`, git hash, PR/diff URL, deploy timestamp, who deployed, deploy trigger (merge/manual/config-change), deployment age. Answers the first incident question -- "did something just deploy?"
