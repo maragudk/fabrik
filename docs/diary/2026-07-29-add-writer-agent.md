@@ -50,3 +50,47 @@ Read `/agents/writer.md` as a prompt: does the input contract (brief with audien
 ### Future work
 
 Version bump to 0.28.0 with tag and GitHub release after the PR merges (Markus decides when).
+
+## Step 2: First live run of the writer
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Use the writer to check the readme
+
+**Interpretation:** After reloading plugins, spawn the new writer sub-agent with a brief to review `/README.md` for accuracy and clarity -- its first live run.
+
+**Inferred intent:** Test that the writer's contract (brief in, full skill read, own research, uncommitted edits, pointer report back) works in practice, on a real task.
+
+### What I did
+
+Spawned the writer with a brief (what, audience, purpose, pointers per its contract). It verified all 31 skill entries and all three sub-agent entries in `/README.md` against the repo, found one gap -- the Usage section told forkers to customize hooks without the README saying what they were -- and added an "Available Hooks" section documenting the SessionStart hook. I reviewed the diff and committed it.
+
+### Why
+
+A fresh agent definition is untested until it runs; the README check was a well-scoped first task that exercises every part of the contract.
+
+### What worked
+
+The whole contract held: the writer researched the repo itself, edited the file directly, left it uncommitted, and reported a short pointer with what it verified and what it changed -- no prose in the report. It even flagged that the change warrants a patch bump per repo convention.
+
+### What didn't work
+
+Nothing failed. One surprise: spawning it with `run_in_background: false` still ran it in the background, because `background: true` in its frontmatter wins.
+
+### What I learned
+
+The report-is-a-pointer instruction produces a genuinely useful review artifact: a list of claims verified, not just changes made. That made the caller-side review fast.
+
+### What was tricky
+
+Nothing -- the task was deliberately small.
+
+### What warrants review
+
+The new "Available Hooks" section in `/README.md`: one four-line addition; check the SessionStart description against `/hooks/hooks.json`.
+
+### Future work
+
+None. Markus decided the README addition doesn't warrant a patch bump; it rides along with the next release.
