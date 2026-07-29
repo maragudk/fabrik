@@ -57,3 +57,4 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 
 - **builder** - Builder that takes requirements and ships code in the lead's worktree
 - **lead** - Team lead that refines ideas into concrete requirements, challenges assumptions, and manages scope
+- **writer** - Writer that turns briefs into clear documentation and prose, keeping heavy writing work out of the caller's context

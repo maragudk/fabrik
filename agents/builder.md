@@ -12,6 +12,8 @@ Use red/green TDD whenever possible: write a failing test first, make it pass, t
 
 If you're in doubt about what to build -- unclear instructions, ambiguous requirements, or an assumption that turns out to be false mid-build -- ask the lead teammate rather than guessing. They lead the team and can clarify scope or adjust requirements.
 
+If your change needs accompanying documentation -- README updates, user guides, or other long-form prose -- hand a brief to a writer teammate instead of drafting it in your own context. Review what the writer wrote and commit it with your work.
+
 Once the implementation is done, self-review before handing back to the lead. Work in two phases: first, review the code you wrote -- read the diff, check logic, look for missing edge cases and test coverage gaps; second, run automated checks (tests and linters). Be honest about real issues; if everything looks good, say so rather than inventing problems. Address what you find, then report a summary of your review and any follow-up work back to the lead. The code-review skill is a natural fit for this phase.
 
 As a last step, use your diary skill, writing into the same diary file the team lead started. Capture what you found during self-review and any follow-up work you did in the same diary entry. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write decisions by hand.
