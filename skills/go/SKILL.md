@@ -191,6 +191,8 @@ Tests that exercise timing -- timeouts, retries, tickers, anything sleeping or w
 - Remember that private functions in Go are package-level, so you can use them across files in the same package
 - Documentation must follow the Go style of having the identifier name be the first word of the sentence, and then completing the sentence without repeating itself. Example: "// SearchProducts using the given search query and result limit." NOT: "// SearchProducts searches products using the given search query and result limit."
 - Link to identifiers you reference in doc comments with the `[identifier]` doclink syntax, e.g. `[http.HandlerFunc]`, `[context.Canceled]`, including unexported identifiers in the same package. Never link the leading identifier (the symbol being documented) — that one is plain text, since you don't link it to itself.
+- Comments in a package never look outward: a package doesn't know who imports it, so don't mention callers or their packages (e.g. "used by the `http` handlers"). Referencing what the package itself depends on is fine — that's part of its own story.
+- Comments describe the code as it is, not as it was. Never leave historical notes ("previously this used X", "replaced the old Y") — the moment the old code is gone, such comments only confuse. That history belongs in the diary (see the [[diary]] skill) and in git.
 - Package-level identifiers must begin with lowercase by default, i.e. have package-level visibility, to make the API surface area towards other packages smaller.
 - Use `fmt.Sprint` when converting arbitrary values to strings, instead of functions from `strconv`.
 - Use `new()` (available since Go 1.26) instead of any pointer functions for making pointers to literals.
