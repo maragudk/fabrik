@@ -89,3 +89,47 @@ Read `/skills/turbopuffer/SKILL.md` top to bottom -- especially the Limits and G
 ### Future work
 
 Once real turbopuffer code exists in a project, run `/improve-skill` after the first few sessions to fold in whatever the skill got wrong or missed.
+
+## Step 3: Ship the PR and fold in the version bump
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** "version bump as part of the PR"
+
+**Interpretation:** Include the plugin version bump in PR #89 instead of deferring it to after the merge.
+
+**Inferred intent:** One mergeable unit -- the skill should propagate to plugin users the moment the PR lands, without a follow-up commit.
+
+### What I did
+
+Committed `/skills/turbopuffer/SKILL.md`, the README entry, and this diary on branch `add-turbopuffer-skill`, pushed, and opened https://github.com/maragudk/fabrik/pull/89. On request, bumped `/.claude-plugin/plugin.json` from 0.29.1 to 0.30.0 (minor -- new skill is new functionality) in a follow-up commit on the branch, and refreshed the PR body so it no longer claimed the bump would come after merge.
+
+### Why
+
+The repo requires the README entry in the same commit as a new skill, and remote installs are cached by version, so the bump is what makes the skill reachable for users of the plugin.
+
+### What worked
+
+Checking `gh issue list` before committing: the repo has zero open issues, so the git skill's "ask about issue references and wait" step would have been an empty checkpoint, and I skipped straight to committing.
+
+### What didn't work
+
+Nothing failed in this step.
+
+### What I learned
+
+The stored preference was "ask about version bump after merge", but Markus asked for the bump inside the PR this time -- when he directs it, the bump belongs on the branch, and the PR body must be updated to match.
+
+### What was tricky
+
+Only the judgment call between the standing "bump after merge, ask first" feedback and the direct instruction; the direct instruction wins.
+
+### What warrants review
+
+That 0.30.0 is the right increment (new skill = minor per `/CLAUDE.md`), and that the PR body matches what actually shipped.
+
+### Future work
+
+After merge: tag `v0.30.0` on the merge commit and create the GitHub release with `gh release create`.
