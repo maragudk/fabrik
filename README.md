@@ -48,6 +48,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **one-at-a-time** - Output-pacing discipline that presents one unit at a time instead of dumping a list or wall of text
 - **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
+- **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
