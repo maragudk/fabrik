@@ -105,8 +105,8 @@ Break long noun chains with prepositions (of, on, in, for):
 | 3.6 | Active voice. In descriptive text, passive is legal only when the agent is unknown. |
 | 3.7 | Describe an action with a verb, not a noun ("compress the file", not "perform compression of the file"). |
 
-**Approved modals: can, will, must. Banned: should, would, may, might, could.**
-The standard rejects "could" even for possibility: write "an explosion can occur", never "could occur". For "should": a requirement becomes "must"; a suggestion is stated as fact or deleted. This matters double for agent instructions — models read "should" as optional.
+**Approved modals: can, will, must. Banned: should, would, may, might.**
+"Could" is approved only as the past tense of "can" — never for possibility: write "an explosion can occur", never "could occur". For "should": a requirement becomes "must"; a suggestion is stated as fact or deleted. This matters double for agent instructions — models read "should" as optional.
 
 **Before:** The migration has completed and the table is being rebuilt.
 **After:** The migration is complete. The database rebuilds the table.
@@ -149,7 +149,7 @@ Rule 4.2 is the anti-terseness rule. STE is short sentences with complete gramma
 
 | Rule | Instruction |
 |---|---|
-| 6.1 | Give information gradually: one new fact per sentence. |
+| 6.1 | Give information gradually: one subject per sentence. |
 | 6.2 | Use key words and phrases to give the text a logical structure. |
 | 6.3 | Maximum 25 words per sentence. |
 | 6.4 | Group related information in paragraphs. |
