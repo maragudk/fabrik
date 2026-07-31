@@ -51,6 +51,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
+- **turbopuffer** - Guide for building search on turbopuffer, the object-storage-native vector and full-text search engine (namespaces, schemas, BM25, hybrid search with RRF), with Go examples first-class
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
 - **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)
 
