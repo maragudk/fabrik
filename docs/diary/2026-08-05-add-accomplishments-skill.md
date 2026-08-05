@@ -213,3 +213,83 @@ Judging "superseded" versus "foundational" from the diary alone. The PO/QA agent
 ### Future work
 
 Consider noting in the skill that the git log can supplement the diary when entries are sparse -- a candidate for the next /improve-skill run.
+
+## Step 6: Fold the git log supplement into the skill
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Merge 91 and fix the skill now to include the git log supplement?
+**Interpretation:** Merge the first live run's PR, then act on its Step 5 finding immediately: teach the skill that the git log supplements the diary.
+**Inferred intent:** Close the improvement loop in the same session it surfaced, rather than deferring to a future /improve-skill run.
+
+### What I did
+
+Merged PR #91. Then edited `/skills/accomplishments/SKILL.md`: flow step 2 now says the diary is the primary but incomplete record and to skim `git log` over the same date range for significant undiaried work, and the date-prefix rule covers git-log-sourced items (date the work started per the log). Bumped `/.claude-plugin/plugin.json` to 0.31.1 (patch, change to existing functionality).
+
+### Why
+
+The first live run's most-valued item (the lead/builder workflow) existed only in the git log. A skill that assumes diary completeness would keep missing exactly that kind of work.
+
+### What worked
+
+Same-session feedback loop: finding surfaced at 09:00, folded into the skill before the session ended.
+
+### What didn't work
+
+Nothing; two-sentence edit plus a bump.
+
+### What was tricky
+
+Keeping the supplement subordinate -- the diary stays the primary record, the log is a sweep for gaps, not a second source of equal rank.
+
+### What warrants review
+
+The step 2 addition in `/skills/accomplishments/SKILL.md` -- check the git log guidance reads as a supplement, not a rewrite of the flow.
+
+### Future work
+
+None; the loop from Step 5 is closed.
+
+## Step 7: Ship v0.31.0 (recorded out of order)
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Merge the PR and do the version bump and release
+**Interpretation:** Merge PR #90, tag `v0.31.0` on the merge commit, and publish the GitHub release. This happened between Steps 4 and 5 but went unrecorded until now.
+**Inferred intent:** Make the skill and hook reachable by remote installs, then run the skill live.
+
+### What I did
+
+Refreshed PR #90's body to match what actually shipped (the test round and appreciation-harvesting had landed after it was written), merged with a merge commit and deleted the branch, tagged `v0.31.0` on the merge commit, pushed the tag, and published the release. Later in the session: merged PR #91 (the first live run's output) and opened PR #92 (git log supplement, 0.31.1) -- covered in Steps 5 and 6.
+
+### Why
+
+Refreshing the PR body before merge follows the git skill: a branch drifts as feedback lands, leaving the body written for the first commit stale.
+
+### What worked
+
+The whole ship was one command sequence with no retries: edit body, merge, pull, tag, release.
+
+### What didn't work
+
+Nothing in the ship itself. The process miss was this diary step -- the shipping went unrecorded until Markus asked "anything for the diary before that?", despite the repo having a precedent commit for exactly this ("Add diary step for shipping the PR and version bump", from the turbopuffer work).
+
+### What I learned
+
+The diary skill's session-end trigger fires on "a work chunk wraps up" -- a release is such a moment, and I logged the work around it but not the ship. The gap is ironic given this very session established that undiaried work is what the accomplishments skill misses.
+
+### What was tricky
+
+Nothing technically; only noticing the omission.
+
+### What warrants review
+
+Release https://github.com/maragudk/fabrik/releases/tag/v0.31.0 -- notes should match the merged content of PR #90.
+
+### Future work
+
+After PR #92 merges: tag `v0.31.1` and publish its release.
