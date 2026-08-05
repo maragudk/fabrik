@@ -213,3 +213,41 @@ Judging "superseded" versus "foundational" from the diary alone. The PO/QA agent
 ### Future work
 
 Consider noting in the skill that the git log can supplement the diary when entries are sparse -- a candidate for the next /improve-skill run.
+
+## Step 6: Fold the git log supplement into the skill
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Merge 91 and fix the skill now to include the git log supplement?
+**Interpretation:** Merge the first live run's PR, then act on its Step 5 finding immediately: teach the skill that the git log supplements the diary.
+**Inferred intent:** Close the improvement loop in the same session it surfaced, rather than deferring to a future /improve-skill run.
+
+### What I did
+
+Merged PR #91. Then edited `/skills/accomplishments/SKILL.md`: flow step 2 now says the diary is the primary but incomplete record and to skim `git log` over the same date range for significant undiaried work, and the date-prefix rule covers git-log-sourced items (date the work started per the log). Bumped `/.claude-plugin/plugin.json` to 0.31.1 (patch, change to existing functionality).
+
+### Why
+
+The first live run's most-valued item (the lead/builder workflow) existed only in the git log. A skill that assumes diary completeness would keep missing exactly that kind of work.
+
+### What worked
+
+Same-session feedback loop: finding surfaced at 09:00, folded into the skill before the session ended.
+
+### What didn't work
+
+Nothing; two-sentence edit plus a bump.
+
+### What was tricky
+
+Keeping the supplement subordinate -- the diary stays the primary record, the log is a sweep for gaps, not a second source of equal rank.
+
+### What warrants review
+
+The step 2 addition in `/skills/accomplishments/SKILL.md` -- check the git log guidance reads as a supplement, not a rewrite of the flow.
+
+### Future work
+
+None; the loop from Step 5 is closed.
