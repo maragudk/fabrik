@@ -251,3 +251,45 @@ The step 2 addition in `/skills/accomplishments/SKILL.md` -- check the git log g
 ### Future work
 
 None; the loop from Step 5 is closed.
+
+## Step 7: Ship v0.31.0 (recorded out of order)
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Merge the PR and do the version bump and release
+**Interpretation:** Merge PR #90, tag `v0.31.0` on the merge commit, and publish the GitHub release. This happened between Steps 4 and 5 but went unrecorded until now.
+**Inferred intent:** Make the skill and hook reachable by remote installs, then run the skill live.
+
+### What I did
+
+Refreshed PR #90's body to match what actually shipped (the test round and appreciation-harvesting had landed after it was written), merged with a merge commit and deleted the branch, tagged `v0.31.0` on the merge commit, pushed the tag, and published the release. Later in the session: merged PR #91 (the first live run's output) and opened PR #92 (git log supplement, 0.31.1) -- covered in Steps 5 and 6.
+
+### Why
+
+Refreshing the PR body before merge follows the git skill: a branch drifts as feedback lands, leaving the body written for the first commit stale.
+
+### What worked
+
+The whole ship was one command sequence with no retries: edit body, merge, pull, tag, release.
+
+### What didn't work
+
+Nothing in the ship itself. The process miss was this diary step -- the shipping went unrecorded until Markus asked "anything for the diary before that?", despite the repo having a precedent commit for exactly this ("Add diary step for shipping the PR and version bump", from the turbopuffer work).
+
+### What I learned
+
+The diary skill's session-end trigger fires on "a work chunk wraps up" -- a release is such a moment, and I logged the work around it but not the ship. The gap is ironic given this very session established that undiaried work is what the accomplishments skill misses.
+
+### What was tricky
+
+Nothing technically; only noticing the omission.
+
+### What warrants review
+
+Release https://github.com/maragudk/fabrik/releases/tag/v0.31.0 -- notes should match the merged content of PR #90.
+
+### Future work
+
+After PR #92 merges: tag `v0.31.1` and publish its release.
