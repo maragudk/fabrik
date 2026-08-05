@@ -133,3 +133,41 @@ The two skill edits: the length guidance ("around 40 words is plenty") and the a
 ### Future work
 
 First live run on fabrik's own diary after merge.
+
+## Step 4: Harvest appreciation already in the diary
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** One last thing: the diary has some verbatim prompts, and I sometimes praise your work while we're working together. Should we use those in the skill if present?
+**Interpretation:** The skill should mine appreciation that is already recorded in diary entries -- praise inside verbatim prompts or captured reactions -- when extracting accomplishments.
+**Inferred intent:** Spontaneous in-the-moment praise is more authentic than appreciation reconstructed weeks later, and the diary already preserves it for free.
+
+### What I did
+
+Extended flow step 4 in `/skills/accomplishments/SKILL.md`: found appreciation seeds the conversation ("at the time, you said...") rather than replacing it, and quick courtesies like "great work" don't count -- only praise that names something.
+
+### Why
+
+Praise in a verbatim prompt is uninvited, specific, and word-for-word from the moment -- better-sourced than solicited appreciation. But the live exchange stays, because the ritual is half the point.
+
+### What worked
+
+The diary skill's verbatim-prompt rule turns out to double as an appreciation archive; nobody designed it for that.
+
+### What didn't work
+
+Nothing; a two-sentence skill edit.
+
+### What was tricky
+
+Keeping the guardrails tight enough that the found praise supplements the conversation instead of quietly becoming a reason to skip it.
+
+### What warrants review
+
+The step 4 wording in `/skills/accomplishments/SKILL.md`.
+
+### Future work
+
+None beyond the existing plan: first live run after merge.
