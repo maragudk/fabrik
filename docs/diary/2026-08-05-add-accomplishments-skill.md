@@ -171,3 +171,45 @@ The step 4 wording in `/skills/accomplishments/SKILL.md`.
 ### Future work
 
 None beyond the existing plan: first live run after merge.
+
+## Step 5: First live run
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** /fabrik:accomplishments
+**Interpretation:** Run the just-released skill for real on fabrik's own diary -- the first run with Markus actually in the appreciation loop.
+**Inferred intent:** Close the loop the whole session built toward: fifteen diary entries in, a recognition file out.
+
+### What I did
+
+Read all fifteen diary entries (146KB, read in chunks via the persisted output file), picked seven accomplishments and passed over five entries, presented picks and passes with reasoning, and heard Markus's appreciation. His input changed the selection: the git log filled diary gaps (many skills shipped undiaried), and the lead/builder workflow -- which I had passed over as "superseded" -- turned out to be his daily workhorse. Final file: eight items, including one sourced from the git log arc (lead/builder, dated 2026-04-08) and the bootstrap item carrying the diary skill by name.
+
+### Why
+
+The skill says selection is mine and appreciation is his; both mattered. My judgment missed what only he could know -- which work he actually leans on daily.
+
+### What worked
+
+The conversation step earned its place immediately: three items got materially better lines from his comments ("the distillation outran the reading" exists because he mentioned still reading the book), and one wrong pass got reversed.
+
+### What didn't work
+
+The diary alone was an incomplete record -- whole arcs (lead/builder evolution, undiaried skills like atproto and garden) live only in the git log. The skill assumes the diary is the source of record; the first real run needed `git log` as a supplement, at Markus's prompting.
+
+### What I learned
+
+Appreciation genuinely reshapes selection, not just wording. Also: the diary underrepresents exactly the work that matters most -- the daily-use infrastructure nobody writes an entry about.
+
+### What was tricky
+
+Judging "superseded" versus "foundational" from the diary alone. The PO/QA agents looked like dead ends on paper; the workflow they grew into is the thing Markus values most.
+
+### What warrants review
+
+/docs/accomplishments.md -- eight items, one line each, newest first, dates matching source diary entries (or the git log arc for lead/builder).
+
+### Future work
+
+Consider noting in the skill that the git log can supplement the diary when entries are sparse -- a candidate for the next /improve-skill run.
