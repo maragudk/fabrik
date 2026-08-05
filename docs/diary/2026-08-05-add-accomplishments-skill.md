@@ -91,3 +91,45 @@ Automated skill evals were a poor fit here: the flow has Markus in the loop mid-
 ### Future work
 
 Run `/accomplishments` on fabrik's own diary as the first live test; this very entry is a candidate.
+
+## Step 3: Subagent testing and refinements
+
+**Author:** main
+
+### Prompt Context
+
+**Verbatim prompt:** Test the skill with subagents maybe?
+**Interpretation:** Validate the skill with subagent test runs before considering it done; a follow-up ("Improve the skill as needed") delegated judgment on refinements.
+**Inferred intent:** Confidence the skill behaves correctly before merge, without Markus needing to review a browser-based eval viewer.
+
+### What I did
+
+Built three fixture projects (fresh extraction, incremental update with a same-date sibling and a pre-boundary entry, idempotent no-op) and ran each with the skill and as a skill-less baseline -- six subagents, scripted assertions. The appreciation step used canned notes since Markus can't be in a subagent's loop. Results: skill 16/16 assertions, baseline 12/16. Applied two refinements from reading the outputs: a ~40-word length target for items (iteration-1 items sprawled to 50-60 words; a rerun landed at 39-41) and a final flow step showing Markus the finished lines.
+
+### Why
+
+The baseline failures were the design earning its keep: without the skill, the fresh run invented a prose format in which `grep '^- '` finds zero items (the hook would silently inject nothing), and the incremental run added an entry from before the boundary.
+
+### What worked
+
+Scripted grading over a strict file format -- every assertion was a few lines of Python. The `>=` boundary logic passed its hardest case (same-date sibling added, already-listed item not duplicated) on the first run.
+
+### What didn't work
+
+The skill-creator aggregation script expected `eval-N/<config>/run-1/grading.json` and a `summary` block in grading.json; my first layout produced a 0% benchmark twice before matching it. The eval viewer also needs Python 3.10+ (`dict | None` syntax fails on the system 3.9; used Homebrew 3.14), and was moot anyway -- no browser on this machine.
+
+### What I learned
+
+Idle notifications from subagents carry no token/duration metrics, so benchmark Time/Tokens rows stayed zero; only pass rates are real.
+
+### What was tricky
+
+Testing an interactive skill non-interactively: canned appreciation notes cover the mechanics but not the conversational step, which remains untested until the first live `/accomplishments` run.
+
+### What warrants review
+
+The two skill edits: the length guidance ("around 40 words is plenty") and the added "show Markus the finished lines" step.
+
+### Future work
+
+First live run on fabrik's own diary after merge.

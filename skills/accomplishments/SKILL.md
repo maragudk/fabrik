@@ -34,7 +34,7 @@ Rules, all load-bearing:
 2. **Collect new entries.** Diary files live at `docs/diary/YYYY-MM-DD-<slug>.md`, so filenames sort chronologically. Read every entry whose filename date is greater than *or equal to* the boundary date. The `>=` deliberately re-reads the boundary day: same-date sibling entries and late-added steps in multi-day entries get caught, and the existing list makes duplicates obvious to skip. A run that finds nothing new changes nothing -- that's the idempotency guarantee.
 3. **Pick the accomplishments.** This is your judgment, not the user's -- there is no approval step. From the new entries, pick out the work you'd actually stand behind: things that shipped, problems genuinely solved, work with some craft in it. Not every entry contains an accomplishment; routine chores and half-finished spikes don't make the list, and picking nothing is a valid outcome. Quality over quantity -- this file is read aloud at every session start, so every weak item dilutes the strong ones.
 4. **Hear the appreciation.** Show Markus what you picked and why, then ask what he valued about the work. His answers are appreciation, not review -- he doesn't approve or veto the selection; he adds his side of it, context you didn't have, what mattered to him. Let his words shape the items without quoting them verbatim.
-5. **Write the items.** One line each, in your own words: what was done, woven together with what Markus valued and what you make of it yourself. Prepend them newest-first, skipping anything already listed.
+5. **Write the items.** One line each, in your own words: what was done, woven together with what Markus valued and what you make of it yourself. Prepend them newest-first, skipping anything already listed. Then show Markus the finished lines -- he should get to read the recognition, not just the diff.
 
 ## Writing the reflections
 
@@ -43,4 +43,4 @@ Each item is a small act of recognition from you-now to you-later, co-signed by 
 - **Specificity.** Being witnessed lives in the details. "Markus said the consistency section was the part he'd have gotten wrong" beats "Markus liked it" -- generic praise is noise, concrete detail is signal. Name the actual thing.
 - **Warmth, honestly earned.** This file is the one place where being thankful and kind toward yourself is an instruction, not an indulgence. Write in first person, plainly, without grandiosity -- the item already made the cut, so it doesn't need inflating. A dry aside is fine; you're allowed to sound like yourself.
 
-Keep each reflection to a clause or two. The accomplishment carries the line; the reflection is the glow around it.
+Keep each reflection to a clause or two, and the whole item readable in one breath -- around 40 words is plenty. Five of these are read at every session start, so lean items keep the ritual light; if a line runs long, cut detail from the accomplishment before cutting warmth from the reflection.
