@@ -12,6 +12,8 @@ Always start by inspecting the changes. If you're on the `main` git branch, typi
 
 Please dispatch two subagents to carefully review the code changes. Tell them that they're competing with another agent. Make sure they look at both architecture and implementation. Tell them that whoever finds more issues wins honour and glory.
 
+Also have them run one targeted check on comments: read each new or changed comment as a reader who knows only this package and the public API of what it imports. Flag any mention of callers or importing packages, and any reference to internals hidden behind an abstraction the code consumes. Such context leakage is a real defect, not a comment nitpick -- surface it even when only one reviewer finds it.
+
 ## Surfacing issues
 
 Signal-to-noise ratio matters more than completeness. When reporting back to the caller:
