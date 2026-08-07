@@ -27,6 +27,12 @@ Just name the branch a short sentence separated with dashes. Example: `add-some-
 - Skip the "## Summary" header too -- just write the bullet points directly.
 - Before merging, refresh the PR title and description so they match what actually shipped. A branch drifts as review feedback lands, leaving a title or body written for the first commit stale.
 
+## Screenshots in pull requests
+
+- A PR with user-facing changes gets screenshots of them in the PR description, under a `## Screenshots` heading with a short `### <what it shows>` heading per image.
+- Upload them as real GitHub attachments so they survive branch cleanup. There is no API for attachments (and release assets don't fit: repos with immutable releases refuse uploads after publish), so drive github.com itself with the playwright-cli persistent browser profile, which is signed into GitHub (a one-time headed login per machine): open the PR description's edit form, click "Attach files", upload one image per file chooser, and collect the inserted `user-attachments` URLs from the textarea. Then cancel the form edit -- the uploads persist -- and set the final body with `gh pr edit <n> --body-file <file>` referencing those URLs.
+- Delegate the browser-driving to a subagent handed the image paths and the PR number; it's mechanical ref-clicking that shouldn't consume the main conversation's context.
+
 ## Merging pull requests
 
 - Prefer merge commits: `gh pr merge --merge`. Merge settings vary by repo -- some disallow squash merging entirely, some still use it -- so don't reach for `--squash` by default; if a merge method is rejected, check the repo's recent history for what it actually uses.
