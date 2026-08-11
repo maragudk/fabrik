@@ -22,17 +22,13 @@ Comments may come from:
 
 ## Process
 
-### 1. Pull latest
-
-Always run `git pull` first. Review artifacts (such as a review document) may have been pushed from elsewhere and not yet present locally.
-
-### 2. Collect feedback
+### 1. Collect feedback
 
 - **GitHub PR**: Use GraphQL to fetch all comments in one go. Fetch inline review comments via `pullRequest.reviewThreads` and general PR comments via `pullRequest.comments`. Skip already-resolved threads (`isResolved`). Still present outdated but unresolved comments (`isOutdated`), noting to the user that the code has changed since the comment was left.
 - **Document**: Read the file and extract review items.
 - **Conversation**: Use the comments as provided.
 
-### 3. Triage all comments
+### 2. Triage all comments
 
 Walk through every comment, strictly one at a time. **No code changes during this phase.** No edits, no commits, no file writes for the fixes themselves. Only discussion and decision-recording.
 
@@ -45,9 +41,9 @@ For each comment:
 
 For GitHub PR inline comments: immediately reply to the comment on GitHub and resolve the thread after discussion. (Replies and resolutions are not code changes — they are part of triage.)
 
-Only after the last comment has been triaged, move on to step 4.
+Only after the last comment has been triaged, move on to step 3.
 
-### 4. Apply changes
+### 3. Apply changes
 
 Now — and only now — implement the agreed-upon changes. Apply all agreed-upon code changes in one batch.
 
