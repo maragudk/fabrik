@@ -12,8 +12,6 @@ Consult an OpenAI model through the `codex` CLI and relay what it says. The valu
 
 Check auth once per session: `codex login status` should print `Logged in using ChatGPT` (or the API-key equivalent). Anything else: stop and ask the user to authenticate -- suggest they type `! codex login` (ChatGPT account, usage billed to their plan) or use `codex login --api-key <key>`.
 
-If any codex command hangs -- even `codex --version` -- the installed binary does not work under Claude Code's Bash sandbox. Rerun with sandboxing disabled (`dangerouslyDisableSandbox: true`); that is safe combined with `-s read-only` below, which makes codex sandbox its own work. The Homebrew build has this problem; the standalone install (`codex update`) does not. Don't disable the sandbox preemptively -- only on a hang.
-
 ## Core command
 
 Set up a working directory, write the prompt to a file (avoids shell-quoting pain and keeps a record of what was asked), then run codex in the background:
