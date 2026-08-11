@@ -48,6 +48,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **observable-plot** - Guide for using Observable Plot, a JavaScript library for exploratory data visualization with marks, scales, and transforms
 - **one-at-a-time** - Output-pacing discipline that presents one unit at a time instead of dumping a list or wall of text
 - **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
+- **second-opinion** - Get a second opinion from another AI model (OpenAI, via the [codex CLI](https://github.com/openai/codex)) on designs, bugs, and code
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
 - **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
 - **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
