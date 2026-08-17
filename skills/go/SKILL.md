@@ -194,6 +194,7 @@ Tests that exercise timing -- timeouts, retries, tickers, anything sleeping or w
 - Comments in a package never look outward: a package doesn't know who imports it, so don't mention callers or their packages (e.g. "used by the `http` handlers"). Referencing direct dependencies is fine — that's part of its own story — but only their public API: when a package depends on an interface, comments describe the contract, never a concrete implementation behind it.
 - Comments describe the code as it is, not as it was. Never leave historical notes ("previously this used X", "replaced the old Y") — the moment the old code is gone, such comments only confuse. That history belongs in the diary (see the [[diary]] skill) and in git.
 - Package-level identifiers must begin with lowercase by default, i.e. have package-level visibility, to make the API surface area towards other packages smaller.
+- Don't pull values used in only one place out as constants — timeouts, string literals for headers, query keys, and the like read best inline at their use site. Even a couple of uses within a single function can stay inline. Extract a constant when the value is reused across functions or the name adds real meaning, not before.
 - Use `fmt.Sprint` when converting arbitrary values to strings, instead of functions from `strconv`.
 - Use `new()` (available since Go 1.26) instead of any pointer functions for making pointers to literals.
 
