@@ -37,7 +37,7 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **distill-book** - Distill a long book in any format (PDF, EPUB, Markdown, HTML...) into concise, structured learnings by processing it chapter by chapter with parallel subagents, then synthesizing -- optionally into a skill
 - **garden** - Autonomous project gardening: scans for maintenance issues, picks one, fixes it in a worktree with self-review, and opens a PR
 - **gardeners** - Team version of `garden`: spawns a coordinated team of gardeners that each fix a different issue in parallel, sharing a task list to avoid duplicate work
-- **git** - Guide for using git according to preferences (branch naming, commit messages, issue references)
+- **git** - Guide for using git according to preferences (commit messages, issue references, pull requests)
 - **go** - Guide for developing Go apps and modules/libraries (code style, testing, dependency injection, package structure)
 - **gomponents** - Guide for working with gomponents, a pure Go HTML component library for building HTML views
 - **improve-skill** - Review the current conversation for fabrik skills that could be improved and ship the improvements back as PRs (concrete fixes) or issues (fuzzy observations / redesigns)

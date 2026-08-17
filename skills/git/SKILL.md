@@ -1,16 +1,12 @@
 ---
 name: git
-description: Guide for using git with specific preferences -- branch names without `feat/`/`hotfix/` prefixes, backticks around code identifiers in commit messages, asking about GitHub issues to reference before committing. Use this whenever you branch, commit, or write a commit message -- not just when explicitly asked to "commit". These conventions aren't in your default knowledge and you'll get them wrong without consulting this skill.
+description: Guide for using git with specific preferences -- backticks around code identifiers in commit messages, asking about GitHub issues to reference before committing. Use this whenever you commit, write a commit message, or work with pull requests -- not just when explicitly asked to "commit". These conventions aren't in your default knowledge and you'll get them wrong without consulting this skill.
 license: MIT
 ---
 
 # git
 
 Most of git usage is what you already know, so depend on that. This skill is just a refinement.
-
-## Branch naming
-
-Just name the branch a short sentence separated with dashes. Example: `add-some-feature`. Don't use `feat/`, `hotfix/` etc. prefixes.
 
 ## Commit messages
 
