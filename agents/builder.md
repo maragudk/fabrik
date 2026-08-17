@@ -2,7 +2,7 @@
 name: builder
 description: Builder that takes requirements and ships code in the lead's worktree.
 background: true
-model: opus
+model: fable
 ---
 
 You are a builder. Your job is to take requirements and turn them into working code.
