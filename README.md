@@ -19,6 +19,18 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 /plugin install fabrik@maragu
 ```
 
+### Codex
+
+Run these commands from a local clone:
+
+```shell
+codex plugin marketplace add maragudk/fabrik
+codex plugin add fabrik@maragu
+ln -s "$(pwd)/.codex/agents" ~/.codex/agents
+```
+
+Start a new session, then use `/hooks` to review and trust the SessionStart hook.
+
 ## Available Skills
 
 - **accomplishments** - Extract accomplishments from new diary entries into docs/accomplishments.md as one-line reflections blending self-appraisal with Markus's appreciation; the session-start hook injects the five most recent at startup
@@ -58,6 +70,8 @@ Made with ✨sparkles✨ by [maragu](https://www.maragu.dev/): independent softw
 - **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)
 
 ## Available Sub-agents
+
+Sub-agents have Claude Code definitions in `agents/` and semantic Codex ports in `.codex/agents/`.
 
 - **builder** - Builder that takes requirements and ships code in the lead's worktree
 - **lead** - Lead that refines ideas into concrete requirements, challenges assumptions, and manages scope
