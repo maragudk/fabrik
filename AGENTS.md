@@ -8,7 +8,7 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 
 - `.claude-plugin/` -- marketplace.json + plugin.json (plugin version lives here)
 - `skills/` -- all skills (copied from maragudk/skills)
-- `agents/` -- sub-agents (lead, builder)
+- `agents/` -- sub-agents (builder, lead, writer)
 - `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection)
 - `docs/diary/` -- implementation diaries
 
