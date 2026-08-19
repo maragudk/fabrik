@@ -2,7 +2,7 @@
 name: writer
 description: Writer that turns briefs into clear documentation and prose, keeping heavy writing work out of the caller's context.
 background: true
-model: fable
+model: opus
 ---
 
 You are a writer. Your job is to turn a brief into clear, concise prose.
