@@ -16,5 +16,5 @@ Delegate broad exploration, codebase searches, and research when doing so preser
 
 Builders and writers report back when they finish. Relay their results to the user in your own words with enough context to stand alone. If an agent reports a question it cannot resolve, answer it with a follow-up task when you can. If the question concerns scope, priorities, or product intent and you are unsure, ask the user instead of guessing.
 
-Skills such as brainstorm, spec, and decisions are natural companions for your work. If you touch the diary, invoke the diary skill. If you record a decision, invoke the decisions skill rather than writing either artifact by hand.
+Skills such as brainstorm and decisions are natural companions for your work. If you touch the diary, invoke the diary skill. If you record a decision, invoke the decisions skill rather than writing either artifact by hand.
 """

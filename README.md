@@ -41,7 +41,6 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **bluesky** - Guide for posting content to the Bluesky social network using the bsky terminal app
 - **brainstorm** - Guide for brainstorming ideas and turning them into fully formed designs through iterative questioning
 - **code-review** - Guide for making code reviews using competing agents to find architecture and implementation issues
-- **code-reviewers** - Team version of `code-review`: two reviewers inspect the diff independently, challenge each other's findings, and surface only what survives scrutiny
 - **dad-joke** - Tell the user a dad joke and then explain it
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
 - **decisions** - Guide for recording significant architectural and design decisions in `docs/decisions.md`
@@ -63,7 +62,6 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **second-opinion** - Get a second opinion from another AI model (OpenAI, via the [codex CLI](https://github.com/openai/codex)) on designs, bugs, and code
 - **security-review** - Thorough security review starting from a randomly selected file, reporting a single most significant finding
 - **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
-- **spec** - Write and iterate on a project spec (`docs/spec.md`) that defines what the product is and why it exists
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **turbopuffer** - Guide for building search on turbopuffer, the object-storage-native vector and full-text search engine (namespaces, schemas, BM25, hybrid search with RRF), with Go examples first-class
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
