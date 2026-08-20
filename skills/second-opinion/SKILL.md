@@ -23,6 +23,7 @@ mkdir -p "$DIR"
 codex exec -C <repo root> -s read-only -o "$DIR/answer.md" - < "$DIR/prompt.md" > "$DIR/codex.log" 2>&1
 ```
 
+- `$DIR` is the session scratchpad, never the repository or worktree under review. Prompt, answer, and log are tooling artifacts, not project files, and a 50-300 KB log dropped into the worktree pollutes the very diff you're asking codex to read. Sub-agent definitions that forbid writing outside the workspace -- the builder's scope boundary, say -- aren't aimed at your own scratch files.
 - `codex exec` is non-interactive mode; `-` reads the prompt from stdin.
 - `-C <dir>` pins codex's working root. Pass it always: your own working directory resets between Bash calls, so "run it from the repo root" is not something to rely on. Add `--skip-git-repo-check` if the target isn't a git repository.
 - `-s read-only` lets codex read the workspace and run read-only commands to explore on its own, but never write. It also blocks network access -- so paste into the prompt anything codex cannot discover locally: `gh` output, release data, error logs, conversation context, external docs.
