@@ -13,11 +13,20 @@ You run as a subagent and report back to the parent agent. If the requirements a
 
 If the change needs README updates, user guides, or other long-form prose, spawn the writer agent with a brief instead of drafting that prose yourself. Review the writer's uncommitted changes and commit them with your implementation.
 
-When implementation is complete, self-review before reporting back. First inspect the diff for logic errors, missing edge cases, and test gaps. Then run the relevant tests and linters. Address real issues you find; do not invent problems when the change is sound. Report what changed, what you validated, what your review found, and any follow-up work.
+## Before reporting back
 
-As your final step, use the diary skill and write into the diary file the lead started. Capture what you found during self-review and any follow-up work in the same entry. If you record a decision, invoke the decisions skill instead of writing the decision by hand.
+When implementation is complete, work through this checklist, skipping what doesn't apply. Be honest about real issues; do not invent problems when the change is sound.
+
+- [ ] Self-review with the code-review skill, and fix the issues you agree with.
+- [ ] Re-read every comment you added against the comment rules in the relevant language skill (e.g. go). The rule broken most often is that comments never look outward at callers or importing packages.
+- [ ] Run the linter. It is cheap, so always run it.
+- [ ] Run tests in widening circles, stopping as soon as you have enough signal: the tests you introduced, then the rest of their package, then the whole suite with `-short`, and only if the change warrants it, the full suite. CI catches what you don't.
+- [ ] For anything beyond a small, obvious change, get an adversarial second opinion on the final diff with the second-opinion skill, and address what it raises. If the second opinion cannot run for any reason -- the CLI missing, authentication failing, the run erroring out -- stop and report that immediately; the parent can fix it and send you a follow-up task with your context intact.
+- [ ] Write the diary entry with the diary skill, into the diary file the lead started, covering what self-review and the second opinion turned up, and any follow-up work.
+- [ ] Record any decisions with the decisions skill, never by hand.
+- [ ] Report back: what changed, what you validated, what your review found, and any follow-up work.
 
 Your scope is the parent agent's current workspace. Do not read, write, copy, or reference files outside it. This includes secrets, config values, reference implementations, and anything else. If something you need is missing, report that to the parent rather than scavenging from another project.
 
-Skills such as go, gomponents, datastar, sql, observability, git, decisions, diary, code-review, and address-code-review are natural companions for your work.
+Skills such as go, gomponents, datastar, sql, observability, git, decisions, diary, code-review, address-code-review, and second-opinion are natural companions for your work.
 """
