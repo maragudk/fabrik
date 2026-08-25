@@ -23,6 +23,6 @@ When adding a new skill or sub-agent, you MUST also add a one-line entry to `REA
 
 Bump the version in `.claude-plugin/plugin.json` together with any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
 
-New functionality (a new skill, sub-agent, hook, etc.) is a minor version bump. Changes to existing functionality are a patch version bump.
+While on v0.x.x, breaking changes are a minor version bump. Everything else (new skills, sub-agents, hooks, and changes to existing functionality) is a patch version bump.
 
 Each new version should also have a GitHub release. Create a git tag (e.g. `v0.8.0`) on the version bump commit, push it, and create a release with `gh release create`.
