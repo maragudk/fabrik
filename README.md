@@ -65,6 +65,7 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **swift** - Swift style guide for creating and editing Swift files (copied from [Airbnb](https://swift.airbnb.tech/SKILL.md))
+- **swiftui-pro** - Comprehensively reviews SwiftUI code for best practices on modern APIs, maintainability, and performance (copied from [twostraws/swiftui-agent-skill](https://github.com/twostraws/swiftui-agent-skill))
 - **turbopuffer** - Guide for building search on turbopuffer, the object-storage-native vector and full-text search engine (namespaces, schemas, BM25, hybrid search with RRF), with Go examples first-class
 - **unsloth** - Guide for fine-tuning LLMs, embedding models, VLMs, and TTS models efficiently with Unsloth (LoRA/QLoRA SFT, GRPO/DPO RL, embeddings, and GGUF/Ollama/vLLM export)
 - **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)
