@@ -39,3 +39,4 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 ## Merging pull requests
 
 - Prefer merge commits: `gh pr merge --merge`. Merge settings vary by repo -- some disallow squash merging entirely, some still use it -- so don't reach for `--squash` by default; if a merge method is rejected, check the repo's recent history for what it actually uses.
+- After a merge, clean up local state: pull the main branch in the project directory, remove any worktree used for the work (`git worktree remove <path>`), and delete the merged local branch. Don't leave stale branches and worktrees lying around for the next session to trip over.
