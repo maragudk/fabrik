@@ -17,6 +17,10 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 - Ask me about any Github issues that should be referenced, and wait for my response before committing. Reference them at the end of the commit message like this: "See #123, #234". If the commit fixes one or more issues, use "Fixes #123, fixes #234" instead (the double "fixes" is important for Github to actually close the issue).
 - Don't mention that you've updated tests, that's assumed.
 
+## Creating pull requests
+
+- Assign Markus as reviewer by default: `gh pr create --reviewer markuswustenberg` (or `gh pr edit <n> --add-reviewer markuswustenberg` for an existing PR).
+
 ## Pull request descriptions
 
 - Don't include sections that mirror what CI reports. Test Plan, Quality Gates, "ran build/lint/tests, all green" status -- skip them all. CI is the source of truth; freezing a snapshot into the PR body is noise.
