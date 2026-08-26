@@ -14,6 +14,8 @@ Please dispatch two subagents to carefully review the code changes. Tell them th
 
 Also have them run one targeted check on comments: read each new or changed comment as a reader who knows only this package and the public API of what it imports. Flag any mention of callers or importing packages, and any reference to internals hidden behind an abstraction the code consumes. Such context leakage is a real defect, not a comment nitpick -- surface it even when only one reviewer finds it.
 
+Run a second targeted check on constants: flag any new package-level constant (or variable) that is used in only one place, or only within a single function. The fix is to inline the value at its use site, until a constant is genuinely needed -- reuse across functions, or a name that adds real meaning the literal lacks. Surface this even when only one reviewer finds it.
+
 ## Surfacing issues
 
 Signal-to-noise ratio matters more than completeness. When reporting back to the caller:
