@@ -19,7 +19,7 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 
 ## Creating pull requests
 
-- Assign Markus as reviewer by default: `gh pr create --reviewer markuswustenberg` (or `gh pr edit <n> --add-reviewer markuswustenberg` for an existing PR). Skip this if the PR is authored by his own account, since GitHub rejects self-review.
+- Assign Markus as reviewer by default: `gh pr create --reviewer markuswustenberg` (or `gh pr edit <n> --add-reviewer markuswustenberg` for an existing PR).
 
 ## Pull request descriptions
 
