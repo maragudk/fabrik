@@ -1,6 +1,6 @@
 ---
 name: decisions
-description: Guide for recording significant architectural and design decisions in docs/decisions.md. Use this skill when clearly significant architectural decisions are made (database choices, frameworks, core design patterns) or when explicitly asked to document a decision. Also suggest proactively at natural session-end moments -- after a PR merges, a feature ships, or a work chunk wraps up -- if a significant decision was made during the session and not yet recorded. Be conservative - only suggest for major decisions, not minor implementation details.
+description: Guide for recording high-level architectural, design, and product decisions in docs/decisions.md. This is NOT a log of every choice made during a regular build -- those belong in the implementation diary. Use this skill only when a clearly significant decision is made (database choices, frameworks, core design patterns, product direction) or when explicitly asked to document a decision. Also suggest proactively at natural session-end moments -- after a PR merges, a feature ships, or a work chunk wraps up -- if a significant decision was made during the session and not yet recorded. Be conservative - only suggest for major decisions, not minor implementation details.
 license: MIT
 ---
 
@@ -8,7 +8,29 @@ license: MIT
 
 ## Overview
 
-This skill maintains a chronological record of significant project decisions in `docs/decisions.md`. It captures important architectural and design decisions, especially those involving tradeoffs, to create a permanent record of why key choices were made.
+This skill maintains a chronological record of significant project decisions in `docs/decisions.md`. It captures high-level architectural, design, and product decisions, especially those involving tradeoffs, to create a permanent record of why key choices were made.
+
+## Scope: High-Level Decisions Only
+
+**The decisions doc is for high-level architectural, design, and product decisions. It is NOT a log of every little decision made during a regular build.**
+
+A regular feature build involves dozens of small choices: which helper to extract, how to name a type, whether to return early, which package a function lives in, how to structure a test. None of those belong in `docs/decisions.md`. They belong in the implementation diary (see the `diary` skill), in the PR description, or nowhere at all.
+
+The test is: **would someone six months from now need to know why this was chosen in order to understand the shape of the project?** If the answer is no, do not record it here.
+
+Belongs in the decisions doc:
+- Choosing a database, framework, or major library
+- Core architectural patterns (monolith vs microservices, rendering approach, sync vs async)
+- Product direction (what the project is and is not, who it is for, what it will not do)
+- Fundamental design choices that constrain future work
+
+Does NOT belong in the decisions doc:
+- Implementation details of a single feature
+- Naming, file layout, or code organization within a package
+- Choices that could be reversed in a single PR without anyone noticing
+- Anything you would only mention in a code review comment
+
+When in doubt, leave it out. A short, high-signal decisions doc is far more useful than a long one nobody reads.
 
 ## When to Use This Skill
 
@@ -21,9 +43,12 @@ Suggest recording decisions only when there is a clearly significant architectur
 
 **Do NOT proactively suggest for:**
 - Minor implementation details
-- Routine coding decisions
+- Routine coding decisions made during a regular build
 - Small refactoring choices
 - Trivial technical choices
+- Anything that fits in the implementation diary instead
+
+A normal feature build should usually produce zero entries in the decisions doc.
 
 **Manual:**
 Record decisions when explicitly requested by the user with phrases like:
@@ -134,5 +159,5 @@ Wait for user confirmation before recording.
 - Maintain formatting consistency with existing entries
 - Don't create duplicate entries for the same decision
 - Create `docs/` directory if it doesn't exist
-- Avoid recording trivial decisions that don't have long-term architectural impact
+- Avoid recording trivial decisions that don't have long-term architectural, design, or product impact. The bar is high on purpose; see the scope section above.
 - Don't modify old decision entries. Only edit an entry if it was created in the current session. If a previous decision is revisited or changed, record it as a new entry rather than rewriting the old one -- the decision log is a historical record.
