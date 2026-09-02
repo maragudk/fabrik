@@ -30,6 +30,17 @@ Does NOT belong in the decisions doc:
 - Choices that could be reversed in a single PR without anyone noticing
 - Anything you would only mention in a code review comment
 
+### Common Misuses
+
+These patterns show up in real decision logs and are all wrong:
+
+- **Dependency bumps and version pins.** "Bump library X" or "Pin Y to version Z for compatibility" is maintenance, not a decision. Put it in the commit message or the diary.
+- **Single-PR implementation details.** Encoding formats, size caps, rounding rules, error-vs-empty return conventions for one endpoint. These are choices a reviewer sees in the diff and are reversible without ceremony.
+- **Progress notes disguised as decisions.** "Shipped X partially, Y deferred", "closed 4 of 6 open items", "post-review refinement of Z". These describe where the work is, not why the project is shaped the way it is. They belong in the diary.
+- **Decision-per-PR cadence.** If a single day or a single PR produces several entries, the log is tracking the build rather than the architecture. Collapse them into one entry if a real decision is buried in there, otherwise drop them.
+
+Title smell test: an entry title starting with "Bump", "Pin", "Fix", "Ship ... partial", or ending in "(post-review refinement)" is almost never a decision.
+
 When in doubt, leave it out. A short, high-signal decisions doc is far more useful than a long one nobody reads.
 
 ## When to Use This Skill
