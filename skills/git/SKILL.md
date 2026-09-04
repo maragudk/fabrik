@@ -27,14 +27,13 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 - Skip the "## Summary" header too -- just write the bullet points directly.
 - Before merging, refresh the PR title and description so they match what actually shipped. A branch drifts as review feedback lands, leaving a title or body written for the first commit stale.
 
-## Screenshots in pull requests
+## Screenshots for pull requests
 
-- A PR with user-facing changes gets screenshots of them in the PR description, under a `## Screenshots` heading with a short `### <what it shows>` heading per image.
-- Upload them as real GitHub attachments so they survive branch cleanup. There is no API for attachments (and release assets don't fit: repos with immutable releases refuse uploads after publish), so drive github.com itself with playwright-cli signed into GitHub: open the PR description's edit form, click "Attach files", upload one image per file chooser, and collect the inserted `user-attachments` URLs (a snapshot suffices -- `eval` can be blocked in isolated sessions, and snapshots collapsing newlines doesn't matter for URLs). Then cancel the form edit -- the uploads persist -- and set the final body with `gh pr edit <n> --body-file <file>` referencing those URLs.
-- The signed-in login lives in one specific persistent profile directory (a one-time headed login per machine). playwright-cli derives the profile directory from session name + working directory, so a bare `--persistent` from anywhere else -- a worktree, a differently-named session -- opens a fresh, logged-out browser. Point at the existing signed-in profile explicitly with `--profile=<path to that profile directory>`. If the browser still isn't signed in, stop and ask the user to log in -- never go looking for sessions in cookie databases, other profile directories, or running browser processes.
-- Stage the images inside the repository working directory before uploading; playwright-cli refuses files from outside its allowed roots.
-- A failed upload attempt consumes the file chooser -- click "Attach files" again before every retry.
-- Delegate the browser-driving to a subagent handed the image paths, the PR number, and the profile path; it's mechanical ref-clicking that shouldn't consume the main conversation's context.
+- A PR with user-facing changes gets screenshots of them. Don't upload them to GitHub; publish them as a private Artifact in the session instead, one Artifact per PR.
+- Build a single HTML page titled after the PR, with a short heading per image saying what it shows, and the images embedded as data URIs (the Artifact sandbox blocks external image URLs). Keep the total page under 16 MB; downscale or JPEG-encode large captures if needed.
+- Publish it with the Artifact tool. Artifacts are private by default; don't share it more widely unless asked.
+- Put a `## Screenshots` section in the PR description linking to the Artifact URL, rather than embedding images in the body.
+- Redeploy to the same file path (same URL) when screenshots change during review, so the link in the PR stays valid.
 
 ## Merging pull requests
 
