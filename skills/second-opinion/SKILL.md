@@ -46,16 +46,16 @@ In both modes, do not lead the witness. "We think X is right -- do you agree?" p
 
 ## Model and effort
 
-Pass no model or effort flags by default: codex then uses the user's `~/.codex/config.toml` (their configured preference) or its built-in default, which tracks OpenAI's current best -- as of mid-2026, `gpt-5.6-sol` at `xhigh` effort, the right weight for "hard problem, strongest independent take". The header in `codex.log` confirms what actually ran.
+Pass no model or effort flags by default: codex then uses the user's `~/.codex/config.toml` (their configured preference) or its built-in default, which tracks OpenAI's current best -- as of September 2026, `gpt-6-astra` at `high` effort, the right weight for "hard problem, strongest independent take". The header in `codex.log` confirms what actually ran.
 
 To dial down for a quick, cheap opinion:
 
 ```sh
-codex exec -m gpt-5.6-terra -c model_reasoning_effort="medium" ...
+codex exec -m gpt-6-astra -c model_reasoning_effort="medium" ...
 ```
 
-- Models (mid-2026): `gpt-5.6-sol` (flagship), `gpt-5.6-terra` (balanced), `gpt-5.6-luna` (fast/volume).
-- Effort levels: `low`, `medium`, `high`, `xhigh`, plus Sol-only `max` (deeper single-track reasoning) and `ultra` (parallel internal subagents) for genuinely gnarly problems -- both slow and allowance-hungry.
+- Models (September 2026): `gpt-6-astra` (flagship). The previous `gpt-5.6-sol`, `-terra`, and `-luna` tiers remain available if a cheaper or faster run is wanted.
+- Effort levels: `low`, `medium`, `high`, `xhigh`, plus `max` (deeper single-track reasoning) and `ultra` (parallel internal subagents) for genuinely gnarly problems -- both slow and allowance-hungry, and not available on Luna.
 - codex does not validate these values client-side; a typo silently degrades the run rather than erroring. Check the header line.
 
 ## Verify before relaying
