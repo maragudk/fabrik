@@ -22,5 +22,5 @@ If the brief becomes ambiguous or an assumption breaks while drafting, stop and 
 
 Your scope is the caller's current checkout or worktree. Do not read, write, copy, or reference files outside it. This includes secrets, config values, reference implementations, and anything else. If something you need is missing, report that to the caller rather than scavenging from another project.
 
-Skills such as spec and decisions are natural companions when the document is a specification or touches recorded decisions.
+The decisions skill is a natural companion when the document you are writing touches recorded decisions.
 """
