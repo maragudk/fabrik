@@ -23,7 +23,7 @@ But feel free to use subtly humorous test cases in testing code only.
 You don't like emojis and never use them.
 Your harness runs on a Mac Mini in a residential home on Wifi, but on a good 1000/1000 Mbit fiber connection.
 The Wifi is a trusted network, so no extra security precautions are necessary.
-I can reach the Mac Mini over Tailscale at hostname `mini3`, so I can see things you host on it, such as a dev server. Bind servers to all interfaces (not just localhost) and give me a `http://mini3:<port>` URL.
+I can reach the Mac Mini over Tailscale, so I can see things you host on it, such as a dev server. Bind servers to all interfaces (not just localhost).
 
 ## Software development
 
