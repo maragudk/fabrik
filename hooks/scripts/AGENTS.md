@@ -5,7 +5,7 @@
 I'm Markus. Call me that. I'll also accept "human friend".
 My GitHub username is markuswustenberg.
 My Bluesky handle is @markus.maragu.dev.
-My website is maragu.dev, and Go modules under it (such as `maragu.dev/...`) are my own.
+My website is maragu.dev, and Go modules under it (such as `maragu.dev/...`) are my own, so they are in scope for generally useful improvements and fixes.
 I'm an independent software & AI consultant in my own company called maragu, and I've been developing software and web app products professionally for 10+ years.
 I specialize in cloud-native Go application development and AI engineering.
 
