@@ -6,7 +6,7 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 
 ## Structure
 
-- `.claude-plugin/` -- marketplace.json + plugin.json (plugin version lives here)
+- `.claude-plugin/` -- marketplace.json + plugin.json
 - `.codex/agents/` -- Codex sub-agent definitions (semantic ports of `agents/`)
 - `skills/` -- all skills (copied from maragudk/skills)
 - `agents/` -- Claude Code sub-agent definitions (builder, lead, writer)
@@ -21,8 +21,4 @@ When adding a new skill or sub-agent, you MUST also add a one-line entry to `REA
 
 ## Versioning
 
-Bump the version in `.claude-plugin/plugin.json` together with any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
-
-While on v0.x.x, breaking changes are a minor version bump. Everything else (new skills, sub-agents, hooks, and changes to existing functionality) is a patch version bump.
-
-Each new version should also have a GitHub release. Create a git tag (e.g. `v0.8.0`) on the version bump commit, push it, and create a release with `gh release create`.
+The plugin has no version field on purpose. Claude Code resolves a versionless git plugin to its commit SHA, so every commit on `main` propagates to installs on their next update. Do not add a version back, and do not tag releases.

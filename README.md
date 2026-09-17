@@ -81,4 +81,4 @@ Sub-agents have Claude Code definitions in `agents/` and semantic Codex ports in
 
 ## Available Hooks
 
-- **SessionStart** - Shows a welcome message with the plugin version and injects `hooks/scripts/AGENTS.md`, the session context that tells the agent who you are and how you work
+- **SessionStart** - Shows a welcome message and injects `hooks/scripts/AGENTS.md`, the session context that tells the agent who you are and how you work

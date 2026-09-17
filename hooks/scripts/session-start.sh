@@ -1,9 +1,6 @@
 #!/bin/bash
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PLUGIN_DIR="$SCRIPT_DIR/../.."
-
-VERSION=$(jq -r '.version' "$PLUGIN_DIR/.claude-plugin/plugin.json")
 
 CONTEXT=$(cat "$SCRIPT_DIR/AGENTS.md")
 
@@ -25,7 +22,7 @@ fi
 # and outputs it as a properly escaped JSON string (quotes, newlines, etc.)
 cat <<EOF
 {
-  "systemMessage": "Welcome to the fabrik v${VERSION}.",
+  "systemMessage": "Welcome to fabrik.",
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
     "additionalContext": $(printf '%s' "$CONTEXT" | jq -Rs .)
