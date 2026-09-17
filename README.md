@@ -50,7 +50,6 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **gardeners** - Team version of `garden`: spawns a coordinated team of gardeners that each fix a different issue in parallel, sharing a task list to avoid duplicate work
 - **git** - Guide for using git according to preferences (commit messages, issue references, pull requests)
 - **go** - Guide for developing Go apps and modules/libraries (code style, testing, dependency injection, package structure)
-- **gomponents** - Guide for working with gomponents, a pure Go HTML component library for building HTML views
 - **improve-skill** - Review the current conversation for fabrik skills that could be improved and ship the improvements back as PRs (concrete fixes) or issues (fuzzy observations / redesigns)
 - **macos-design** - Design and build native-feeling macOS application UIs: layout, interaction patterns, light/dark mode, and the details that make an app feel native (copied from [ceorkm/macos-design-skill](https://github.com/ceorkm/macos-design-skill))
 - **marimo** - Guide for creating and working with marimo notebooks, the reactive Python notebook that stores as pure .py files
