@@ -6,7 +6,7 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 
 ## Structure
 
-- `.claude-plugin/` -- marketplace.json + plugin.json (plugin version lives here)
+- `.claude-plugin/` -- marketplace.json + plugin.json
 - `.codex/agents/` -- Codex sub-agent definitions (semantic ports of `agents/`)
 - `skills/` -- all skills (copied from maragudk/skills)
 - `agents/` -- Claude Code sub-agent definitions (builder, lead, writer)
@@ -18,11 +18,3 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 Sub-agent definitions exist in two platform-specific formats: Claude Code uses `agents/<name>.md`, while Codex uses `.codex/agents/<name>.toml`. Every logical sub-agent MUST exist in both directories. When adding, removing, or changing an agent, update both semantic versions in the same commit/PR. Keep their names, descriptions, responsibilities, and scope boundaries aligned, while translating platform-specific metadata and terminology rather than copying it literally.
 
 When adding a new skill or sub-agent, you MUST also add a one-line entry to `README.md` in the same commit/PR -- skills go under "Available Skills", sub-agents under "Available Sub-agents". Both lists are alphabetical and use the format `- **name** - one-line description`. Each logical sub-agent gets one README entry, not one per platform format. Anything not listed in the README is invisible to anyone browsing the repo.
-
-## Versioning
-
-Bump the version in `.claude-plugin/plugin.json` together with any change that should be picked up by users. Remote installs are cached by version -- without a bump, updates won't propagate.
-
-While on v0.x.x, breaking changes are a minor version bump. Everything else (new skills, sub-agents, hooks, and changes to existing functionality) is a patch version bump.
-
-Each new version should also have a GitHub release. Create a git tag (e.g. `v0.8.0`) on the version bump commit, push it, and create a release with `gh release create`.

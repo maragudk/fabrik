@@ -83,7 +83,7 @@ The skill almost always runs outside the fabrik repo. To edit `skills/*/SKILL.md
 
 The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case description of the change (e.g. `improve-skill/brainstorm-one-question`). By default, one PR per `improve-skill` invocation, even when several skills are touched -- keeps review batched. But if the user wants to act on findings one at a time (e.g. "let's take those one at a time"), a PR per finding is fine; follow the user's preference.
 
-**Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, version bumping, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
+**Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
 
 ## Step 5: Ship it
 
@@ -123,7 +123,7 @@ Commit, push, and open the PR or issue using your normal git/PR conventions (the
 
 One issue per fuzzy / redesign finding. Title clearly: `improve-skill: <skill-name> <one-line summary>`.
 
-Report URLs back when done. Follow-up review feedback, version bumps, and merging are the user's call.
+Report URLs back when done. Follow-up review feedback and merging are the user's call.
 
 ## Notes on tone
 
