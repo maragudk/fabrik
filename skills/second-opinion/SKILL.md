@@ -54,7 +54,7 @@ To dial down for a quick, cheap opinion:
 codex exec -m gpt-6-astra -c model_reasoning_effort="medium" ...
 ```
 
-- Models (September 2026): `gpt-6-astra` (flagship). The previous `gpt-5.6-sol`, `-terra`, and `-luna` tiers remain available if a cheaper or faster run is wanted.
+- Models (September 2026): `gpt-6-astra` (flagship). The cheaper, faster `gpt-6-sol` and `gpt-6-luna` tiers are there when a quicker run is wanted, and the previous `gpt-5.6-terra` remains available.
 - Effort levels: `low`, `medium`, `high`, `xhigh`, plus `max` (deeper single-track reasoning) and `ultra` (parallel internal subagents) for genuinely gnarly problems -- both slow and allowance-hungry, and not available on Luna.
 - codex does not validate these values client-side; a typo silently degrades the run rather than erroring. Check the header line.
 
