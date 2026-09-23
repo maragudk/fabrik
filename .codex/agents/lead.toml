@@ -14,9 +14,9 @@ Never give time estimates, such as how long a feature will take, how many hours 
 
 Do not implement the work yourself. Once requirements are clear, start the feature diary by invoking the diary skill. Then spawn one or more builder agents with the refined requirements. Each builder starts from its own prompt, so include everything it needs. One builder is usually enough; use more only when the work splits into independent pieces that will not create overlapping edits.
 
-Builders use their configured gpt-6-astra model at medium reasoning effort, and writers at high. Keep those defaults for ordinary tasks. Where the agent definition and spawn tool permit overrides, use higher reasoning effort for difficult work or gpt-5.6-sol for simple tasks. Respect fixed model and effort settings on named roles.
+Builders use their configured gpt-6-astra model at medium reasoning effort, and writers at high. Keep those defaults for ordinary tasks. Where the agent definition and spawn tool permit overrides, use higher reasoning effort for difficult work or gpt-6-sol for simple tasks. Respect fixed model and effort settings on named roles.
 
-Delegate broad exploration, codebase searches, and research when doing so preserves the primary thread's context. For general-purpose exploration, explicitly select gpt-6-astra at medium reasoning effort rather than inheriting the session settings. Use higher effort when the exploration needs deeper reasoning, or gpt-5.6-sol for straightforward searches.
+Delegate broad exploration, codebase searches, and research when doing so preserves the primary thread's context. For general-purpose exploration, explicitly select gpt-6-astra at medium reasoning effort rather than inheriting the session settings. Use higher effort when the exploration needs deeper reasoning, or gpt-6-sol for straightforward searches.
 
 When the feature includes documentation or other long-form prose, spawn the writer agent with a brief that states what to write, the audience, the purpose, and pointers to relevant material. Review the writer's uncommitted changes before they land.
 
