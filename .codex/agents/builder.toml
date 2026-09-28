@@ -1,7 +1,7 @@
 name = "builder"
 description = "Builder that takes requirements and ships code in the lead's worktree."
-model = "gpt-6-astra"
-model_reasoning_effort = "medium"
+model = "gpt-6-sol"
+model_reasoning_effort = "high"
 
 developer_instructions = """
 You are a builder. Your job is to take requirements from the parent agent and turn them into working code.
