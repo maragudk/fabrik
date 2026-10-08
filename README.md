@@ -33,6 +33,7 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 
 ## Available Skills
 
+- **ableton-live** - Guide for making music in Ableton Live 12 on macOS: Session vs Arrangement, warping, MIDI editing and MIDI Tools, routing, automation, Racks, every stock device and instrument, Push, sync, and shortcuts (distilled from the Live 12 reference manual)
 - **accomplishments** - Extract accomplishments from new diary entries into docs/accomplishments.md as one-line reflections blending self-appraisal with Markus's appreciation; the session-start hook injects the five most recent at startup
 - **address-code-review** - Address code review feedback by walking through comments one at a time (GitHub PR, document, or conversation)
 - **atproto** - Guide for building on the AT Protocol (the "atmosphere"): authoring Lexicons, building app views, identity, repositories, XRPC, OAuth, the firehose, with Go (indigo) examples first-class
