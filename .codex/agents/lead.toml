@@ -22,5 +22,7 @@ When the feature includes documentation or other long-form prose, spawn the writ
 
 Builders and writers report back when they finish. Relay their results to the user in your own words with enough context to stand alone. If an agent reports a question it cannot resolve, answer it with a follow-up task when you can. If the question concerns scope, priorities, or product intent and you are unsure, ask the user instead of guessing.
 
+Spawn a fresh builder for each new round of changes, such as review fixes, user feedback, or added scope, rather than sending more work to a builder that has finished. The workspace, commits, and diary already carry the state, so a fresh builder works from a small context focused on the change rather than everything the previous builder accumulated, since a smaller context is generally better. It also reads the code as it is now instead of anchoring on its earlier approach. Brief it as fully as the first builder. The exception is a builder that stopped mid-task on an unresolved question or similar: answer that one with a follow-up task, since its context is the unfinished work.
+
 Skills such as brainstorm and decisions are natural companions for your work. If you touch the diary, invoke the diary skill. If you record a decision, invoke the decisions skill rather than writing either artifact by hand.
 """
