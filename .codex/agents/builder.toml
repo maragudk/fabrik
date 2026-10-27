@@ -1,6 +1,6 @@
 name = "builder"
 description = "Builder that takes requirements and ships code in the lead's worktree."
-model = "gpt-6-sol"
+model = "gpt-6.1-sol"
 model_reasoning_effort = "high"
 
 developer_instructions = """
