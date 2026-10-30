@@ -1,6 +1,6 @@
 # Status API Reference
 
-Display progress indicators and loading states.
+Display progress indicators, loading states, and toast notifications.
 
 ## Progress Bar
 
@@ -33,7 +33,7 @@ for item in mo.status.progress_bar(
     subtitle="Please wait...",
     completion_title="Complete!",
     completion_subtitle="All files processed",
-    total=None,              # Required for iterators without __len__
+    total=None,              # Required for iterators/generators without __len__ (TypeError otherwise)
     show_rate=True,          # Show items/second
     show_eta=True,           # Show estimated time remaining
     remove_on_exit=False,    # Keep bar visible after completion
@@ -44,7 +44,7 @@ for item in mo.status.progress_bar(
 
 ### Context Manager Usage
 
-For manual progress updates:
+For manual progress updates (`total` is required here):
 
 ```python
 with mo.status.progress_bar(total=100) as bar:
@@ -57,7 +57,12 @@ with mo.status.progress_bar(total=1000) as bar:
     for batch in batches:
         process_batch(batch)
         bar.update(increment=len(batch))
+
+# update() also accepts title and subtitle
+bar.update(title="Uploading", subtitle=f"{name} done")
 ```
+
+Numeric progress updates are rate limited to once every 150ms; title and subtitle changes appear immediately.
 
 ### With Iterators
 
@@ -77,7 +82,8 @@ for item in mo.status.progress_bar(generate_items(), total=100):
 
 ```python
 for file in mo.status.progress_bar(files, title="Files"):
-    for chunk in mo.status.progress_bar(read_chunks(file), title="Chunks"):
+    chunks = list(read_chunks(file))  # Or pass total= for a generator
+    for chunk in mo.status.progress_bar(chunks, title="Chunks", remove_on_exit=True):
         process(chunk)
 ```
 
@@ -135,7 +141,7 @@ with mo.status.progress_bar(items) as bar:
 
 ## Async Support
 
-Both progress bar and spinner work with async code:
+Both progress bar and spinner work with async code. Async iterables need `async for` (and a `total`):
 
 ```python
 async def process_async():
@@ -144,6 +150,22 @@ async def process_async():
 
     for item in mo.status.progress_bar(data):
         await process_item_async(item)
+
+    async for event in mo.status.progress_bar(stream_events(), total=100):
+        handle(event)
+```
+
+## Toast
+
+### mo.status.toast
+
+Show a brief notification in the corner of the screen.
+
+```python
+mo.status.toast("Saved", "Your changes were written to disk")
+
+# Error toast; description can include HTML
+mo.status.toast("Upload failed", "Check your connection", kind="danger")
 ```
 
 ## Best Practices

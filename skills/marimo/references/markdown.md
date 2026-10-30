@@ -125,28 +125,35 @@ mo.latex(r"""
 mo.md(r"Let $f: \R \to \R$ with $\norm{f} = 1$")
 ```
 
+`mo.latex()` registers macros as a side effect, so call it in the same cell as `import marimo`; otherwise the macros may not be loaded before cells that use them. Pass either `text` or `filename`, not both.
+
 ## Icons
 
 Embed icons from the Iconify library.
 
 ```python
+# Shorthand inside markdown (no size/color/rotation options)
+mo.md("::lucide:rocket:: Launch")
+
 # Basic icon
 mo.icon("lucide:heart")
 
 # With options
 mo.icon(
     "lucide:settings",
-    size=24,
+    size=24,                # Pixels
     color="blue",
-    flip="horizontal",  # "horizontal", "vertical", "both"
-    rotate=90           # Degrees
+    flip="horizontal",      # "horizontal", "vertical", "horizontal,vertical"
+    rotate="90deg",         # "90deg", "180deg", "270deg"
+    inline=True,            # False renders as a block element
+    style={"opacity": 0.5}, # Extra CSS
 )
 
 # In markdown
 mo.md(f"Click {mo.icon('lucide:arrow-right')} to continue")
 ```
 
-Browse icons at [Iconify](https://icon-sets.iconify.design/).
+Browse icons at [Iconify](https://icon-sets.iconify.design/). Icons load lazily from a CDN, so they do not render offline.
 
 ## Tables in Markdown
 
@@ -180,11 +187,33 @@ For editable code, use `mo.ui.code_editor()`.
 mo.md("""
 [Link text](https://example.com)
 
-![Alt text](image.png)
+![Alt text](public/image.png)
 
-<img src="image.png" width="400">
+<img src="public/image.png" width="400">
 """)
 ```
+
+Local files are served only from a `public/` folder next to the notebook, referenced with the `public/` prefix. Symlinks and `../` traversal are blocked.
+
+## Details and Admonitions
+
+Block syntax for collapsible sections and callouts inside markdown.
+
+```python
+mo.md("""
+/// details | Heads up
+
+Here's some additional context.
+///
+
+/// attention | This is important.
+
+Pay attention to this text!
+///
+""")
+```
+
+For a programmatic alternative, use `mo.callout()`.
 
 ## Tooltips
 

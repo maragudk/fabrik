@@ -17,14 +17,15 @@ mo.hstack([element1, element2, element3])
 # With options
 mo.hstack(
     [element1, element2],
-    justify="space-between",  # "start", "center", "end", "space-between", "space-around"
-    align="center",           # "start", "center", "end", "stretch"
-    gap=2,                    # Spacing between items (in units)
-    wrap=True                 # Wrap to next line if needed
+    justify="space-between",  # Default. "start", "center", "end", "space-between", "space-around"
+    align="center",           # "start", "center", "end", "stretch" (default None)
+    gap=2,                    # Spacing in rem (default 0.5)
+    wrap=True,                # Wrap to next line if needed (default False)
+    widths=[1, 2],            # Relative widths, or "equal" (default None)
 )
 
-# Vertical stack
-mo.vstack([element1, element2, element3])
+# Vertical stack (justify defaults to "start"; heights works like widths)
+mo.vstack([element1, element2, element3], gap=1, heights="equal")
 
 # Nested stacks
 mo.hstack([
@@ -67,7 +68,8 @@ mo.accordion({
 mo.accordion(
     {"Section 1": content1, "Section 2": content2},
     multiple=True,    # Allow multiple open sections
-    lazy=True         # Render content only when opened
+    lazy=True,        # Render content only when opened
+    expanded=True,    # Initially open: True (first, or all if multiple), or a list of names
 )
 ```
 
@@ -84,6 +86,9 @@ tabs = mo.ui.tabs({
 
 # Access selected tab
 selected = tabs.value
+
+# Options: initial tab, lazy-load tab content, vertical tabs
+mo.ui.tabs(tabs_dict, value="Details", lazy=True, orientation="vertical")
 ```
 
 ### callout
@@ -93,12 +98,12 @@ Highlighted content box.
 ```python
 mo.callout("Important information here", kind="info")
 
-# Kinds: "info", "warn", "danger", "success", "neutral"
+# Kinds: "info", "warn", "danger", "success", "neutral" (default)
 mo.callout(content, kind="danger")
-mo.callout(content, kind="success")
+mo.callout(content, kind="success", title="Done")  # Optional bold title line
 
 # Can also use Html method
-element.callout(kind="warn")
+element.callout(kind="warn", title="Warning")
 ```
 
 ### carousel
@@ -120,37 +125,42 @@ mo.sidebar([
     filters
 ])
 
-# Sidebar content appears alongside main notebook content
+# With a footer pinned to the bottom and a custom width
+mo.sidebar(content, footer=mo.md("v1.0"), width="300px")
+
+# Sidebar content appears alongside main notebook content.
+# It must be the last expression in its cell.
 ```
 
 ## Navigation
 
 ### routes
 
-Multi-page navigation.
+Multi-page navigation. Values are objects or (sync/async) functions returning content; functions are only called when their route is active.
 
 ```python
 mo.routes({
-    "/": home_page,
-    "/about": about_page,
-    "/users/{user_id}": user_page,  # Dynamic route
-    mo.routes.CATCH_ALL: not_found_page
+    "#/": render_home,
+    "#/about": render_about,
+    mo.routes.CATCH_ALL: render_home,
 })
 ```
 
+Use hash-based routes (`#/...`) for a single-page app; use path-based routes (`/...`) for multi-page apps served with `mo.create_asgi_app`. Nested and dynamic routes (e.g. `#/user/:id`) are not supported.
+
 ### nav_menu
 
-Navigation menu component.
+Navigation menu of links. Keys are URLs (or a submenu label), values are labels (markdown).
 
 ```python
-nav = mo.ui.nav_menu({
-    "Home": "/",
-    "Products": {
-        "Category A": "/products/a",
-        "Category B": "/products/b"
+nav = mo.nav_menu({
+    "#/": "Home",
+    "Products": {  # Submenu, one level deep
+        "#/products/a": "Category A",
+        "#/products/b": {"label": "Category B", "description": "More products"},
     },
-    "Contact": "/contact"
-})
+    "#/contact": f"{mo.icon('lucide:phone')} Contact",
+}, orientation="horizontal")  # or "vertical" (e.g. inside mo.sidebar)
 ```
 
 ### outline
@@ -159,6 +169,7 @@ Table of contents from markdown headers.
 
 ```python
 mo.outline()  # Auto-generates from notebook headings
+mo.outline(label="Table of Contents")
 ```
 
 ## Data Display
@@ -177,8 +188,8 @@ mo.tree({
     }
 })
 
-# From nested dict/list
-mo.tree(nested_data)
+# From nested dict/list/tuple, with optional label
+mo.tree(nested_data, label="Config")
 ```
 
 ### json
@@ -188,8 +199,8 @@ JSON viewer with syntax highlighting.
 ```python
 mo.json(data)
 
-# With options
-mo.json(data, name="config")
+# Accepts a JSON string or JSON-compatible object, with optional label
+mo.json(data, label="config")
 ```
 
 ### stat
@@ -202,14 +213,15 @@ mo.stat(
     label="Revenue",
     caption="vs last month",
     direction="increase",  # "increase", "decrease", None
-    bordered=True
+    bordered=True,         # Default False
+    target_direction="increase",  # Which direction is good (colors the arrow); default "increase"
 )
 
 # Multiple stats
 mo.hstack([
     mo.stat("150", "Users", direction="increase"),
     mo.stat("$5K", "Revenue", direction="increase"),
-    mo.stat("3.2%", "Bounce Rate", direction="decrease")
+    mo.stat("3.2%", "Bounce Rate", direction="decrease", target_direction="decrease")
 ])
 ```
 
@@ -223,40 +235,31 @@ Defer content rendering until visible.
 mo.lazy(expensive_content)
 
 # Useful for large outputs or expensive computations
-mo.lazy(lambda: generate_large_chart())
+mo.lazy(lambda: generate_large_chart())  # Function (sync or async) runs when visible
+
+# Typical use: inside tabs or accordions
+mo.ui.tabs({"Overview": summary, "Charts": mo.lazy(expensive_chart, show_loading_indicator=True)})
 ```
 
 ### plain
 
-Remove default styling.
+Display a value without marimo's opinionated formatting.
 
 ```python
-mo.plain(content)
+mo.plain(df)
 
-# Renders content without marimo's default formatting
+# Best way to opt out of marimo's default rich dataframe rendering
 ```
 
-## Layout Utilities
+## Grid and Slides Layouts (App Mode)
 
-### justify
+In addition to the default vertical layout, apps can use a grid or slides layout, chosen in the editor:
 
-Wrapper for horizontal alignment.
+1. Open the app preview (button in the bottom-right of the editor, or the command palette)
+2. Pick "Grid" or "Slides" from the layout dropdown
+3. Grid: drag and drop cell outputs onto the grid and resize them. Slides: reorder slides, set slide types, and add speaker notes (reveal.js)
 
-```python
-mo.justify(element, justify="center")
-# justify: "start", "center", "end", "space-between", "space-around"
-```
-
-## Grid Layout (App Mode)
-
-In app mode, configure grid layouts through the editor:
-
-1. Open layout settings (gear icon)
-2. Select "Grid" layout
-3. Drag and drop cells to arrange
-4. Resize cells as needed
-
-Grid configuration saves to `layouts/` folder in notebook directory.
+Layout metadata saves to a `layouts/` folder next to the notebook; include it in version control and deployments.
 
 ## Combining Layouts
 

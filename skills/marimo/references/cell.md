@@ -62,11 +62,11 @@ calculate.refs  # Set of variable names used as inputs
 
 ### name
 
-The cell's identifier (if named).
+The cell's name, which is its function name (`_` for anonymous cells).
 
 ```python
-@app.cell(name="process_data")
-def _(data):
+@app.cell
+def process_data(data):
     result = process(data)
     return (result,)
 
@@ -122,7 +122,7 @@ output, defs = calculate.run(prepared_data=my_data)
 
 ## Async Cells
 
-Async cells return awaitables:
+If a cell is `async`, or any of its ancestors is, `run()` returns an awaitable:
 
 ```python
 @app.cell
@@ -134,6 +134,11 @@ async def _(url):
 from my_notebook import fetch_cell
 
 output, defs = await fetch_cell.run(url="https://api.example.com")
+
+# When unsure, check:
+from collections.abc import Awaitable
+ret = fetch_cell.run()
+output, defs = (await ret) if isinstance(ret, Awaitable) else ret
 ```
 
 ## UI Elements in Cells
@@ -152,16 +157,16 @@ def _():
 
 ## Named Cells
 
-Give cells names for clearer imports:
+A cell's name is its function name. Rename `def _(...)` to give it a name (or use the cell menu in the editor). `@app.cell` has no `name=` parameter; extra keyword arguments are ignored, so `@app.cell(name="x")` does NOT name the cell.
 
 ```python
-@app.cell(name="load_config")
-def _():
+@app.cell
+def load_config():
     config = load_config_file()
     return (config,)
 
-@app.cell(name="process_data")
-def _(config, raw_data):
+@app.cell
+def process_data(config, raw_data):
     processed = transform(raw_data, config)
     return (processed,)
 
@@ -171,7 +176,27 @@ from my_notebook import load_config, process_data
 
 ## Testing Cells
 
-### With pytest
+### pytest on the notebook itself
+
+`pytest my_notebook.py` collects cells whose function name starts with `test_`, and cells that contain only `test_` functions and `Test` classes (plus `@pytest.fixture`s). Name a notebook `test_*.py` and a plain `pytest` run discovers it.
+
+```python
+@app.cell
+def test_sanity(inc):
+    assert inc(3) == 4
+
+
+@app.cell
+def _(inc, pytest):
+    @pytest.mark.parametrize(("x", "y"), [(3, 4), (4, 5)])
+    def test_answer(x, y):
+        assert inc(x) == y
+```
+
+- In the editor, marimo also runs pytest reactively on test-only cells when `pytest` is installed (disable with `runtime.reactive_tests = false`). A cell that mixes tests with anything else (helpers, imports, constants) is skipped.
+- Fixtures are only visible to tests in the same cell, unless they are defined or imported in the setup cell (`with app.setup:`) or in `conftest.py`.
+
+### From a separate test file
 
 ```python
 # test_notebook.py
@@ -221,13 +246,15 @@ def test_cell_output():
     # Check output exists
     assert output is not None
 
-    # Check output content (if HTML)
-    assert "Summary" in str(output)
+    # Check output content (mo.md / Html outputs expose .text)
+    assert "Summary" in output.text
 ```
 
 ## Cross-Notebook Imports
 
 ### Basic Import
+
+Functions and classes are importable only when defined top-level with `@app.function` / `@app.class_definition` (see app.md):
 
 ```python
 # main_notebook.py
@@ -267,13 +294,13 @@ _, defs3 = step3.run(
 
 ```python
 # Good - single responsibility
-@app.cell(name="load_data")
-def _():
+@app.cell
+def load_data():
     df = pd.read_csv("data.csv")
     return (df,)
 
-@app.cell(name="clean_data")
-def _(df):
+@app.cell
+def clean_data(df):
     cleaned = df.dropna()
     return (cleaned,)
 
@@ -291,8 +318,8 @@ def _():
 
 ```python
 # Name cells you'll import or test
-@app.cell(name="calculate_metrics")
-def _(data):
+@app.cell
+def calculate_metrics(data):
     metrics = compute_metrics(data)
     return (metrics,)
 
@@ -300,15 +327,15 @@ def _(data):
 @app.cell
 def _(metrics):
     mo.md(f"Metrics: {metrics}")
-    return ()
+    return
 ```
 
 ### Design for Testability
 
 ```python
 # Testable - clear inputs and outputs
-@app.cell(name="transform")
-def _(df, config):
+@app.cell
+def transform(df, config):
     result = apply_transform(df, config)
     return (result,)
 
@@ -323,8 +350,8 @@ def _():
 ### Document Cell Purpose
 
 ```python
-@app.cell(name="feature_engineering")
-def _(raw_features):
+@app.cell
+def feature_engineering(raw_features):
     """
     Transform raw features into model-ready format.
 

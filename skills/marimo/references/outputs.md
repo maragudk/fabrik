@@ -35,6 +35,8 @@ for i in range(5):
     mo.output.append(f"Processed {i}: {result}")
 ```
 
+A non-`None` last expression replaces anything written imperatively, just like `mo.output.replace()`. End the cell with `mo.output.append(value)` (or no expression) to keep the appended output.
+
 ### mo.output.clear
 
 Remove all current cell output.
@@ -48,7 +50,7 @@ mo.output.append("Fresh start")
 
 ### mo.output.replace_at_index
 
-Replace output at a specific position.
+Replace output at a specific position. Signature is `replace_at_index(value, idx)`.
 
 ```python
 # Build initial output
@@ -57,10 +59,10 @@ mo.output.append("Item 1")
 mo.output.append("Item 2")
 
 # Replace specific item
-mo.output.replace_at_index(1, "Updated Item 1")
+mo.output.replace_at_index("Updated Item 1", 1)
 
 # Append at end (index equals length)
-mo.output.replace_at_index(3, "Item 3")
+mo.output.replace_at_index("Item 3", 3)
 ```
 
 ## Code Display
@@ -70,19 +72,17 @@ mo.output.replace_at_index(3, "Item 3")
 Display cell source code alongside output in app mode.
 
 ```python
-# Show code above output
+# Show only the cell's code
 mo.show_code()
 
-# Show code below output
-mo.show_code(position="below")
+# Show code with specific output (code below output by default)
+mo.show_code(my_chart)
 
-# Show code with specific output
+# Show code above output
 mo.show_code(output=my_chart, position="above")
-
-# Default position is "above"
-result = expensive_computation()
-mo.show_code(output=result)
 ```
+
+Default position is `"below"`. In the displayed code, `mo.show_code(...)` calls are replaced with `...`.
 
 Use cases:
 - Educational notebooks showing implementation
@@ -112,6 +112,16 @@ with mo.redirect_stderr():
 with mo.redirect_stdout(), mo.redirect_stderr():
     print("stdout message")
     print("stderr message", file=sys.stderr)
+```
+
+### mo.output.clear_console
+
+Clear the console area below the cell, including text printed earlier in the same run.
+
+```python
+print("Loading...")
+data = load()
+mo.output.clear_console()
 ```
 
 ### mo.capture_stdout / mo.capture_stderr
@@ -207,6 +217,8 @@ mo.output.append(mo.md("---\n*Processing complete*"))
 
 ### Edit Mode vs App Mode
 
+`mo.app_meta().mode` is `"edit"`, `"run"`, `"script"`, `"test"`, or `None`.
+
 ```python
 mode = mo.app_meta().mode
 
@@ -221,8 +233,11 @@ elif mode == "run":
 ### Conditional Output
 
 ```python
+# Cell 1 - define the element (reading .value here would not react to changes)
 verbose = mo.ui.checkbox(label="Show details")
+verbose
 
+# Cell 2 - re-runs when the checkbox changes
 if verbose.value:
     mo.output.append(mo.md("## Detailed Output"))
     for step, detail in enumerate(details):
@@ -247,16 +262,18 @@ for item in items:
 results  # Only shows at end
 ```
 
-### Clear Before Rebuilding
+### Clear Placeholder Output
+
+Each run starts with an empty output, so re-running never duplicates appended output. Use `clear` to drop placeholders written earlier in the same run.
 
 ```python
-# Prevent duplicate output on re-run
-mo.output.clear()
+mo.output.append(mo.md("*Loading...*"))
+results = [format_item(item) for item in items]
 
-# Build fresh output
+mo.output.clear()
 mo.output.append(header)
-for item in items:
-    mo.output.append(format_item(item))
+for result in results:
+    mo.output.append(result)
 ```
 
 ### Capture for Processing

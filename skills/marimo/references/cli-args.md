@@ -7,16 +7,22 @@ Access command-line arguments when running notebooks as scripts.
 marimo notebooks can be run as Python scripts with command-line arguments:
 
 ```bash
-python notebook.py -- --arg1 value1 --arg2 value2
+python notebook.py --arg1 value1 --arg2 value2
 ```
 
-The `--` separator distinguishes notebook arguments from Python arguments.
+With `marimo` commands (`edit`, `run`, `export`), put notebook arguments after a `--` separator so they aren't parsed as marimo options:
+
+```bash
+marimo edit notebook.py -- --arg1 value1 --arg2 value2
+```
+
+Don't use `--` with `python notebook.py`: it is passed through to `sys.argv`, so `argparse` treats everything after it as positional and `mo.cli_args()` gets a bogus `""` key.
 
 ## Basic Usage
 
 ### mo.cli_args
 
-Get parsed command-line arguments.
+Get parsed command-line arguments as a read-only, dict-like `CLIArgs` object (`get`, `get_all`, `keys`, `items`, `to_dict`, `in`; `args["missing"]` returns `None`).
 
 ```python
 import marimo as mo
@@ -39,32 +45,41 @@ if "output" in args:
 
 ```bash
 # Basic usage
-python notebook.py -- --lr 0.001 --epochs 50
+python notebook.py --lr 0.001 --epochs 50
 
 # Multiple arguments
-python notebook.py -- --input data.csv --output results.json --verbose
+python notebook.py --input data.csv --output results.json --verbose=true
 
-# With marimo run
+# With inline (PEP 723) dependencies
+uv run notebook.py --lr 0.001
+
+# With marimo commands (note the --)
+marimo edit notebook.py -- --lr 0.001
 marimo run notebook.py -- --config production
+marimo export html notebook.py -o out.html -- --lr 0.001
 ```
 
 ### Argument Formats
 
 ```bash
-# Key-value pairs
-python notebook.py -- --name value
-python notebook.py -- --name=value
+# Key-value pairs (single dash works too: -name value)
+python notebook.py --name value
+python notebook.py --name=value
 
-# Flags parsed as boolean
-python notebook.py -- --verbose=true
-python notebook.py -- --debug=false
+# Booleans need an explicit value
+python notebook.py --verbose=true
+python notebook.py --debug=false
+
+# A bare flag becomes an empty string (falsy!)
+python notebook.py --verbose
+# Results in: {"verbose": ""}
 
 # Numeric values auto-converted
-python notebook.py -- --count=10      # int
-python notebook.py -- --rate=0.5      # float
+python notebook.py --count=10      # int
+python notebook.py --rate=0.5      # float
 
 # Lists (repeated arguments)
-python notebook.py -- --tag important --tag urgent
+python notebook.py --tag important --tag urgent
 # Results in: {"tag": ["important", "urgent"]}
 ```
 
@@ -78,25 +93,26 @@ python notebook.py -- --tag important --tag urgent
 | `--rate=0.5` | float | `0.5` |
 | `--flag=true` | bool | `True` |
 | `--flag=false` | bool | `False` |
+| `--flag` | str | `""` |
 | `--name=hello` | str | `"hello"` |
 
 ## Using sys.argv
 
-For more control, access raw arguments via `sys.argv`:
+For more control, access raw arguments via `sys.argv`. Under `marimo edit`/`run`/`export`, marimo sets it to the notebook filename followed by the arguments after `--`:
 
 ```python
 import sys
 
-# sys.argv after -- separator
-# python notebook.py -- --lr 0.001 --epochs 50
-# sys.argv = ["notebook.py", "--lr", "0.001", "--epochs", "50"]
+# python notebook.py --lr 0.001 --epochs 50
+# marimo edit notebook.py -- --lr 0.001 --epochs 50
+# Both give: sys.argv == ["notebook.py", "--lr", "0.001", "--epochs", "50"]
 
 print(sys.argv)
 ```
 
 ## Robust Argument Parsing
 
-For complex argument handling, use `argparse` or `simple-parsing`:
+marimo's docs recommend `argparse` or `simple-parsing` over `mo.cli_args()`: they declare the arguments and generate help text. Because marimo sets `sys.argv`, they work in scripts and under `marimo edit`/`run`/`export` alike:
 
 ### With argparse
 
@@ -139,17 +155,20 @@ learning_rate = config.lr
 
 ## Conditional Execution
 
-```python
-args = mo.cli_args()
+Seed a UI element from a CLI arg. When run as a script, the element just keeps its initial value, so the same code serves both modes:
 
-# Skip interactive elements in script mode
-if mo.app_meta().mode == "script":
-    # Use CLI args directly
-    threshold = args.get("threshold", 0.5)
-else:
-    # Show interactive UI
-    threshold = mo.ui.slider(0, 1, value=0.5).value
+```python
+# Cell 1
+threshold_slider = mo.ui.slider(
+    0, 1, step=0.05, value=mo.cli_args().get("threshold", 0.5)
+)
+threshold_slider
+
+# Cell 2
+threshold = threshold_slider.value
 ```
+
+To branch on how the notebook runs, use `mo.app_meta().mode` (`"edit"`, `"run"`, `"script"`, `"test"`, or `None`) or `mo.running_in_notebook()` (`False` under `python notebook.py`). `marimo export` reports `"edit"`, not `"script"`.
 
 ## Complete Example
 
@@ -179,7 +198,7 @@ mo.md(f"Loaded {len(df)} rows from `{config['input']}`")
 filtered = df[df["score"] > config["threshold"]]
 
 if config["verbose"]:
-    mo.md(f"Filtered to {len(filtered)} rows (threshold: {config['threshold']})")
+    print(f"Filtered to {len(filtered)} rows (threshold: {config['threshold']})")
 
 # Cell 4: Save results
 import json
@@ -194,7 +213,7 @@ mo.md(f"Saved results to `{config['output']}`")
 Run with:
 
 ```bash
-python notebook.py -- --input sales.csv --output filtered.json --threshold 0.7 --verbose=true
+python notebook.py --input sales.csv --output filtered.json --threshold 0.7 --verbose=true
 ```
 
 ## Best Practices
@@ -212,6 +231,8 @@ output_file = args.get("output", "output.json")
 ### Validate Arguments
 
 ```python
+from pathlib import Path
+
 args = mo.cli_args()
 
 input_file = args.get("input")
@@ -226,9 +247,9 @@ if input_file and not Path(input_file).exists():
 mo.md("""
 ## Usage
 
-```bash
-python notebook.py -- --input FILE --output FILE [--threshold FLOAT] [--verbose]
-```
+~~~bash
+python notebook.py --input FILE --output FILE [--threshold FLOAT] [--verbose=true]
+~~~
 
 **Arguments:**
 - `--input`: Input CSV file (required)
@@ -241,19 +262,23 @@ python notebook.py -- --input FILE --output FILE [--threshold FLOAT] [--verbose]
 ### Handle Script vs Interactive Mode
 
 ```python
-mode = mo.app_meta().mode
+# Skip interactive-only work (e.g. heavy charts) when run as a script
+mo.stop(not mo.running_in_notebook())
 
-if mode == "script":
-    # CLI mode - use arguments
-    value = mo.cli_args().get("value", 50)
-else:
-    # Interactive mode - show UI
-    slider = mo.ui.slider(0, 100, value=50)
-    value = slider.value
+chart = make_interactive_chart(df)
+chart
+```
+
+### Resolve Paths Relative to the Notebook
+
+Scripts run from cron or CI often have a different working directory:
+
+```python
+input_file = mo.cli_args().get("input") or mo.notebook_dir() / "data" / "input.csv"
 ```
 
 ## Limitations
 
-- Arguments must come after `--` separator
+- With `marimo` commands, arguments must come after the `--` separator (but not with `python notebook.py`)
 - Complex nested structures not supported (use JSON files instead)
 - No built-in help generation (use argparse for that)
