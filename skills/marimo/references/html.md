@@ -26,6 +26,8 @@ element = mo.Html("""
 """)
 ```
 
+`<script>` tags inside `mo.Html` and `mo.as_html` output are not executed; use `mo.iframe` for HTML that needs to run scripts.
+
 ### mo.as_html
 
 Convert any Python object to HTML.
@@ -61,9 +63,10 @@ mo.iframe(
 ```
 
 Use iframes when:
-- Running scripts that shouldn't affect the notebook
-- Isolating CSS styles
-- Embedding external content safely
+- Running scripts (they don't execute in `mo.Html`)
+- Isolating CSS styles from the rest of the page
+
+`mo.iframe` takes an HTML string, not a URL, and is not a security sandbox (no `sandbox` attribute; it is served from the notebook's origin).
 
 ## Html Methods
 
@@ -121,6 +124,9 @@ element.callout(kind="success")  # Green
 element.callout(kind="warn")     # Yellow
 element.callout(kind="danger")   # Red
 element.callout(kind="neutral")  # Gray
+
+# With a bold title line
+element.callout(kind="warn", title="Warning")
 ```
 
 ### Batch
@@ -264,11 +270,12 @@ safe_content = html.escape(user_input)
 mo.Html(f"<div>{safe_content}</div>")
 ```
 
-### Use Iframes for Untrusted Content
+### Don't Treat Iframes as a Sandbox
 
 ```python
-# Isolate potentially unsafe HTML
-mo.iframe(external_html_content)
+# mo.iframe isolates styles and lets scripts run, but those scripts share
+# the notebook's origin. Escape or sanitize untrusted HTML instead.
+mo.iframe(trusted_html_with_scripts)
 ```
 
 ### Keep Styles Inline

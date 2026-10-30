@@ -18,6 +18,30 @@ graph LR
 """)
 ```
 
+Signature: `mo.mermaid(diagram, theme=None, theme_variables=None)`. Returns an `Html` object.
+
+### Themes
+
+By default the diagram follows the app's light/dark theme. Pass `theme` to pin one: `"default"`, `"base"`, `"dark"`, `"forest"`, `"neutral"`, or `"null"`.
+
+```python
+mo.mermaid(diagram, theme="neutral")
+
+# Custom colors via Mermaid themeVariables
+mo.mermaid(
+    diagram,
+    theme="base",
+    theme_variables={
+        "primaryColor": "#E8EEF5",
+        "primaryTextColor": "#1F2937",
+        "primaryBorderColor": "#64748B",
+        "lineColor": "#475569",
+    },
+)
+```
+
+`theme_variables` only works with `theme="base"`. If you omit `theme`, marimo sets it to `"base"` for you; combining `theme_variables` with any other explicit theme raises `ValueError`. See [Mermaid theming](https://mermaid.js.org/config/theming.html) for the available variables.
+
 ## Flowcharts
 
 ### Basic Flowchart
@@ -307,20 +331,24 @@ graph TD
 
 ### Combine with Markdown
 
+A cell only displays its last expression, so stack the pieces with `mo.vstack`:
+
 ```python
-mo.md("""
+mo.vstack([
+    mo.md("""
 ## System Architecture
 
 The following diagram shows the data flow:
-""")
-
-mo.mermaid("""
+"""),
+    mo.mermaid("""
 graph LR
     Input --> Processing --> Output
-""")
-
-mo.md("Data flows from left to right through the system.")
+"""),
+    mo.md("Data flows from left to right through the system."),
+])
 ```
+
+Or embed the diagram in markdown with an f-string: `mo.md(f"## Data flow\n\n{mo.mermaid(diagram)}")`.
 
 ## Resources
 

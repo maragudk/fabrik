@@ -28,27 +28,36 @@ if __name__ == "__main__":
     app.run()
 ```
 
+`App(**kwargs)` accepts these config keys (unknown keys are silently dropped):
+
+```python
+app = marimo.App(
+    width="medium",          # "compact" (default), "medium", "full", "columns", "normal"
+    app_title="My App",      # Browser tab title
+    layout_file="layouts/notebook.grid.json",  # Relative to the notebook file
+    css_file="custom.css",   # Relative to the notebook file
+    html_head_file="head.html",
+    auto_download=["html"],  # Any of "html", "markdown", "ipynb"
+    sql_output="auto",       # "auto", "polars", "lazy-polars", "pandas", "native"
+)
+```
+
 ## Embedding Notebooks
 
 ### app.embed
 
-Embed one notebook's output into another (async).
+Embed one notebook's output into another (async). Signature: `embed(defs: dict[str, Any] | None = None) -> AppEmbedResult`.
 
 ```python
-import marimo as mo
-
-# Import another notebook
+# Cell 1: import the other notebook
 from other_notebook import app as other_app
+```
 
-# Embed it
-async def embed_notebook():
-    result = await other_app.embed()
-    return result.output
-
-# In a cell
-output = await other_app.embed()
-output.output  # Visual output
-output.defs    # Variable definitions
+```python
+# Cell 2: embed it -- app.embed() can't be called in the cell that imported it
+result = await other_app.embed()
+result.output  # Visual output
+result.defs    # Variable definitions
 ```
 
 With parameter override:
@@ -59,6 +68,16 @@ result = await other_app.embed(defs={"threshold": 0.8})
 
 # The embedded notebook runs with threshold=0.8
 # instead of its default value
+```
+
+To embed independent copies of the same notebook, clone it first:
+
+```python
+one = other_app.clone()
+r1 = await one.embed()
+
+two = other_app.clone()
+r2 = await two.embed()
 ```
 
 ### Nested Embedding
@@ -115,6 +134,8 @@ outputs, definitions = app.run(defs={
 # Their dependents run with the provided values
 ```
 
+Overriding is all-or-nothing per cell: if a cell defines `x` and `y`, passing only `x` raises `IncompleteRefsError`. Provide every definition of each overridden cell.
+
 ## App Metadata
 
 ### mo.app_meta
@@ -150,6 +171,7 @@ theme = mo.app_meta().theme
 # Possible values:
 # - "light"
 # - "dark"
+# A "system" theme setting currently reports "light"
 ```
 
 **request**: HTTP request data (in app mode).
@@ -158,10 +180,12 @@ theme = mo.app_meta().theme
 request = mo.app_meta().request
 
 # Access request information
-request.headers      # HTTP headers
-request.cookies      # Cookies
-request.query_params # URL query parameters
-request.user         # Authenticated user info (if available)
+request.headers      # HTTP headers (dict)
+request.cookies      # Cookies (dict)
+request.query_params # URL query parameters (dict of name -> list of values)
+request.path_params  # Path parameters from the URL route
+request.url          # Dict with "path", "query", "hostname", "port", ...
+request.user         # Authenticated user info from auth middleware (if available)
 ```
 
 ## Conditional Behavior
@@ -206,7 +230,7 @@ plt.style.use("dark_background" if theme == "dark" else "default")
 request = mo.app_meta().request
 
 if request and request.user:
-    user_name = request.user.get("name", "Guest")
+    user_name = request.user.get("username", "Guest")
     mo.md(f"Welcome, {user_name}!")
 else:
     mo.md("Please log in")
@@ -214,17 +238,33 @@ else:
 
 ## Notebook as Module
 
-Import and use notebooks as Python modules:
+Only top-level functions and classes are importable as plain Python objects. Define them with `@app.function` / `@app.class_definition`; they may only reference names from the setup cell or other top-level definitions:
 
 ```python
-# utils_notebook.py defines utility functions
-from utils_notebook import process_data, validate_input
+# utils_notebook.py
+with app.setup:
+    import pandas as pd
 
-# Use exported functions
+@app.function
+def process_data(df):
+    return df.dropna()
+
+@app.class_definition
+class Validator:
+    def check(self, df):
+        return not df.empty
+```
+
+```python
+# another file
+from utils_notebook import process_data, Validator
+
 result = process_data(my_data)
 ```
 
-Cells can be imported individually:
+A function defined inside a regular `@app.cell` is NOT importable (`ImportError`).
+
+Named cells can be imported individually as `Cell` objects (the name is the cell's function name):
 
 ```python
 from utils_notebook import calculate
@@ -270,14 +310,19 @@ def _():
 ### Check Mode Before UI
 
 ```python
+# Cell 1
 mode = mo.app_meta().mode
+threshold_ui = mo.ui.slider(0, 1, step=0.1, value=0.5)
+threshold_ui if mode != "script" else None
+```
 
-if mode == "script":
-    # Use CLI args or defaults
-    threshold = mo.cli_args().get("threshold", 0.5)
-else:
-    # Show interactive UI
-    threshold = mo.ui.slider(0, 1, value=0.5).value
+```python
+# Cell 2 -- read .value in a different cell than the one that created the UI
+threshold = (
+    float(mo.cli_args().get("threshold", 0.5))
+    if mode == "script"
+    else threshold_ui.value
+)
 ```
 
 ### Handle Missing Request
@@ -295,15 +340,12 @@ else:
 ### Export Clean APIs
 
 ```python
-# In notebook, define clean interface
-@app.cell
-def _():
-    def public_function(data):
-        """Process data and return results."""
-        return _internal_process(data)
+# In notebook, define a top-level function
+@app.function
+def public_function(data):
+    """Process data and return results."""
+    return internal_process(data)  # Must itself be top-level or from the setup cell
 
-    return (public_function,)
-
-# Other notebooks can import and use
+# Other notebooks or scripts can import and use it
 from my_notebook import public_function
 ```

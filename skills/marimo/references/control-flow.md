@@ -89,20 +89,23 @@ mo.stop(
 
 ### mo.ui.refresh
 
-Trigger cell re-execution at intervals.
+Trigger cell re-execution at intervals. The element is a button with an interval dropdown; it ticks in the frontend, so it must be displayed.
 
 ```python
-# Auto-refresh every 5 seconds
-refresh = mo.ui.refresh(interval=5)
+# Auto-refresh every 5 seconds (number of seconds or a string like "5s", "1m 30s")
+refresh = mo.ui.refresh(default_interval=5)
+refresh
 
-# With options
+# With a choice of intervals (default_interval must be one of the options;
+# the dropdown adds its own "off" choice, so don't pass "off")
 refresh = mo.ui.refresh(
-    options=["1s", "5s", "10s", "30s", "off"],
-    default_interval="5s"
+    options=["1s", "5s", "10s", "30s"],
+    default_interval="5s",
 )
+refresh
 
-# In another cell - reference refresh to trigger updates
-_ = refresh.value
+# In another cell - reference refresh to re-run on every tick
+_ = refresh.value  # "" before the first tick, then e.g. "5s (3)"
 current_time = datetime.now()
 latest_data = fetch_data()
 ```
@@ -111,24 +114,26 @@ latest_data = fetch_data()
 
 ### Lazy Execution Mode
 
-Configure via notebook settings to mark cells as stale instead of auto-running.
+Set "On cell change" to "lazy" in the notebook settings (or the notebook footer) to mark dependent cells as stale instead of auto-running them. Running a cell with stale ancestors runs those ancestors first; the run button runs all stale cells.
 
-In the editor:
-1. Open settings (gear icon)
-2. Enable "Lazy execution"
-3. Cells show "stale" indicator when dependencies change
-4. Click to run manually
+```toml
+# pyproject.toml (or the notebook's PEP 723 metadata)
+[tool.marimo.runtime]
+on_cell_change = "lazy"   # default: "autorun"
+```
 
 Useful for:
 - Expensive computations
 - Debugging
 - Step-by-step execution
 
-### Disable Autorun
+### Disable Autorun on Startup
 
-In notebook settings:
-- Disable "Autorun on startup"
-- Disable "Autorun on cell execution"
+Toggle the "On startup" setting (config key `auto_instantiate`) to stop `marimo edit` from running the notebook when it opens. Neither setting affects apps served with `marimo run`.
+
+### Disable Individual Cells
+
+Disable a cell from the editor's cell menu, or with `@app.cell(disabled=True)` in the file. A disabled cell and its descendants don't run.
 
 ## Threading
 
@@ -189,17 +194,17 @@ process(result)
 
 ```python
 # Complex gating example
-file = mo.ui.file(filetypes=[".csv"])
+file = mo.ui.file(filetypes=[".csv"])  # value is an empty tuple until upload
 run_btn = mo.ui.run_button(label="Analyze")
 
 mo.vstack([file, run_btn])
 
 # In processing cell
-mo.stop(file.value is None, mo.md("Upload a CSV file"))
+mo.stop(not file.value, mo.md("Upload a CSV file"))
 mo.stop(not run_btn.value, mo.md("Click **Analyze** to process"))
 
 # Both conditions met - process
-df = pd.read_csv(io.BytesIO(file.value[0].contents))
+df = pd.read_csv(io.BytesIO(file.contents()))
 analysis = analyze(df)
 ```
 

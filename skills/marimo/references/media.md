@@ -27,11 +27,17 @@ mo.image(
     alt="Description for accessibility",
     width=400,
     height=300,
-    rounded=True
+    rounded=True,
+    caption="Figure 1",
+    style={"border": "1px solid gray"},
 )
 
 # Data URL
 mo.image(src="data:image/png;base64,...")
+
+# From arrays/tensors (numpy, torch, lists; requires Pillow).
+# uint8 used as-is; other dtypes are min-max normalized unless vmin/vmax given
+mo.image(array, vmin=0, vmax=255)
 ```
 
 ### mo.image_compare
@@ -40,8 +46,12 @@ Compare two images side by side with a slider.
 
 ```python
 mo.image_compare(
-    left="before.png",
-    right="after.png"
+    before_image="before.png",
+    after_image="after.png",
+    value=30,                # Initial slider position, 0-100 (default 50)
+    direction="horizontal",  # or "vertical"
+    width=500,
+    height=400,
 )
 ```
 
@@ -61,13 +71,11 @@ mo.audio(src="./audio/recording.wav")
 # From bytes
 mo.audio(src=audio_bytes)
 
-# With options
-mo.audio(
-    src="audio.mp3",
-    autoplay=False,
-    controls=True,
-    loop=False
-)
+# From a numpy array (1D mono, or 2D [channels, samples]); rate is required
+mo.audio(src=waveform, rate=44100)
+
+# normalize=True (default) rescales array audio; False requires values in [-1, 1]
+mo.audio(src=waveform, rate=44100, normalize=False)
 ```
 
 ## Video
@@ -91,8 +99,10 @@ mo.video(
     autoplay=False,
     controls=True,
     loop=False,
-    muted=False
+    muted=False,
+    rounded=False
 )
+# Note: autoplay only works when muted=True
 ```
 
 ## PDF
@@ -102,17 +112,20 @@ mo.video(
 Display PDF documents.
 
 ```python
-# From URL
+from pathlib import Path
+
+# From URL (plain strings are used as the URL as-is)
 mo.pdf(src="https://example.com/document.pdf")
 
-# From local file
-mo.pdf(src="./docs/report.pdf")
+# From local file: pass a Path or a file opened in binary mode, not a str
+mo.pdf(src=Path("docs/report.pdf"))
 
-# With options
+# With options (defaults: width="100%", height="70vh")
 mo.pdf(
-    src="document.pdf",
+    src="https://example.com/document.pdf",
     width="100%",
-    height="600px"
+    height="600px",
+    initial_page=3,  # Only works when src is a URL string
 )
 ```
 
@@ -120,7 +133,7 @@ mo.pdf(
 
 ### mo.download
 
-Create downloadable content.
+Show a download button. `data` can be bytes, a string, a file opened in binary mode, or a URL (strings starting with `http` or `data:`).
 
 ```python
 # From string
@@ -153,6 +166,15 @@ mo.download(
     filename="data.csv",
     mimetype="text/csv"
 )
+
+# Lazy: pass a (sync or async) function; it runs only when the button is clicked
+mo.download(data=lambda: build_report_bytes(), filename="report.pdf")
+
+# Filename can also be a callable, evaluated at click time
+mo.download(data=get_data, filename=lambda: f"export-{date.today()}.csv", mimetype="text/csv")
+
+# Disabled button
+mo.download(data=b"", filename="empty.txt", disabled=True)
 ```
 
 ## Plain Text
@@ -173,7 +195,7 @@ mo.plain_text("Preformatted text\n  with indentation")
 
 ## Static Files
 
-For images and media in markdown, place files in a `public/` directory:
+For images and media in markdown, place files in a `public/` directory next to the notebook (served at `public/...`):
 
 ```
 notebook.py
@@ -235,7 +257,10 @@ img = Image.open("photo.jpg")
 # Process image
 img = img.resize((400, 300))
 
-# Convert to bytes for display
+# Pass the PIL image directly
+mo.image(img)
+
+# Or convert to bytes yourself
 buf = io.BytesIO()
 img.save(buf, format="PNG")
 buf.seek(0)

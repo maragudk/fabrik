@@ -46,6 +46,15 @@ set_count(5)
 set_count(lambda x: x + 1)
 ```
 
+### Reactivity rule
+
+When a setter is called in one cell, marimo runs all *other* cells that reference the getter **through a global variable**. So:
+
+- Always assign the getter to a global variable (like a UI element).
+- The cell that called the setter is not re-run, even if it reads the getter (unless `allow_self_loops=True`).
+- A setter called from an `on_change`/`on_click` callback counts as called from the cell that **defined the UI element**. Display the state in a different cell, or that display won't update.
+- Never mutate the state value in place; always go through the setter.
+
 ## Synchronizing UI Elements
 
 Link multiple UI elements to the same state:
@@ -88,9 +97,10 @@ button = mo.ui.button(
 button
 
 # Cell 3: Display history
-mo.md(f"Entries: {len(get_history())}")
-for entry in get_history():
-    mo.output.append(str(entry))
+mo.vstack(
+    [mo.md(f"Entries: {len(get_history())}")]
+    + [mo.md(str(entry)) for entry in get_history()]
+)
 ```
 
 ## Parameters
@@ -104,7 +114,7 @@ get_value, set_value = mo.state(
 
 ### allow_self_loops
 
-By default, calling `set_value()` doesn't re-run the cell containing the setter. Enable `allow_self_loops=True` to allow this (use with caution to avoid infinite loops).
+By default, calling `set_value()` doesn't re-run the cell that called it (for UI callbacks, the cell that defined the element). Enable `allow_self_loops=True` to allow this (use with caution to avoid infinite loops).
 
 ```python
 get_count, set_count = mo.state(0, allow_self_loops=True)
@@ -121,21 +131,22 @@ button = mo.ui.button(
 ### Counter
 
 ```python
-# State
+# Cell 1: State and controls
 get_count, set_count = mo.state(0)
 
-# Controls
-mo.hstack([
-    mo.ui.button(label="-", on_click=lambda _: set_count(get_count() - 1)),
-    mo.md(f"**{get_count()}**"),
-    mo.ui.button(label="+", on_click=lambda _: set_count(get_count() + 1))
-])
+decrement = mo.ui.button(label="-", on_change=lambda _: set_count(lambda v: v - 1))
+increment = mo.ui.button(label="+", on_change=lambda _: set_count(lambda v: v + 1))
+mo.hstack([decrement, increment])
+
+# Cell 2: Display (separate cell, so it re-runs on click)
+mo.md(f"**{get_count()}**")
 ```
 
 ### Toggle
 
 ```python
-get_visible, set_visible = mo.state(False)
+# allow_self_loops so this cell (which reads the getter) re-runs on click
+get_visible, set_visible = mo.state(False, allow_self_loops=True)
 
 toggle = mo.ui.button(
     label="Show" if not get_visible() else "Hide",
@@ -151,8 +162,10 @@ mo.vstack([
 ### Form with Reset
 
 ```python
+# Cell 1: State
 get_form_data, set_form_data = mo.state({"name": "", "email": ""})
 
+# Cell 2: Inputs (typing doesn't re-run this cell; reset does)
 name = mo.ui.text(
     value=get_form_data()["name"],
     on_change=lambda v: set_form_data({**get_form_data(), "name": v})
@@ -163,11 +176,13 @@ email = mo.ui.text(
     on_change=lambda v: set_form_data({**get_form_data(), "email": v})
 )
 
+# Cell 3: Reset button (must not be in Cell 2, or Cell 2 won't re-run)
 reset = mo.ui.button(
     label="Reset",
     on_click=lambda _: set_form_data({"name": "", "email": ""})
 )
 
+# Cell 4: Layout
 mo.vstack([name, email, reset])
 ```
 

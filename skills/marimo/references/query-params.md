@@ -14,7 +14,7 @@ Query parameters allow:
 
 ### mo.query_params
 
-Get the query parameters object.
+Get the query parameters object. Call it in its own cell; mutating it re-runs every other cell that references it.
 
 ```python
 import marimo as mo
@@ -39,15 +39,18 @@ params = mo.query_params()
 # Get with default
 value = params.get("key", "default")
 
-# Direct access (may raise KeyError)
+# Direct access (returns None if missing, no KeyError)
 value = params["key"]
 
-# Get all as dict
+# Repeated keys (?tag=a&tag=b) give a list; get_all always returns a list
+tags = params.get_all("tag")  # ["a", "b"], or [] if missing
+
+# Get all as dict (values are str or list[str])
 all_params = params.to_dict()
 
-# Iterate
-for key, value in params.items():
-    print(f"{key}: {value}")
+# Iterate (yields keys; there is no .items())
+for key in params:
+    print(f"{key}: {params[key]}")
 ```
 
 ## Setting Parameters
@@ -61,16 +64,19 @@ params["search"] = "hello"
 # Set using method
 params.set("page", "2")
 
-# Set multiple
-params.update({
-    "search": "hello",
-    "page": "1",
-    "sort": "date"
-})
+# Set a list (?tag=a&tag=b), or append to one
+params["tag"] = ["a", "b"]
+params.append("tag", "c")
+
+# Set multiple (there is no .update())
+for key, value in {"search": "hello", "page": "1", "sort": "date"}.items():
+    params[key] = value
 
 # Remove parameter
-del params["filter"]
-params.pop("filter", None)
+del params["filter"]          # KeyError if missing
+params.remove("filter")       # no-op if missing
+params.remove("tag", "a")     # remove one value from a list
+params["filter"] = None       # setting None (or []) also removes the key
 
 # Clear all
 params.clear()
@@ -136,7 +142,7 @@ Query params integrate with marimo's reactivity:
 # Cell 1
 params = mo.query_params()
 
-# Cell 2 - reacts to URL changes
+# Cell 2 - re-runs whenever another cell sets a param
 search_term = params.get("search", "")
 results = search_database(search_term)
 
@@ -149,7 +155,7 @@ mo.ui.table(results)
 Use Pydantic for type-safe query parameters:
 
 ```python
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 class FilterParams(BaseModel):
     search: str = ""
@@ -172,11 +178,9 @@ except ValidationError as e:
 ```python
 # Set parameters for sharing
 params = mo.query_params()
-params.update({
-    "view": "chart",
-    "date_range": "2024-01-01,2024-12-31",
-    "categories": "a,b,c"
-})
+params["view"] = "chart"
+params["date_range"] = "2024-01-01,2024-12-31"
+params["categories"] = "a,b,c"
 
 # URL becomes: ?view=chart&date_range=2024-01-01,2024-12-31&categories=a,b,c
 ```
@@ -271,14 +275,14 @@ except ValueError:
 ```python
 # Remove empty parameters
 if not search.value:
-    params.pop("search", None)
+    params.remove("search")
 else:
     params.set("search", search.value)
 ```
 
 ## Limitations
 
-- Query params are strings; convert types manually
+- Query params are strings (or lists of strings for repeated keys); convert types manually
 - Long URLs may hit browser limits
 - Not suitable for sensitive data
 - Changes trigger cell re-execution

@@ -48,7 +48,7 @@ Options:
 ```python
 @mo.persistent_cache(
     save_path="./cache",        # Custom cache directory
-    method="pickle"             # "pickle" (default) or "json"
+    method="pickle"             # "pickle" (default), "json", or "lazy"
 )
 def cached_function(x):
     return process(x)
@@ -65,6 +65,7 @@ def bounded_cache(x):
 
 # Keeps most recent 128 unique argument combinations
 # Evicts least recently used when full
+# maxsize defaults to 128; maxsize=-1 disables the limit
 ```
 
 ## Cache Key Construction
@@ -104,8 +105,8 @@ def func(x):
 
 ```python
 @mo.persistent_cache(
-    save_path="./my_cache",  # Default: __marimo__/cache/
-    method="pickle",          # "pickle" or "json"
+    save_path="./my_cache",  # Default: __marimo__/cache/ next to the notebook
+    method="pickle",          # "pickle" (default), "json", or "lazy"
     pin_modules=False,
     name="my_cache"           # Identifier for context manager usage
 )
@@ -127,6 +128,15 @@ with mo.persistent_cache(name="data_processing"):
 # result is cached
 ```
 
+`mo.cache("name")` and `mo.lru_cache("name")` work the same way as in-memory context managers:
+
+```python
+with mo.cache("embeddings"):
+    X = embed(texts)
+```
+
+On a cache hit the whole block is skipped (including prints) and its variables are restored. The context manager uses `sys.settrace`, so it may conflict with debuggers.
+
 ## Async Support
 
 All cache decorators support async functions.
@@ -141,6 +151,8 @@ async def fetch_data(url):
 # Usage
 data = await fetch_data("https://api.example.com/data")
 ```
+
+Concurrent calls with the same arguments run the function once; the others await that result.
 
 ## Cache Behavior
 
@@ -164,6 +176,7 @@ with_side_effect(5)  # No print, returns 10 (cached)
 - `mo.cache`: Cleared when notebook restarts
 - `mo.persistent_cache`: Persists across sessions (saved to disk)
 - `mo.lru_cache`: Cleared when notebook restarts, bounded size
+- All of them survive re-running the cell that defines the cached function, as long as that cell's code (and its ancestors' code) is unchanged. Unlike `functools.cache`, which resets on every re-run.
 
 ### Cache Invalidation
 
@@ -172,6 +185,8 @@ Caches invalidate when:
 - Closed-over variables change
 - Source code changes (if variables can't be hashed)
 - `pin_modules=True` and module versions change
+
+Not tracked: the source code of imported (non-marimo) modules, and mutations of variables. Decorators from other modules that don't use `functools.wraps` can cause cache-key collisions between different functions when stacked under `@mo.cache`.
 
 ## Best Practices
 
@@ -233,6 +248,32 @@ def pipeline(x):
     return result
 ```
 
+### Watch Files Used Inside Caches
+
+Read files through `mo.watch.file` so edits to the file invalidate the cache:
+
+```python
+# Cell 1
+data_file = mo.watch.file("data.txt")
+```
+
+```python
+# Cell 2
+with mo.persistent_cache("parsed"):
+    parsed = parse(data_file.read_text())
+```
+
+## Automatic Cell Caching (experimental)
+
+Cache every cell, not just decorated functions, by enabling it in `pyproject.toml` or the notebook's PEP 723 metadata:
+
+```toml
+[tool.marimo.runtime]
+cache_cells = true
+```
+
+On restart, cells with a cache hit are skipped and their variables restored. Cells whose values can't be restored re-run live (as do cells that define UI elements).
+
 ## Clearing Caches
 
 ```python
@@ -244,6 +285,15 @@ import shutil
 shutil.rmtree("__marimo__/cache")
 ```
 
+Inspect on-disk caches from the CLI:
+
+```bash
+marimo cache dir notebook.py      # Print the cache directories for a notebook (or folder)
+marimo cache size -r notebooks/   # Disk usage and entry counts, recursively
+```
+
+For git projects, add `**/__marimo__/cache/` to `.gitignore`.
+
 ## Debugging Cache
 
 ```python
@@ -253,4 +303,7 @@ def my_func(x):
     return x * 2
 
 # Monitor cache hits/misses via print output
+
+my_func.cache_info()
+# CacheInfo(hits=1, misses=2, maxsize=None, currsize=2, time_saved=0.0)
 ```
