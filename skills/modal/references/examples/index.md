@@ -1,0 +1,77 @@
+# Examples
+
+- Getting started
+  - [Hello, world](./hello_world.md)
+  - [Simple web scraper](./webscraper.md)
+  - [Serving Web Functions](./basic_web.md)
+- Large language models (LLMs)
+  - [Deploy an OpenAI-compatible LLM service with vLLM](./llm_inference.md)
+  - [Cut Ministral 3 cold start times by 10x with snapshots](./ministral3_inference.md)
+  - [Maximize tokens per second in batch processing with vLLM](./vllm_throughput.md)
+  - [Serve an ultra-low-latency chatbot with SGLang](./sglang_low_latency.md)
+  - [Deploy Nemotron 3](./nemotron_inference.md)
+  - [Serve Inkling-Small with SGLang](./inkling_small.md)
+  - [Serve DeepSeek-V4-Flash](./deepseek_v4_flash.md)
+  - [Run a multimodal RAG chatbot to answer questions about PDFs](./chat_with_pdf_vision.md)
+  - [Deploy a stateless MCP with FastMCP](./mcp_server_stateless.md)
+- Images, video, & 3D
+  - [Edit images with Flux Kontext](./image_to_image.md)
+  - [Fine-tune Wan2.1 video models on your face](./music-video-gen.md)
+  - [Run Flux fast with torch.compile](./flux.md)
+  - [Animate images with LTX-Video](./image_to_video.md)
+  - [Generate video clips with LTX-Video](./ltx.md)
+  - [Run Stable Diffusion with a CLI, API, and web UI](./text_to_image.md)
+- Audio
+  - [Deploy a Moshi voice chatbot](./llm-voice-chat.md)
+  - [Stream transcripts at the speed of speech using Kyutai STT](./streaming_kyutai_stt.md)
+  - [Make music with ACE-Step](./generate_music.md)
+  - [Generate speech with Chatterbox](./chatterbox_tts.md)
+  - [Run high throughput batched transcription with Whisper](./batched_whisper.md)
+  - [Fine-tune Whisper to recognize new words](./fine_tune_asr.md)
+- Real-time communication (WebRTC)
+  - [Serverless WebRTC](./webrtc_yolo.md)
+  - [WebRTC quickstart with FastRTC](./fastrtc_flip_webcam.md)
+- Computational biology
+  - [Design protein binders with ESMFold2](./esmfold2_binder_design.md)
+  - [Fold proteins with Chai-1](./chai1.md)
+  - [Build a protein-folding dashboard](./esm3.md)
+  - [Fold proteins with Boltz-2](./boltz_predict.md)
+- Modal Sandboxes
+  - [Run Cursor Cloud Agents on Modal](./cursor.md)
+  - [Build a scalable AI coding platform](./modal-vibe.md)
+  - [Create GIFs from Slack using the Claude Agent SDK](./claude-slack-gif-creator.md)
+  - [Run a LangGraph agent's code in a secure GPU sandbox](./agent.md)
+  - [Watch a computer-use agent work in real-time over VNC](./computer_use_vnc.md)
+  - [Run massively parallel evals on Modal Sandboxes](./harbor_evals.md)
+  - [Build a stateful, sandboxed code interpreter](./simple_code_interpreter.md)
+  - [Run Node.js, Ruby, and more in a Sandbox](./safe_code_execution.md)
+  - [Speed up Sandbox starts with warm pools](./sandbox_pool.md)
+  - [Inject secrets into outbound requests](./sandbox_secret_injection.md)
+- Reinforcement Learning
+  - [Paint flowers with code](./paint_flowers.md)
+  - [Train coding agents](./swe_gym.md)
+  - [Make LLMs better at math](./miles_grpo.md)
+- Embeddings
+  - [Serve Liquid AI embeddings with Modal Servers](./liquidai_embeddings_server.md)
+  - [Embed millions of documents with TEI](./amazon_embeddings.md)
+- Parallel processing and job scheduling
+  - [Deploy a Hacker News Slackbot](./hackernews_alerts.md)
+  - [Run a Document OCR job queue](./doc_ocr_jobs.md)
+  - [Serve a Document OCR web app](./doc_ocr_webapp.md)
+- Training models from scratch
+  - [Train an SLM with early-stopping grid search over hyperparameters](./hp_sweep_gpt.md)
+  - [Run long, resumable training jobs](./long-training.md)
+- Hosting popular libraries
+  - [YOLO: Fine-tune and serve computer vision models](./finetune_yolo.md)
+  - [Blender: Build a 3D render farm](./blender_video.md)
+  - [Streamlit: Run and deploy Streamlit apps](./serve_streamlit.md)
+  - [SQLite: Publish explorable data with Datasette](./cron_datasette.md)
+  - [Algolia: Build docsearch with a crawler](./algolia_indexer.md)
+- Connecting to other APIs
+  - [Google Sheets: Sync databases and APIs to a Google Sheet](./db_to_sheet.md)
+  - [OpenAI: Run a RAG Q&A chatbot](./potus_speech_qanda.md)
+  - [Tailscale: Add Modal Apps to your VPN](./modal_tailscale.md)
+  - [Prometheus: Publish custom metrics with Pushgateway](./pushgateway.md)
+- Managing data
+  - [Mount S3 buckets in Modal Apps](./s3_bucket_mount.md)
+  - [Build your own data warehouse with DuckDB, dbt, and Modal](./dbt_duckdb.md)

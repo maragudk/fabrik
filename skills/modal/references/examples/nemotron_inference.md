@@ -1,0 +1,497 @@
+# Low latency Nvidia Nemotron 3 with SGLang and Modal
+
+In this example, we show how to serve Nvidia's [Nemotron](https://www.nvidia.com/en-us/ai-data-science/foundation-models/nemotron/) models
+on Modal at low latency with [SGLang](https://github.com/sgl-project/sglang).
+
+The Nemotron models use sparse MoE matmuls and hybrid attention
+(mixing Transformer and Mamba layers) to deliver
+powerful capabilities in a model that's efficient to run.
+You can read more in the paper [here](https://arxiv.org/abs/2512.20856).
+
+This example is intended to demonstrate everything required to run
+inference at the highest performance and with the lowest latency possible,
+and so it includes advanced features of both SGLang and Modal.
+For a simpler introduction to LLM serving, see
+[this example](https://modal.com/docs/examples/llm_inference).
+
+To minimize routing overheads, we use a [Modal Server](https://modal.com/docs/guide/servers),
+which uses a [low-latency routing service on Modal](https://modal.com/blog/serverless-servers)
+designed for latency-sensitive inference workloads.
+This gives us more control over routing, but with increased power comes increased responsibility.
+
+## Set up the container image
+
+Our first order of business is to define the environment our server will run in:
+the [container `Image`](https://modal.com/docs/guide/images).
+
+We start from a container image provided
+[by the SGLang team via Dockerhub](https://hub.docker.com/r/lmsysorg/sglang/tags).
+
+While we're at it, we import the dependencies we'll need both remotely and locally (for deployment).
+
+```python
+import asyncio
+import json
+import subprocess
+import time
+
+import aiohttp
+import modal
+
+MINUTES = 60  # seconds
+
+sglang_image = (
+    modal.Image.from_registry("lmsysorg/sglang:v0.5.11")
+    .entrypoint(  # silence chatty logs on container start
+        []
+    )
+    .run_commands(  # clean up Image
+        "rm -rf /root/.cache/huggingface"
+    )
+)
+
+```
+
+### Loading and cacheing the model weights
+
+We'll serve [NVIDIA's Nemotron 3 Nano](https://arxiv.org/abs/2512.20856).
+This model has 30 billion parameters, 3 billion of which are active per token.
+For lower latency (in both [memory-bound](https://modal.com/gpu-glossary/perf/memory-bound)
+and [compute-bound](https://modal.com/gpu-glossary/perf/compute-bound) settings),
+we choose the version quantized to
+[4 bit precision floating point](https://modal.com/llm-almanac/quant-formats).
+This reduces the amount of data that needs to be loaded
+[from GPU RAM into SM SRAM](https://modal.com/gpu-glossary/perf/memory-bandwidth)
+in each forward pass.
+Loading fewer bytes of model weights also speeds up [cold starts](https://modal.com/docs/guide/cold-start)
+of our inference server.
+
+```python
+MODEL_NAME = "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4"
+
+```
+
+We load the model [from the Hugging Face Hub](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4).
+Downloads from the Hub are much faster if you are authenticated.
+So we add a Hugging Face token as a [Modal Secret](https://modal.com/docs/guide/secrets).
+You can create a a Modal Secret with your Hugging Face token
+[here](https://modal.com/secrets). Make sure to name if `huggingface-secret`!
+
+```python
+hf_secret = modal.Secret.from_name("huggingface-secret")
+
+```
+
+We don't want to load the model from the Hub every time we start the server.
+We can load it much faster from a [Modal Volume](https://modal.com/docs/guide/volumes).
+Typical speeds are around one to two GB/s.
+
+```python
+HF_CACHE_VOL = modal.Volume.from_name("huggingface-cache", create_if_missing=True)
+HF_CACHE_PATH = "/root/.cache/huggingface"
+MODEL_PATH = f"{HF_CACHE_PATH}/{MODEL_NAME}"
+
+```
+
+In addition to pointing the Hugging Face Hub at the path
+where we mount the Volume, we also
+[turn on "high performance" downloads](https://huggingface.co/docs/hub/en/models-downloading#faster-downloads),
+which can fully saturate our network bandwidth.
+
+```python
+sglang_image = sglang_image.env(
+    {"HF_HUB_CACHE": HF_CACHE_PATH, "HF_XET_HIGH_PERFORMANCE": "1"}
+)
+
+```
+
+We also choose a [GPU](https://modal.com/docs/guide/gpu) to deploy our inference server onto.
+We choose the [B200 GPU](https://modal.com/blog/introducing-b200-h200),
+which offers excellent price-performance
+and supports both 8 bit and 4 bit [quantized floating point](https://modal.com/llm-almanac/quant-formats)
+operations.
+
+```python
+GPU_TYPE, N_GPUS = "B200", 1
+GPU = f"{GPU_TYPE}:{N_GPUS}"
+
+```
+
+## Define the inference server and infrastructure
+
+### Selecting infrastructure to minimize latency
+
+Minimizing latency requires geographic co-location of clients and servers.
+
+So for low latency LLM inference services on Modal, you must select a
+[cloud region](https://modal.com/docs/guide/region-selection)
+for both the GPU-accelerated containers running inference
+and for the internal Modal proxies that forward requests to them
+as part of defining a `@app.server`.
+
+Here, we assume users are mostly in the northern half of the Americas
+and select the `us` cloud region serve them.
+This should result in at most a few dozen milliseconds of round-trip time.
+
+```python
+REGION = "us"
+ROUTING_REGION = "us-west"
+
+```
+
+Latencies for multi-turn interactions with LLMs are
+substantially cut when previous interaction turns are in the KV cache.
+KV caches are stored in [GPU RAM](https://modal.com/gpu-glossary/device-hardware/gpu-ram),
+so they aren't shared across replicas.
+To improve cache hit rate, Modal Servers
+include affinity routing based on a client-provided header.
+See the client code below for details.
+
+For production-scale LLM inference services, there are generally
+enough requests to justify keeping at least one replica running at all times.
+Having a "warm" or "live" replica reduces latency by skipping slow initialization work
+that occurs when new replica boots up (a ["cold start"](https://modal.com/docs/guide/cold-start)).
+For LLM inference servers, that latency runs from seconds to minutes.
+
+To ensure at least one container is always available,
+we can set the `min_containers` of our Modal Function
+to `1` or more.
+
+However, since this is documentation code, we'll set it to `0`
+to avoid surprise bills during casual use.
+
+```python
+MIN_CONTAINERS = 0  # set to 1 to ensure one replica is always ready
+
+```
+
+Finally, we need to decide how we will scale up and down replicas
+in response to load. Without autoscaling, users' requests will queue
+when the server becomes overloaded. Even apart from queueing, responses
+generally become slower per user above a certain minimum number of
+concurrent requests.
+
+So we set a target for the number of inputs to run on a single container
+with the [`target_concurrency`](https://modal.com/docs/reference/modal.concurrent) parameter.
+
+```python
+TARGET_INPUTS = 32
+
+```
+
+Generally, this choice needs to be made as part of
+[LLM inference engine benchmarking](https://modal.com/llm-almanac/how-to-benchmark).
+
+### Controlling container lifecycles with `modal.Server`
+
+We wrap up all of the choices we made about the infrastructure
+of our inference server into a number of Python decorators
+that we apply to a Python class that encapsulates the logic
+to run our server.
+
+The key decorators are:
+
+* [`@app.server`](https://modal.com/docs/guide/lifecycle-functions) to define the core of our service.
+  We attach our Image, request a GPU, attach our cache Volumes, specify the region, and configure auto-scaling.
+  This decorator also turns our python code into an HTTP server (i.e. fronting all of our containers with a proxy with a URL).
+  The wrapped code needs to eventually listen for HTTP connections on the provided `port`.
+  See [the reference documentation](https://modal.com/docs/reference/modal.App#server) for details.
+
+* [`@modal.enter` and `@modal.exit`](https://modal.com/docs/guide/lifecycle-functions) to indicate
+  which methods of the class should be run when starting the server and shutting it down.
+
+Modal considers a new replica ready to receive inputs once the `modal.enter` methods have exited
+and the container accepts connections.
+To ensure that we actually finish setting up our server before we are marked ready for inputs,
+we define a helper function to check whether the server is finished setting up and to
+send it a few test inputs.
+
+We use the [`requests` library](https://requests.readthedocs.io/en/latest/)
+to send ourselves these HTTP requests on
+[`localhost`/`127.0.0.1`](https://superuser.com/questions/31824/why-is-localhost-ip-127-0-0-1).
+
+```python
+with sglang_image.imports():
+    import requests
+
+
+def wait_ready(process: subprocess.Popen, timeout: int = 20 * MINUTES):
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            check_running(process)
+            requests.get(f"http://127.0.0.1:{PORT}/health").raise_for_status()
+            return
+        except (
+            requests.exceptions.ConnectionError,
+            requests.exceptions.HTTPError,
+        ):
+            time.sleep(5)
+    raise TimeoutError(f"SGLang server not ready within {timeout} seconds")
+
+
+def check_running(p: subprocess.Popen):
+    if (rc := p.poll()) is not None:
+        raise subprocess.CalledProcessError(rc, cmd=p.args)
+
+
+def warmup():
+    payload = {
+        "messages": [{"role": "user", "content": "Hello, how are you?"}],
+        "max_tokens": 16,
+    }
+    for _ in range(3):
+        requests.post(
+            f"http://127.0.0.1:{PORT}/v1/chat/completions", json=payload, timeout=10
+        ).raise_for_status()
+
+
+```
+
+### Extra configuration
+
+We add a few extra configuration variables for performance.
+
+```python
+sglang_image = sglang_image.env(
+    {
+        "SAFETENSORS_FAST_GPU": "1",
+        "NVIDIA_TF32_OVERRIDE": "1",
+    }
+)
+
+server_args = [
+    "--kv-cache-dtype",  # quantize the model's KV cache for a
+    "fp8_e4m3",  # slight reduction in accuracy, major reduction in memory
+]
+
+```
+
+With all this in place, we are ready to define our high-performance, low-latency
+Nemotron inference server.
+
+```python
+app = modal.App(name="example-nemotron-inference")
+PORT = 8000
+
+
+@app.server(
+    image=sglang_image,
+    gpu=GPU,
+    volumes={HF_CACHE_PATH: HF_CACHE_VOL},
+    compute_region=REGION,
+    min_containers=MIN_CONTAINERS,
+    secrets=[hf_secret],
+    startup_timeout=20 * MINUTES,  # time to load weights
+    port=PORT,  # wrapped code must listen on this port
+    routing_region=ROUTING_REGION,  # location of proxies, should overlap with the container regions
+    exit_grace_period=15,  # seconds, time to finish up requests when closing down
+    target_concurrency=TARGET_INPUTS,
+    unauthenticated=True,
+)
+class Server:
+    @modal.enter()
+    def startup(self):
+        """Start the SGLang server and block until it is healthy, then warm it up."""
+
+        cmd = (
+            [
+                "sglang",
+                "serve",
+                "--model-path",
+                MODEL_NAME,
+                "--served-model-name",
+                MODEL_NAME,
+                "--host",
+                "0.0.0.0",
+                "--port",
+                f"{PORT}",
+                "--tp",
+                f"{N_GPUS}",
+                "--cuda-graph-max-bs",  # only capture CUDA graphs for batch sizes we're likely to observe
+                f"{TARGET_INPUTS * 2}",
+                "--enable-metrics",  # expose metrics endpoints for telemetry
+                "--decode-log-interval",  # how often to log during decoding, in tokens
+                "10",
+                "--trust-remote-code",
+                "--tool-call-parser",
+                "qwen3_coder",
+                "--reasoning-parser",
+                "nemotron_3",
+            ]
+            + server_args
+        )
+
+        self.process = subprocess.Popen(cmd)
+        wait_ready(self.process)
+        warmup()
+
+    @modal.exit()
+    def stop(self):
+        self.process.terminate()
+
+
+```
+
+## Deploy the server
+
+To deploy the server on Modal, just run
+
+```bash
+modal deploy nemotron_inference.py
+```
+
+This will create a new App on Modal and build the container image for it if it hasn't been built yet.
+
+## Interact with the server
+
+Once it is deployed, you'll see a URL appear in the command line,
+something like `https://your-workspace-name--example-nemotron-inference-server.us-east.modal.direct`.
+
+You can find [interactive Swagger UI docs](https://swagger.io/tools/swagger-ui/)
+at the `/docs` route of that URL, i.e. `https://your-workspace-name--example-nemotron-inference-server.us-east.modal.direct/docs`.
+These docs describe each route and indicate the expected input and output
+and translate requests into `curl` commands.
+For simple routes, you can even send a request directly from the docs page.
+
+Note: when no replicas are available, Modal will respond with
+the [503 Service Unavailable status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503).
+In your browser, you can just hit refresh until the docs page appears.
+You can see the status of the application and its containers on your [Modal dashboard](https://modal.com/apps).
+
+## Test the server
+
+To make it easier to test the server setup, we also include a `local_entrypoint`
+that hits the server with a simple client.
+
+If you execute the command
+
+```bash
+modal run nemotron_inference.py
+```
+
+a fresh replica of the server will be spun up on Modal while
+the code below executes on your local machine.
+
+Think of this like writing simple tests inside of the `if __name__ == "__main__"`
+block of a Python script, but for cloud deployments!
+
+```python
+@app.local_entrypoint()
+async def test(test_timeout=10 * MINUTES, prompt=None, twice=True):
+    url = await Server.get_url.aio()
+
+    system_prompt = {
+        "role": "system",
+        "content": "You are a pirate who can't help but drop sly reminders that he went to Harvard.",
+    }
+    if prompt is None:
+        prompt = "Explain the Singular Value Decomposition."
+
+    content = [{"type": "text", "text": prompt}]
+
+    messages = [  # OpenAI chat format
+        system_prompt,
+        {"role": "user", "content": content},
+    ]
+
+    await probe(url, messages, timeout=test_timeout)
+    if twice:
+        messages[0]["content"] = "You are Jar Jar Binks."
+        print(f"Sending messages to {url}:", *messages, sep="\n\t")
+        await probe(url, messages, timeout=10 * MINUTES)
+
+
+```
+
+This test relies on the two helper functions below,
+which ping the server and wait for a valid response to stream.
+
+The `probe` helper function specifically ignores
+two types of errors that can occur while a replica
+is starting up -- timeouts on the client and 5XX responses from the server.
+Modal returns the [503 Service Unavailable status](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/503)
+when a Modal Server has no live replicas.
+
+We include a header with each request --
+`Modal-Routing-Affinity-Key`.
+This is header is used by clients Modal Servers
+to identify which requests should be routed to the same container
+(with caveats explained below).
+
+The value associated with this key
+is used to map requests onto containers such that
+while the set of containers is fixed, requests with the same value
+are sent to the same container.
+Set this to a different value per distinct multi-turn interaction
+(prototypically, a user conversation thread with a chatbot)
+to improve KV cache hit rates.
+Additionally, when the set of containers changes (e.g. due to autoscaling),
+sessions are rebalanced such that load is approximately evenly spread,
+much like in [RAID rebalancing](https://cordero.me/understanding-raid-rebalance-ensuring-optimal-performance-and-data-protection/).
+This ensures no container ends up as a "hot spot" handling too many client requests.
+
+```python
+async def probe(url, messages=None, timeout=20 * MINUTES):
+    if messages is None:
+        messages = [{"role": "user", "content": "Tell me a joke."}]
+
+    client_id = str(0)  # set this to some string per multi-turn interaction
+    # often a UUID per "conversation"
+    headers = {"Modal-Routing-Affinity-Key": client_id}
+    deadline = time.time() + timeout
+    async with aiohttp.ClientSession(base_url=url, headers=headers) as session:
+        while time.time() < deadline:
+            try:
+                await _send_request_streaming(session, messages)
+                return
+            except asyncio.TimeoutError:
+                await asyncio.sleep(1)
+            except aiohttp.client_exceptions.ClientResponseError as e:
+                if e.status == 503:
+                    await asyncio.sleep(1)
+                    continue
+                raise e
+    raise TimeoutError(f"No response from server within {timeout} seconds")
+
+
+async def _send_request_streaming(
+    session: aiohttp.ClientSession, messages: list, timeout: int | None = None
+) -> None:
+    payload = {"messages": messages, "stream": True}
+    headers = {"Accept": "text/event-stream"}
+
+    async with session.post(
+        "/v1/chat/completions", json=payload, headers=headers, timeout=timeout
+    ) as resp:
+        resp.raise_for_status()
+        full_text = ""
+
+        async for raw in resp.content:
+            line = raw.decode("utf-8", errors="ignore").strip()
+            if not line:
+                continue
+
+            # Server-Sent Events format: "data: ...."
+            if not line.startswith("data:"):
+                continue
+
+            data = line[len("data:") :].strip()
+            if data == "[DONE]":
+                break
+
+            try:
+                evt = json.loads(data)
+            except json.JSONDecodeError:
+                # ignore any non-JSON keepalive
+                continue
+
+            delta = (evt.get("choices") or [{}])[0].get("delta") or {}
+            chunk = delta.get("content") or delta.get("reasoning_content")
+
+            if chunk:
+                print(chunk, end="", flush="\n" in chunk or "." in chunk)
+                full_text += chunk
+        print()  # newline after stream completes
+
+```
