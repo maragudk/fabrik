@@ -10,7 +10,7 @@ license: MIT
 
 turbopuffer is a search engine (vector, full-text, hybrid, filters) built natively on object storage. Object storage is the only source of truth; NVMe SSD and memory are caches in front of it. That architecture makes it very cheap at rest, fast when warm (vector p50 ~14ms on 10M docs), and slower when cold (p50 ~500-900ms) or writing (p50 ~165ms for a 512KB batch, since every write is an object-storage PUT).
 
-Reach for it when you have: RAG/semantic search, hybrid search (BM25 + vectors), naturally partitioned data (per-tenant namespaces), or large scale at low cost. It is deliberately *not* a fit for: a free tier (commercial only), heavy first-stage ranking logic (it does first-stage retrieval; rerank in your own code), or built-in embedding as a primary workflow (bring your own vectors; native embedding exists but is in private beta).
+Reach for it when you have: RAG/semantic search, hybrid search (BM25 + vectors), naturally partitioned data (per-tenant namespaces), or large scale at low cost. It is deliberately *not* a fit for: a free tier (commercial only) or heavy first-stage ranking logic (it does first-stage retrieval; rerank in your own code). Bring your own vectors, or let it embed text for you (see Native embeddings).
 
 There is no local emulator and no open-source version. Tests and development hit the real service (see Testing below).
 
@@ -56,8 +56,9 @@ res, err := ns.Write(ctx, turbopuffer.NamespaceWriteParams{
 		{"id": 2, "vector": embedding2, "text": "pufferfish clownfish", "public": false},
 	},
 	DistanceMetric: turbopuffer.DistanceMetricCosineDistance,
-	Schema: map[string]turbopuffer.AttributeSchemaConfigParam{
-		"text": {Type: "string", FullTextSearch: &turbopuffer.FullTextSearchConfigParam{}},
+	Schema: map[string]turbopuffer.AttributeSchemaParam{
+		"text":     {AttributeSchemaConfig: &turbopuffer.AttributeSchemaConfigParam{Type: "string", FullTextSearch: &turbopuffer.FullTextSearchConfigParam{}}},
+		"user_ids": turbopuffer.AttributeSchemaParamAttributeSchemaConfig("[]uuid"), // type only
 	},
 })
 // res.RowsAffected, res.RowsUpserted, ...
@@ -81,7 +82,9 @@ Types: `string`, `int`, `uint`, `float`, `bool`, `uuid`, `datetime` (ISO 8601 st
 
 Per-attribute schema options: `Ann` (required `true` for extra vector columns), `Filterable` (default true; **set false on large attributes you never filter — 50% storage discount and faster indexing**), `FullTextSearch` (bool or config object), `Regex`, `Glob`, `Fuzzy` (each enables the matching filter operators; each defaults `filterable` to false when enabled), `SparseKnn`, `Embed`.
 
-Schema changes in place: `filterable`, `full_text_search`, `regex`, `glob`, `fuzzy`, adding/removing `embed` — via a document-free write with only `Schema` set, or `ns.UpdateSchema`. Type changes and attribute deletion require export + re-upsert into a new namespace. A namespace has max 2 vector columns, **fixed at creation**; all documents must include all vector attributes.
+`Schema` is a `map[string]turbopuffer.AttributeSchemaParam`; wrap options in `{AttributeSchemaConfig: &turbopuffer.AttributeSchemaConfigParam{...}}` or use `turbopuffer.AttributeSchemaParamAttributeSchemaConfig("uuid")` for a bare type.
+
+Schema changes in place: `filterable`, `full_text_search`, `regex`, `glob`, `fuzzy`, adding/removing `embed` — via a document-free write with only `Schema` set, or `ns.UpdateSchema`. Type changes and attribute deletion require export + re-upsert into a new namespace. A namespace has max 8 vector columns (embedded attributes count), **fixed at creation**; all documents must include all vector attributes.
 
 ### Conditional writes
 
@@ -133,7 +136,7 @@ RankBy: turbopuffer.NewRankByTextSum([]turbopuffer.RankByText{
 }),
 ```
 
-Documents scoring zero are excluded from results. `Limit.Total` maxes out at 10,000; `Limit.Per` diversifies (max N results per attribute value). `TopK: turbopuffer.Int(10)` is a shorthand for `Limit`.
+Documents scoring zero are excluded from results. Always set `Limit`: `Limit.Total` maxes out at 10,000; `Limit.Per` diversifies (max N results per attribute value). `top_k` is only a legacy alias for `limit.total` — don't use `TopK` in new code.
 
 ### Filters
 
@@ -209,16 +212,64 @@ res, err := ns.MultiQuery(ctx, turbopuffer.NamespaceMultiQueryParams{
 
 Without `RerankBy`, results come back per-subquery in order. RRF's `rank_constant` defaults to 60. The recommended pipeline for serious search: LLM query rewriting → multi-query retrieval (~50-100 candidates each) → RRF → external re-ranker (Cohere, Voyage, etc.) → your own second-stage logic. Keep it all in one file (`search.go`). Evaluate with NDCG and a fixed query set; check ANN quality with `ns.Recall(...)` (compares ANN against exhaustive ground truth).
 
+## Native embeddings
+
+turbopuffer can embed a `string` attribute on write and the query text at query time, so no embedding-provider code is needed. Declare `Embed` on the attribute; the vector lands in `embed_<attr>` (set `Attribute` to reuse an existing column, e.g. `vector`).
+
+```go
+_, err := ns.Write(ctx, turbopuffer.NamespaceWriteParams{
+	UpsertRows:     []turbopuffer.RowParam{{"id": 1, "text": "a cat sleeping on a windowsill"}},
+	DistanceMetric: turbopuffer.DistanceMetricCosineDistance,
+	Schema: map[string]turbopuffer.AttributeSchemaParam{
+		"text": {AttributeSchemaConfig: &turbopuffer.AttributeSchemaConfigParam{
+			Type:  "string",
+			Embed: turbopuffer.AttributeEmbedConfigParam{Model: "voyage/voyage-4", Dims: turbopuffer.Int(1024)},
+		}},
+	},
+})
+
+res, err := ns.Query(ctx, turbopuffer.NamespaceQueryParams{
+	RankBy: turbopuffer.NewRankByAnnExpr("text", turbopuffer.NewExprEmbed("a sleepy pet")), // wire: ["text", "ANN", ["Embed", "a sleepy pet"]]
+	Limit:  turbopuffer.LimitParam{Total: 10},
+})
+```
+
+- To embed only the query against your own precomputed vectors, rank on the vector column with `NewExprEmbedWithParams(q, turbopuffer.EmbedParams{Model: turbopuffer.String("voyage/voyage-4")})` — same model as the documents.
+- Rows that already include the vector are stored as-is (backfill precomputed vectors). Enabling `embed` on an existing namespace does not re-embed existing rows.
+- `embed` can be added or removed, not changed; switching models means re-ingesting.
+- Limits: 4 embedded attributes per namespace (they count toward the 8 vector columns); 256 rows per upsert that touches an embedded attribute; per-model rate limits (1,024 requests/min and 2M tokens/min for new orgs) return 429 for the whole request. Inputs beyond the model's context are truncated.
+- Models and prices: https://turbopuffer.com/docs/embedding.md (`voyage/voyage-4`, `nvidia/nemotron-3-embed-8b`, `openai/text-embedding-3-small`, `cohere/embed-v4.0`, `qwen/qwen3-embedding-8b`, ...).
+
 ## Namespace operations
 
 - `ns.Metadata(...)` — schema, `approx_row_count`, `approx_logical_bytes`, index status (`unindexed_bytes`), pinning/branching/sharding state. Billed as a zero-row query.
 - `ns.HintCacheWarm(...)` — pre-warm the cache when a user opens your search UI, so their first query isn't cold. Free if already warm.
 - `tpuf.NamespacesAutoPaging(ctx, turbopuffer.NamespacesParams{Prefix: turbopuffer.String("tenant-")})` — list namespaces (needs an API key with list permission).
 - `ns.DeleteAll(...)` — delete the namespace and all documents. Irreversible; the name is immediately reusable.
-- `ns.BranchFrom(...)` — instant copy-on-write clone, constant-time at any size, fully independent afterwards. Great for dev environments on production data, test pipelines, and pre-migration snapshots. Shares storage with the source, so it's not a backup.
-- `ns.CopyFrom(...)` — full server-side copy; the tool for real backups (cross-region/cloud/org via `SourceRegion`/`SourceAPIKey`). There are **no automated backups** — schedule copies yourself if you need them.
-- `ns.UpdateMetadata` with a pinning config — reserve dedicated compute + NVMe for a namespace. Worth it above ~10 QPS sustained; billed by GB-hours (64 GB minimum) instead of per-query.
-- Sharding (beta, org-gated): only for namespaces beyond 500M docs / 1TB; `num_shards` is immutable after the first write.
+- `ns.BranchFrom(ctx, turbopuffer.NamespaceBranchFromParams{SourceNamespace: "prod"})` — instant copy-on-write clone, constant-time at any size, fully independent afterwards, flat $0.032 per branch plus storage at standard rates. Great for dev environments on production data, test pipelines, and pre-migration snapshots. Shares storage with the source, so it's not a backup. Same region only; the destination must be empty; `read_only` is inherited, pinning is not (the branch starts unpinned); not yet supported on sharded namespaces.
+- `ns.CopyFrom(...)` — full server-side copy; the tool for real backups (cross-region/cloud/org via `SourceRegion`/`SourceAPIKey`), resharding, and changing the encryption key. Destination must be empty; pinning is not carried over. There are **no automated backups** — schedule copies yourself if you need them.
+- `ns.UpdateMetadata` with `NamespaceMetadataPatch: turbopuffer.NamespaceMetadataPatchParam{ReadOnly: turbopuffer.Bool(true)}` — freeze a namespace (rejects document and schema writes; in-flight writes may still commit). Same call sets pinning (below).
+- Sharding — only for a namespace that will pass 1 TB / ~500M docs: set `Sharding: turbopuffer.ShardingConfigParam{NumShards: n}` on the **first** write, sized at roughly one shard per TB with room to grow (max 256; over-sharding raises tail latency since every query waits on every shard). The count can't change in place; reshard by writing `CopyFromNamespace: turbopuffer.CopyFromNamespaceParams{SourceNamespace: "docs"}` plus a new `Sharding` into an empty namespace. No per-shard fee. Strongly consistent queries see one snapshot across shards; eventually consistent ones may differ per shard. Not for multi-tenancy (use namespaces) or QPS (use pinning).
+
+## Pinning
+
+By default namespaces share query nodes and cache. Pinning reserves dedicated query nodes + NVMe for one namespace: always warm, predictable latency, and it lifts the 16-concurrent-query cap. It replaces per-query billing with GB-hours: `namespace size (GB) × replicas × hours pinned`, minimum 128 GB and 10 minutes, billed whether or not queries arrive, and each replica multiplies the cost (billed as soon as it runs, even before it's warm).
+
+Pin only when all hold: namespace > 16 GB, sustained (not bursty) traffic > 10 QPS, and cold queries or concurrency 429s are hurting or they want a predictable bill. Below that, per-query billing is cheaper — use `HintCacheWarm` for occasional cold starts instead. Estimate the monthly cost (e.g. 500 GB × 2 replicas × 730 h) and **confirm with the user before pinning or adding replicas**.
+
+```go
+_, err := ns.UpdateMetadata(ctx, turbopuffer.NamespaceUpdateMetadataParams{
+	NamespaceMetadataPatch: turbopuffer.NamespaceMetadataPatchParam{
+		Pinning: turbopuffer.PinningConfigParam{Replicas: turbopuffer.Int(1)},
+	},
+})
+meta, err := ns.Metadata(ctx, turbopuffer.NamespaceMetadataParams{})
+// meta.Pinning.Status.ReadyReplicas, .Replicas, .Utilization
+```
+
+- Takes up to ~30 minutes; queries keep working meanwhile. Each replica serves roughly 100-1,000 QPS depending on query shape. Start with 1; add a replica when `Utilization` stays above 0.9 or queries return 429. Replicas don't autoscale.
+- Unpin with `{"pinning": null}`; the typed params can't express null, so use `ns.UpdateMetadata(ctx, turbopuffer.NamespaceUpdateMetadataParams{}, option.WithJSONSet("pinning", nil))`. Billing stops on unpin.
+- On sharded namespaces every shard gets its own replicas (8 shards × 2 replicas = 16 nodes), billed on total size. Copies and branches start unpinned.
 
 ## Multi-tenancy and permissions
 
@@ -253,6 +304,7 @@ For testing against real data, `BranchFrom` a production namespace and delete th
 - For backfills: set `DisableBackpressure: turbopuffer.Bool(true)`, write large batches concurrently (a couple of goroutines per CPU), and query with eventual consistency until indexed — strongly consistent queries error above the backlog limit while backpressure is off. It doesn't combine with patches or conditional writes.
 - Run the backfill from the same cloud region; max ingest is >150 MB/s per namespace when batched and concurrent.
 - Retries are naturally idempotent: upserts are by ID.
+- Watch the backlog with `ns.Metadata(...)`: `meta.Index.Status` is `updating` (with `UnindexedBytes`/`UnindexedRows` shrinking) or `up-to-date`. If it stops shrinking with no new writes, contact support. Row counts don't update during a backpressure-off backfill.
 
 ## Performance checklist
 
@@ -266,9 +318,28 @@ For testing against real data, `BranchFrom` a production namespace and delete th
 - Warm the cache ahead of user interaction; use eventual consistency where freshness doesn't matter.
 - Keep first-stage `rank_by` simple (retrieve 100-1,000 candidates), do clever ranking in your own second stage.
 
+## Troubleshooting
+
+Start with `ns.Metadata` (schema, index status) and rerun the failing query looking at `res.Performance`: `CacheTemperature` (`hot`/`warm`/`cold`), `ServerTotalMs` (includes time queued behind the concurrency limit; compare `QueryExecutionMs`), `ExhaustiveSearchCount` (unindexed docs scanned — high means an indexing backlog), plus `CacheHitRatio`, `ApproxNamespaceSize`, and `EmbeddingMs`/`EmbeddingTokens` for native embeddings.
+
+- **Empty results:** attribute not `filterable` (FTS/regex/glob/fuzzy default off); `Glob`/`Regex`/`Fuzzy` without the schema flag; BM25 on an attribute without FTS; filter value type doesn't match the schema (`uuid`, `datetime`); HTTP 409 because an index is still building.
+- **Wrong results:** vector dims or embedding model differ between documents and queries; low recall (check `ns.Recall`, then try kNN with filters or hybrid); stale reads from eventual consistency.
+- **Slow queries:** cold cache (`HintCacheWarm`, or pin); heavy shapes — `IncludeAttributes` of everything, unanchored `Glob "*x*"`, huge `In` lists, complex `rank_by`, aggregations on large namespaces; high `ExhaustiveSearchCount` (see Ingestion).
+
+HTTP 429 causes:
+
+| Cause | Fix |
+|---|---|
+| Query concurrency: >16 in flight on an unpinned namespace (17th waits 800ms, then 429; kNN counts 2, aggregations 4) | Faster queries, eventual consistency, warm the cache, cap concurrency client-side, or pin with replicas. The limit is concurrent queries, not QPS: 10ms queries still allow ~1,600 QPS |
+| Pinned namespace saturated | Add replicas when `Utilization` stays above 0.9 |
+| Write backpressure: >2 GB unindexed | `DisableBackpressure` for backfills, or slow down (see Ingestion) |
+| Native embedding rate limit | Back off, smaller batches in parallel, or ask turbopuffer to raise it |
+
+The SDK retries 429s automatically.
+
 ## Limits that matter
 
-Per namespace: 500M docs / 1TB unsharded (256 shards × that with sharding); 2 vector columns (fixed at creation); 10,752 max dense dimensions; 1,024 attribute names; 16 concurrent queries (17th waits up to 800ms, then 429 — aggregations count 4×, exact kNN 2×); ~5k QPS (read replicas raise it). Per request: 512 MB writes; `limit.total` ≤ 10k; 16 subqueries per multi-query; 256 computed attributes; full-text query ≤ 1,024 chars. Per document: 64 MiB total; 8 MiB per attribute value; 4 KiB per filterable value. Full table: https://turbopuffer.com/docs/limits — most limits can be raised on request.
+Per namespace: 500M docs / 1TB unsharded (256 shards × that with sharding); 8 vector columns (fixed at creation; embedded attributes count); 4 embedded attributes; 10,752 max dense dimensions; 1,024 attribute names; 16 concurrent queries (17th waits up to 800ms, then 429 — aggregations count 4×, exact kNN 2×); ~5k QPS (read replicas raise it). Per request: 512 MB writes; `limit.total` ≤ 10k; 16 subqueries per multi-query; 256 computed attributes; full-text query ≤ 1,024 chars. Per document: 64 MiB total; 8 MiB per attribute value; 4 KiB per filterable value. Full table: https://turbopuffer.com/docs/limits — most limits can be raised on request.
 
 ## Gotchas
 
@@ -276,7 +347,7 @@ Per namespace: 500M docs / 1TB unsharded (256 shards × that with sharding); 2 v
 - **Auto-inference locks in types.** First write wins; `uint`, `uuid`, `datetime`, and non-default vectors must be declared in the schema or they're inferred wrong with no in-place fix.
 - **`DistanceMetric` is required** on every write to a namespace with vectors, and must not change.
 - **FTS/regex/glob/fuzzy attributes default to non-filterable.** Set `Filterable: turbopuffer.Bool(true)` if you also filter on them.
-- **Enabling a new index returns HTTP 202** on queries that need it until it's built.
+- **Enabling a new index returns HTTP 409** on queries that depend on it until it's built.
 - **Strong consistency has a ~10ms floor; eventual can be ~1h stale** after massive writes (>128 MiB unindexed).
 - **Conditional writes on missing documents succeed unconditionally** — the condition only gates existing documents.
 - **Billing multipliers:** indexed attributes cost logical size × index count (filterable + FTS = 200%); non-filterable 50%; conditional/filter writes add query cost.
@@ -284,4 +355,4 @@ Per namespace: 500M docs / 1TB unsharded (256 shards × that with sharding); 2 v
 
 ## When to reach for reference docs
 
-Every docs page is fetchable as clean markdown: `https://turbopuffer.com/docs/<page>.md` (e.g. `/docs/query.md`, `/docs/write.md`, `/docs/fts.md`), index at `https://turbopuffer.com/llms.txt`, everything in one file at `https://turbopuffer.com/llms-full.txt`. The Go SDK surface is best checked with `go doc github.com/turbopuffer/turbopuffer-go/v2` (constructors are exhaustive there; the web docs are Python-first). Don't guess constructor or field names — look them up. Native embedding (private beta), CMEK, private networking, BYOC, and audit logs are Enterprise/plan-gated features; point the user at the docs and turbopuffer support for those.
+Every docs page is fetchable as clean markdown: `https://turbopuffer.com/docs/<page>.md` (e.g. `/docs/query.md`, `/docs/write.md`, `/docs/fts.md`), index at `https://turbopuffer.com/llms.txt`, everything in one file at `https://turbopuffer.com/llms-full.txt`. The Go SDK surface is best checked with `go doc github.com/turbopuffer/turbopuffer-go/v2` (constructors are exhaustive there; the web docs are Python-first). Don't guess constructor or field names — look them up. CMEK, private networking, BYOC, and audit logs are Enterprise/plan-gated features; point the user at the docs and turbopuffer support for those.
