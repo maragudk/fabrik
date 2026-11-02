@@ -78,9 +78,17 @@ Running a cell automatically runs all cells that depend on it. Execution order i
 
 ### File Format
 
-Notebooks are pure Python files with marimo decorators. Each cell is a function whose parameters are the variables it reads and whose return tuple is the variables it defines:
+Notebooks are pure Python files with marimo decorators. Each cell is a function whose parameters are the variables it reads and whose return tuple is the variables it defines. Start the file with a PEP 723 script block listing its dependencies (`marimo edit --sandbox` writes one automatically) so `uv run notebook.py` and `--sandbox` resolve them:
 
 ```python
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "marimo",
+#     "polars>=1.0",
+# ]
+# ///
+
 import marimo
 
 __generated_with = "0.25.2"
@@ -218,11 +226,14 @@ marimo run notebook.py                         # Local app
 marimo export html-wasm notebook.py -o out/    # Static WASM app
 ```
 
-Layout options: Vertical (default), Grid (drag-drop in editor), Slides.
+Layout options: Vertical (default), Grid (drag-drop in editor), Slides. For a multi-column editor layout use `marimo.App(width="columns")` with `@app.cell(column=N)`; see `references/app.md`.
 
 ## Best Practices
 
-- **Globals**: Keep global variables few and descriptive; use `_`-prefixed names or functions for intermediates
+- **Globals**: Keep global variables few and descriptive; use `_`-prefixed names or functions for intermediates. Prefix one or two true temporaries per cell, not every variable; a clear new name is better than an underscore
+- **No guards**: Don't wrap a cell body in `if x:` to wait for `x`; the cell doesn't run until `x` is defined, and an indented expression is never rendered as output
+- **No blanket try/except**: Let errors surface in the cell; catch only a specific, expected exception you can recover from
+- **Script mode**: Create and display UI elements in every mode; branch on `mo.app_meta().mode == "script"` only to swap the data source or skip the button wait (see `references/cli-args.md`)
 - **Reactivity**: Declare and mutate variables in the same cell, or create a new variable from the old one
 - **Idempotence**: Write cells that produce the same output given the same inputs
 - **Performance**: Use `@mo.cache` / `mo.persistent_cache` for expensive computations

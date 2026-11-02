@@ -269,6 +269,21 @@ chart = make_interactive_chart(df)
 chart
 ```
 
+Keep one code path for both modes: always create and display the sliders, forms, and buttons, read their `.value` everywhere, and branch on mode only where the two modes genuinely differ: the data source and the run trigger.
+
+```python
+# Cell 1
+is_script = mo.app_meta().mode == "script"
+lr = mo.ui.slider(1e-4, 1e-1, value=1e-2, label="lr")
+train = mo.ui.run_button(label="Train")
+mo.hstack([lr, train])
+
+# Cell 2 -- script: synthetic/default data and run immediately; editor: widget data, wait for the button
+X, y = make_synthetic() if is_script else load_from_widget()
+mo.stop(not is_script and not train.value)
+results = fit(X, y, lr=lr.value)
+```
+
 ### Resolve Paths Relative to the Notebook
 
 Scripts run from cron or CI often have a different working directory:
