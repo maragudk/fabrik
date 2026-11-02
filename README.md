@@ -54,7 +54,6 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **improve-skill** - Review the current conversation for fabrik skills that could be improved and ship the improvements back as PRs (concrete fixes) or issues (fuzzy observations / redesigns)
 - **macos-design** - Design and build native-feeling macOS application UIs: layout, interaction patterns, light/dark mode, and the details that make an app feel native (copied from [ceorkm/macos-design-skill](https://github.com/ceorkm/macos-design-skill))
 - **marimo** - Guide for creating and working with marimo notebooks, the reactive Python notebook that stores as pure .py files
-- **modal** - Guide for running Python code on Modal, the serverless compute platform for AI workloads, batch jobs, scheduled tasks, web endpoints, and sandboxed code execution
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
 - **observability** - Guide for instrumenting and operating observable systems (wide structured events, OpenTelemetry, the core analysis loop, SLOs, sampling, and observability for AI/LLMs)
 - **observable-plot** - Guide for using Observable Plot, a JavaScript library for exploratory data visualization with marks, scales, and transforms
