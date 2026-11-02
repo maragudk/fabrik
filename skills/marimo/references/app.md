@@ -42,6 +42,24 @@ app = marimo.App(
 )
 ```
 
+### Columns Layout
+
+With `width="columns"`, `@app.cell(column=N)` starts a column; the cells that follow belong to it until the next `column=` marker. Keep these markers when editing such a notebook.
+
+```python
+app = marimo.App(width="columns")
+
+@app.cell(column=0, hide_code=True)
+def _(mo):
+    mo.md("## Results")  # this and the following cells sit in column 0
+    return
+
+@app.cell(column=1)
+def _():
+    import marimo as mo  # boilerplate in column 1
+    return (mo,)
+```
+
 ## Embedding Notebooks
 
 ### app.embed
