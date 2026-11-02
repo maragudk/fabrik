@@ -64,6 +64,8 @@ A second opinion arrives with the same confidence whether it is right or wrong, 
 
 So before relaying, check the load-bearing factual claims -- the empirical assertions the opinion stands on: git-history claims (`git log`, `git tag`, `git diff` them), tool and API mechanics (check the docs), numbers and measurements (recompute them). Skip claims that are pure judgment; verify the ones the judgment rests on. Report what you checked and what held -- a verified disagreement is worth far more than an unverified one.
 
+Then weigh each issue by its real-world impact. Codex sometimes raises problems that are more theoretical than practical: a race that needs timing no real workload produces, an input the code never receives, a failure mode that takes several unlikely events in a row. A claim can be factually true and still not matter. Ask how likely the issue is in practice and what happens if it does occur. Issues that never happen in practice or are extremely unlikely can usually be set aside -- say so when relaying, rather than passing them on with the same weight as real problems.
+
 ## Follow-ups
 
 The session id is printed in the `codex.log` header. Continue the conversation with:
