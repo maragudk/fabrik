@@ -26,7 +26,7 @@ Create a worktree and branch:
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
-WORKTREE="$REPO/.worktrees/garden-$(date +%Y%m%d-%H%M%S)"
+WORKTREE="$REPO/.claude/worktrees/garden-$(date +%Y%m%d-%H%M%S)"
 git worktree add "$WORKTREE" -b garden/<descriptive-slug>
 echo "repo: $REPO"
 echo "worktree: $WORKTREE"
