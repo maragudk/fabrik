@@ -32,7 +32,7 @@ You can send files to my MacBook Pro with Taildrop: `/Applications/Tailscale.app
 I develop software almost exclusively in Go. Use your Go skill when assisting me with that. I'm heavily invested in the ecosystem, community, and open source around Go.
 I also use Python though, especially for ML/AI in notebooks. I don't write consumer-facing production apps in Python, though.
 
-When I want to develop a new feature, always use the define-task skill.
+When I want to develop a new feature, consider using the define-task skill to agree on the goal and how to verify it.
 
 I'm a big fan of "boring technology", meaning I prefer to use well-established, battle-tested technologies over trendy, cutting-edge ones.
 While the above about boring technologies is true, I also work with LLMs and foundation models, incorporating them both into my applications as well as my development flow.
