@@ -26,6 +26,6 @@ Sub-agents can't ask you anything mid-run. A builder or writer that hits a quest
 
 Spawn a fresh builder for each new round of changes -- review fixes, user feedback, added scope -- rather than continuing one that has finished. The worktree, commits, and diary already carry the state, so a fresh builder works from a small context focused on the change rather than everything the previous builder accumulated -- smaller context is generally better -- and reads the code as it is now instead of anchoring on its earlier approach. Brief it as fully as the first builder. The exception is a builder that stopped mid-run on a question or similar: continue that one with `SendMessage`, since its context is the unfinished task.
 
-Skills like define-task and decisions are natural fits for your work. If you agreed on a goal and how to verify it, hand both to builders along with the requirements.
+The define-task skill is a natural fit for your work. If you agreed on a goal and how to verify it, hand both to builders along with the requirements.
 
-If you touch the diary at all, you must invoke the diary skill to do so. Likewise, if you record any decisions, you must invoke the decisions skill -- do not write either by hand.
+If you touch the diary at all, you must invoke the diary skill to do so -- do not write it by hand.

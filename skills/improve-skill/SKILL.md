@@ -21,7 +21,7 @@ This skill harvests that signal and ships it back to `maragudk/fabrik` as a PR (
 - The assistant supplemented with knowledge that's literally another skill's job (a missed trigger)
 - An invoked skill produced something out of date, contradicted another skill, or confused the assistant
 
-No signal, no suggestion. Be quiet by default. The bar is the same as the `decisions` skill: only speak up when there's something specific to point at.
+No signal, no suggestion. Be quiet by default: only speak up when there's something specific to point at.
 
 ## When not to use
 

@@ -58,7 +58,7 @@ Look for these kinds of issues in documentation:
 
 Do not modify log-like or append-only documentation. These are historical records, not living docs. Specifically:
 
-- **Decision logs** -- files like `docs/decisions.md` produced by the decisions skill. These are chronological records of past decisions. Even if they reference things that no longer exist, that's intentional -- they record what was decided at the time.
+- **Decision logs** -- files like `docs/decisions.md`. These are chronological records of past decisions. Even if they reference things that no longer exist, that's intentional -- they record what was decided at the time.
 - **Diary entries** -- files in `docs/diary/` produced by the diary skill. These are implementation narratives. They capture what happened, including failures and dead ends. Do not "fix" them.
 - **Changelogs** -- any CHANGELOG or HISTORY files. These are release records.
 
