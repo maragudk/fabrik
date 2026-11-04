@@ -12,7 +12,7 @@ This skill harvests that signal and ships it back to `maragudk/fabrik` as a PR (
 
 ## When to use
 
-**Primarily user-invoked.** The user runs `/improve-skill` or says things like "make the X skill better", "the brainstorm skill should ask fewer questions", "this skill missed something". They may also bring their own idea about what to fix; that idea joins the findings list rather than replacing it.
+**Primarily user-invoked.** The user runs `/improve-skill` or says things like "make the X skill better", "the define-task skill should ask fewer questions", "this skill missed something". They may also bring their own idea about what to fix; that idea joins the findings list rather than replacing it.
 
 **Proactively suggest at end-of-session moments only when there's concrete signal.** Examples of concrete signal:
 
@@ -81,7 +81,7 @@ The skill almost always runs outside the fabrik repo. To edit `skills/*/SKILL.md
    - Do all edits in the worktree, push from the worktree, open the PR from the worktree.
 2. **Otherwise**, clone `maragudk/fabrik` to a temp directory, branch, edit there, push, open the PR. Report the path back to the user so follow-ups are easy.
 
-The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case description of the change (e.g. `improve-skill/brainstorm-one-question`). By default, one PR per `improve-skill` invocation, even when several skills are touched -- keeps review batched. But if the user wants to act on findings one at a time (e.g. "let's take those one at a time"), a PR per finding is fine; follow the user's preference.
+The branch name is `improve-skill/<slug>` where `<slug>` is a short kebab-case description of the change (e.g. `improve-skill/define-task-one-question`). By default, one PR per `improve-skill` invocation, even when several skills are touched -- keeps review batched. But if the user wants to act on findings one at a time (e.g. "let's take those one at a time"), a PR per finding is fine; follow the user's preference.
 
 **Before editing, Read `AGENTS.md` at the repo root** and follow whatever conventions it specifies (README updates, etc.). `CLAUDE.md` is a symlink to `AGENTS.md`. The harness loaded the *user's current project's* AGENTS.md/CLAUDE.md at session start, not fabrik's, so cd-ing into the worktree doesn't auto-load fabrik's rules -- read it explicitly.
 
@@ -98,7 +98,7 @@ Commit, push, and open the PR or issue using your normal git/PR conventions (the
 
 ## What changed
 
-<per-skill bullet of the actual edits, e.g. "brainstorm: added explicit one-question-per-message rule to opening line">
+<per-skill bullet of the actual edits, e.g. "define-task: added explicit one-question-per-message rule to opening line">
 
 ## Why
 
@@ -127,7 +127,7 @@ Report URLs back when done. Follow-up review feedback and merging are the user's
 
 ## Notes on tone
 
-- Be specific. "The brainstorm skill could ask one question at a time" is useless without pointing at where in the conversation that mattered. Cite the moment.
+- Be specific. "The define-task skill could ask one question at a time" is useless without pointing at where in the conversation that mattered. Cite the moment.
 - Generalise from the example. The PR is one diff that will affect every future invocation of the skill -- write it for that universe, not just this conversation.
 - Keep edits surgical. If a finding is "the example is stale", change the example; don't rewrite the section. Big rewrites belong in an issue first.
 - Don't pad. If there's one finding, the PR has one bullet under "What changed". That's fine.

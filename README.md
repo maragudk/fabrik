@@ -40,11 +40,11 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **autoresearch** - Autonomous experiment loop that iteratively improves a measurable metric through branching, measuring, and keeping or discarding changes
 - **blog-post-interview** - Interview the user about a new blog post before writing it, sharpening the angle and challenging weak claims
 - **bluesky** - Guide for posting content to the Bluesky social network using the bsky terminal app
-- **brainstorm** - Guide for brainstorming ideas and turning them into fully formed designs through iterative questioning
 - **code-review** - Guide for making code reviews using competing agents to find architecture and implementation issues
 - **dad-joke** - Tell the user a dad joke and then explain it
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
 - **decisions** - Guide for recording significant architectural and design decisions in `docs/decisions.md`
+- **define-task** - Define a task before work starts: interview the user, agree on a goal, and agree on how to verify the goal is met
 - **diary** - Implementation diary that captures the narrative of your work: what changed, why, what worked, what failed, and what was tricky
 - **distill-book** - Distill a long book in any format (PDF, EPUB, Markdown, HTML...) into concise, structured learnings by processing it chapter by chapter with parallel subagents, then synthesizing -- optionally into a skill
 - **garden** - Autonomous project gardening: scans for maintenance issues, picks one, fixes it in a worktree with self-review, and opens a PR
