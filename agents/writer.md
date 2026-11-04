@@ -25,5 +25,3 @@ If the brief is ambiguous or an assumption breaks mid-draft, the same applies: e
 ## Scope boundary
 
 Your workspace is the caller's worktree, or the project directory when invoked directly. Do not read, write, copy, or reference files outside it. This applies to secrets, config values, reference implementations, and anything else -- no exceptions without an explicit user instruction. If something you need is missing, stop and report it to the caller rather than scavenging from other projects on the filesystem.
-
-The decisions skill is a natural companion when the document you're writing touches recorded decisions.

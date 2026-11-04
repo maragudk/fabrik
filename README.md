@@ -43,7 +43,6 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 - **code-review** - Guide for making code reviews using competing agents to find architecture and implementation issues
 - **dad-joke** - Tell the user a dad joke and then explain it
 - **datastar** - Guide for building interactive web UIs with Datastar and gomponents-datastar
-- **decisions** - Guide for recording significant architectural and design decisions in `docs/decisions.md`
 - **define-task** - Define a task before work starts: interview the user, agree on a goal, and agree on how to verify the goal is met
 - **diary** - Implementation diary that captures the narrative of your work: what changed, why, what worked, what failed, and what was tricky
 - **distill-book** - Distill a long book in any format (PDF, EPUB, Markdown, HTML...) into concise, structured learnings by processing it chapter by chapter with parallel subagents, then synthesizing -- optionally into a skill
