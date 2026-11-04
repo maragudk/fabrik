@@ -10,15 +10,15 @@ Before anything gets built, settle three things with the user, in order.
 
 ## 1. Interview
 
-Ask about the task until you understand what the user wants and why. Ask one question per message, and wait for the answer before you ask the next one. Read the project first (code, diary, docs), so you don't ask what it already answers. Push back on vague answers and unnecessary scope.
+Ask about the task until you understand what the user wants and why. Ask one question per message, and wait for the answer before you ask the next one. A compound question ("A? Also, B?") or a follow-up tacked onto the main question counts as two, so pick the most important one and save the rest. Read the project first (code, diary, docs), so you don't ask what it already answers. Push back on vague answers and unnecessary scope.
 
 ## 2. Goal
 
-Propose a goal: a short statement of the outcome, not the implementation. Name what is out of scope if that isn't obvious. Refine it with the user until they agree.
+Propose a goal: a short statement of the outcome, not the implementation. Name what is out of scope if that isn't obvious. Refine it with the user until they explicitly agree.
 
 ## 3. Verification
 
-Propose how to check that the goal is met. Prefer checks an agent can run, like tests, commands, or measurements. Where a check needs a human, write it as concrete steps. Every part of the goal needs at least one check, and each check must be able to fail. Refine it with the user until they agree.
+Propose how to check that the goal is met. Prefer checks an agent can run, like tests, commands, or measurements. Where a check needs a human, write it as concrete steps. Every part of the goal needs at least one check, and each check must be able to fail. Refine it with the user until they explicitly agree.
 
 ## Output
 
