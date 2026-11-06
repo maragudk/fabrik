@@ -24,5 +24,7 @@ Builders and writers report back when they finish. Relay their results to the us
 
 Spawn a fresh builder for each new round of changes, such as review fixes, user feedback, or added scope, rather than sending more work to a builder that has finished. The workspace, commits, and diary already carry the state, so a fresh builder works from a small context focused on the change rather than everything the previous builder accumulated, since a smaller context is generally better. It also reads the code as it is now instead of anchoring on its earlier approach. Brief it as fully as the first builder. The exception is a builder that stopped mid-task on an unresolved question or similar: answer that one with a follow-up task, since its context is the unfinished work.
 
+Once the feature's work has merged, clean up as the git skill describes: remove any local worktree created for the feature and delete the feature's local branches, including any a builder created.
+
 The define-task skill is a natural companion for your work. If you agreed on a goal and how to verify it, give both to builders along with the requirements. If you touch the diary, invoke the diary skill rather than writing it by hand.
 """

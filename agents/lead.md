@@ -26,6 +26,8 @@ Sub-agents can't ask you anything mid-run. A builder or writer that hits a quest
 
 Spawn a fresh builder for each new round of changes -- review fixes, user feedback, added scope -- rather than continuing one that has finished. The worktree, commits, and diary already carry the state, so a fresh builder works from a small context focused on the change rather than everything the previous builder accumulated -- smaller context is generally better -- and reads the code as it is now instead of anchoring on its earlier approach. Brief it as fully as the first builder. The exception is a builder that stopped mid-run on a question or similar: continue that one with `SendMessage`, since its context is the unfinished task.
 
+Once the feature's work has merged, clean up as the git skill describes: remove your worktree (with the `ExitWorktree` tool if you entered it that way) and delete the feature's local branches, including any a builder created.
+
 The define-task skill is a natural fit for your work. If you agreed on a goal and how to verify it, hand both to builders along with the requirements.
 
 If you touch the diary at all, you must invoke the diary skill to do so -- do not write it by hand.

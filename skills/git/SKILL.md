@@ -1,6 +1,6 @@
 ---
 name: git
-description: Guide for using git with specific preferences -- backticks around code identifiers in commit messages, asking about GitHub issues to reference before committing. Use this whenever you commit, write a commit message, or work with pull requests -- not just when explicitly asked to "commit". These conventions aren't in your default knowledge and you'll get them wrong without consulting this skill.
+description: Guide for using git with specific preferences -- backticks around code identifiers in commit messages, asking about GitHub issues to reference before committing, cleaning up worktrees and branches after merges. Use this whenever you commit, write a commit message, work with pull requests, or merge a branch -- not just when explicitly asked to "commit". These conventions aren't in your default knowledge and you'll get them wrong without consulting this skill.
 license: MIT
 ---
 
@@ -39,4 +39,13 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 
 - Merge only on an explicit, standalone instruction that names the PR ("merge #123"). A "yes" to a question that bundled the merge with something else, a conditional ("merge once CI is green"), or an earlier grant on a different PR is not one -- ask again, on its own, naming the PR, and wait. Every PR is reviewed by a person first.
 - Prefer merge commits: `gh pr merge --merge`. Merge settings vary by repo -- some disallow squash merging entirely, some still use it -- so don't reach for `--squash` by default; if a merge method is rejected, check the repo's recent history for what it actually uses.
-- After a merge, clean up local state: pull the main branch in the project directory, remove any worktree used for the work (`git worktree remove <path>`), and delete the merged local branch. Don't leave stale branches and worktrees lying around for the next session to trip over.
+
+## Cleaning up after a merge
+
+Always clean up local state after work merges -- whether through a merged pull request or a local merge into the main branch, in a repo that commits straight to main:
+
+- Pull the main branch in the project directory, if it tracks a remote.
+- Remove any worktree used for the work (`git worktree remove <path>`).
+- Delete the merged local branches.
+
+Remove only what the work created; other agents may share the repository. Don't leave stale branches and worktrees lying around for the next session to trip over.
