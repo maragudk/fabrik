@@ -74,7 +74,7 @@ Start a new session, then use `/hooks` to review and trust the SessionStart hook
 
 Sub-agents have Claude Code definitions in `agents/` and semantic Codex ports in `.codex/agents/`.
 
-- **builder** - Builder that takes requirements and ships code in the lead's worktree
+- **builder** - Builder that takes requirements and ships code in the lead's worktree, or its own when running in parallel
 - **lead** - Lead that refines ideas into concrete requirements, challenges assumptions, and manages scope
 - **writer** - Writer that turns briefs into clear documentation and prose, keeping heavy writing work out of the caller's context
 
