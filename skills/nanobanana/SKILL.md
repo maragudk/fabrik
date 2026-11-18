@@ -8,7 +8,7 @@ license: MIT
 
 This is a guide for generating and editing images using the nanobanana CLI tool.
 
-Nanobanana is a command-line interface for the Nano Banana image generation API, which uses Google's generative AI models.
+Nanobanana is a command-line interface for Nano Banana 2.1 (`gemini-nano-banana-2.1`), Google's Gemini image generation model. It is the only model the CLI supports, so there are no model flags.
 
 ## Installation
 
@@ -27,36 +27,22 @@ The `GOOGLE_API_KEY` environment variable must be set, or a `.env` file with the
 To generate a single image:
 
 ```bash
-nanobanana generate output.png "a beautiful sunset over mountains"
+nanobanana generate output.jpg "a beautiful sunset over mountains"
 ```
 
-The output can be either a `.png` or `.jpg` file.
+## Output format
 
-## Using version 2 (preferred)
-
-Always use the `-v2` flag unless the user specifically requests the pro model. Version 2 offers improved quality and aspect ratio support:
-
-```bash
-nanobanana generate -v2 output.png "a beautiful sunset over mountains"
-```
-
-## Using the pro model
-
-To use the highest-quality pro model (only when explicitly requested):
-
-```bash
-nanobanana generate -pro output.png "a beautiful sunset over mountains"
-```
+The output is always JPEG. The output path must end in `.jpg` or `.jpeg` (in any case). Any other extension, such as `.png`, makes the CLI exit with an error before it calls the API. If the user asks for a PNG, generate a `.jpg` and convert it afterwards (for example with `sips -s format png output.jpg --out output.png` on macOS).
 
 ## Editing existing images
 
 To edit or modify an existing image using a text prompt:
 
 ```bash
-nanobanana generate -i input.png output.png "make the sky purple and add stars"
+nanobanana generate -i input.png output.jpg "make the sky purple and add stars"
 ```
 
-This is useful for making specific changes to existing images based on natural language instructions.
+The input image can be in any format the API accepts, but the output is still JPEG.
 
 ## Tips for effective prompts
 
@@ -69,15 +55,15 @@ This is useful for making specific changes to existing images based on natural l
 
 Generate a logo:
 ```bash
-nanobanana generate logo.png "minimalist tech company logo with geometric shapes in blue and white"
+nanobanana generate logo.jpg "minimalist tech company logo with geometric shapes in blue and white"
 ```
 
 Create concept art:
 ```bash
-nanobanana generate concept.png "futuristic city skyline at night with neon lights and flying vehicles, cyberpunk style"
+nanobanana generate concept.jpg "futuristic city skyline at night with neon lights and flying vehicles, cyberpunk style"
 ```
 
 Edit an existing photo:
 ```bash
-nanobanana generate -i photo.png enhanced.png "enhance the colors and make it look like golden hour"
+nanobanana generate -i photo.png enhanced.jpg "enhance the colors and make it look like golden hour"
 ```
