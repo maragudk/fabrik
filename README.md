@@ -90,6 +90,7 @@ A dependency-free bash pre-commit hook blocks commits that contain secrets. It s
 - OpenAI API keys (`sk-proj-`, `sk-svcacct-`, `sk-admin-`, and the legacy `sk-` format)
 - AWS access key IDs (`AKIA...`, `ASIA...`) and AWS secret access keys (only as the value of a name like `aws_secret_access_key` on the same line)
 - Google API keys (`AIza...`)
+- Tigris access key IDs (`tid_...`) and secret access keys (`tsec_...`)
 
 It also blocks a commit that adds a file named exactly `.env`; `.env.example`, `.env.local`, and the like pass. Findings are printed redacted.
 

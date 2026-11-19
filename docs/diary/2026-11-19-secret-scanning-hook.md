@@ -238,3 +238,54 @@ The `has_env` and `has_key` block in `/hooks/git-hooks/scan-secrets` and the thr
 ### Future work
 
 None.
+
+## Step 5: Detect Tigris access key IDs and secret keys
+
+**Author:** builder
+
+### Prompt Context
+
+**Verbatim prompt:** also, add another secret scan: Tigris secret keys, if they're not already covered
+**Interpretation:** Find Tigris's real credential format. Check whether the existing detectors already catch it. If they don't, add a detector for `tsec_` secret keys and, to match the AWS key-ID detector, one for `tid_` access key IDs. Placeholders from the docs must pass. Output stays redacted. Add tests and update the README. Markus confirmed the `tid_` and `tsec_` prefixes partway through.
+**Inferred intent:** Tigris is Markus's object store, so its keys are the ones most likely to leak into his commits.
+
+### What I did
+
+I researched the format. The official docs (https://www.tigrisdata.com/docs/sdks/s3/, https://www.tigrisdata.com/docs/iam/manage-access-key/) only say that IDs start with `tid_` and secrets with `tsec_`, and every example there is a placeholder. Tigris's own CLI redaction code (`packages/cli/src/utils/redact.ts` in `tigrisdata/storage`) matches `\bt(?:id|sec)_[A-Za-z0-9]+`, with no length. To get lengths, I measured real keys locally without printing them. The first is an ID from a real presigned URL in Tigris's blog post `2026-07-14-presigned-urls-security-vuln`. The others are credentials users pasted into Fly community threads (https://community.fly.io/raw/22251, /raw/23356, /raw/25113, /raw/25180). All five distinct IDs were `tid_` + 50 characters, using only letters and `_`. Both secrets were `tsec_` + 70: one had `_` and `-`, the other `+`. The crafted keypair in Tigris's SigV4 post (`tid_` + 16, `tsec_` + 43) says it was made up for the post, so I gave it no weight.
+
+I wrote the table rows in `/hooks/test/test-git-hooks.sh` first, with fakes built at runtime: `TIGRIS_ID`, `TIGRIS_SECRET`, and `TIGRIS_SECRET_TID`. The rows cover env, JSON, ini, presigned URL, `curl --user id:secret`, `==` padding, placeholders, one-under-minimum lengths, and in-word matches. The red run gave `306 passed, 28 failed`. Every Tigris row that should block passed instead, including `AWS_SECRET_ACCESS_KEY=tsec_...` and `aws_secret_access_key = tsec_...`. So no existing detector covered Tigris: the `_` after `tsec` breaks the AWS secret detector's 40-character run.
+
+Then in `/hooks/git-hooks/scan-secrets` I added `tid_|tsec_` to the awk prefilter, plus two bounded detectors:
+
+- `Tigris access key ID`: `[^A-Za-z0-9_+/-]tid_[A-Za-z0-9_-]{40,}[^A-Za-z0-9_-]`
+- `Tigris secret key`: `[^A-Za-z0-9_-]tsec_[A-Za-z0-9_+/-]{60,}[^A-Za-z0-9_+/-]`
+
+I also added a line to the "Secret scanning" list in `/README.md`.
+
+### Why
+
+The minimums sit 10 below the observed lengths. Tigris doesn't publish the format, so an exact length would miss a key if the format changes, while 40 and 60 are still far above every placeholder in the docs. Using boundaries instead of the open-ended `none` mode stops matches in the middle of base64url blobs.
+
+### What worked
+
+As a false-positive check, I ran both regexes over the full `tigrisdata/tigris-os-docs`, `tigris-blog`, `storage`, and `tigris-agents-plugins` trees. That gave two hits. One is the real key ID in the presigned-URL post, a correct catch. The other is `tsec_example_H3CY...` (68 characters) on the "upload via HTML form" docs page. It's shaped exactly like a real key, so I left it flagged. The final run gave `339 passed, 0 failed` under `/bin/bash` 3.2 with BSD grep.
+
+### What didn't work
+
+Two commands failed for reasons unrelated to the hook itself. The worktree guard refused `gh api 'repos/tigrisdata/storage/git/trees/main?recursive=1'` and a throwaway `git init` demo repo in the scratchpad with "this command names git in a form too complex to verify that it stays inside the worktree". I switched to tarballs, and the test suite already checks the output format. A `sed` over the downloaded docs failed with `sed: RE error: illegal byte sequence` until I set `LC_ALL=C`.
+
+### What I learned
+
+Tigris issues secrets in both base64 alphabets: one real secret had `-` and `_`, another had `+`. So the secret class needs `+` and `/` as well as `-` and `_`. IDs seem to use only URL-safe characters.
+
+### What was tricky
+
+The review found a real case. Because a standard-base64 secret can contain `/` or `+`, a `tid_` could match inside a `tsec_` value after one of those characters. That gives a second finding labelled "access key ID" that prints 4 characters from the middle of the secret. Excluding `+` and `/` from the `tid_` left boundary fixed it, and the `tigris-secret-containing-tid.txt` row covers it.
+
+### What warrants review
+
+Review the length minimums (40, 60) and the decision to flag the `tsec_example_...` docs example. Requiring exactly 70 would stop flagging it, but a real key would be missed if Tigris ever changes the length. To validate, run `bash hooks/test/test-git-hooks.sh`.
+
+### Future work
+
+The code-review pass also found a limitation that predates this change. When two keys of the same type are separated by a single character (`tid_A,tid_B`), `grep -o` uses up the shared boundary character, so only the first key is reported. The commit is still blocked. GNU grep was not available on this machine, so the Linux run is untested here. The patterns use only bracket classes and `{n,}`, as the existing ones do.

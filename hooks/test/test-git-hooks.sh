@@ -81,7 +81,10 @@ AWS_AKIA="AKIA$(fake 16 "$UPPER$DIGITS")"
 AWS_ASIA="ASIA$(fake 16 "$UPPER$DIGITS")"
 AWS_SECRET="$(fake 40 "$ALNUM/+")"
 GOOGLE="AIza$(fake 35 "$ALNUM-_")"
-ALL_KEYS="$ANT_API $ANT_ADMIN $ANT_OAUTH $OAI_PROJ $OAI_SVC $OAI_ADMIN $OAI_LEGACY $AWS_AKIA $AWS_ASIA $AWS_SECRET $GOOGLE"
+TIGRIS_ID="tid_$(fake 50 "$ALNUM-_")"
+TIGRIS_SECRET="tsec_$(fake 70 "$ALNUM-_+/")"
+TIGRIS_SECRET_TID="tsec_$(fake 20)/tid_$(fake 45)"
+ALL_KEYS="$ANT_API $ANT_ADMIN $ANT_OAUTH $OAI_PROJ $OAI_SVC $OAI_ADMIN $OAI_LEGACY $AWS_AKIA $AWS_ASIA $AWS_SECRET $GOOGLE $TIGRIS_ID $TIGRIS_SECRET $TIGRIS_SECRET_TID"
 
 # --- Helpers ---------------------------------------------------------------
 
@@ -188,6 +191,17 @@ aws-secret-too-long.ini|aws_secret_access_key = ${AWS_SECRET}AB\n|pass
 aws-both.ini|aws_access_key_id=$AWS_AKIA\naws_secret_access_key=$AWS_SECRET\n|block:2:aws-both.ini:2  AWS secret access key
 google.js|const key = '$GOOGLE';\n|block:1:Google API key  AIza
 google-too-short.txt|${GOOGLE%?}\n|pass
+tigris-secret.sh|export AWS_SECRET_ACCESS_KEY=$TIGRIS_SECRET\n|block:1:tigris-secret.sh:1  Tigris secret key  tsec_
+tigris-secret.json|{"secretAccessKey": "$TIGRIS_SECRET"}\n|block:1:Tigris secret key
+tigris-secret-padded.txt|secret=${TIGRIS_SECRET}==\n|block:1:Tigris secret key
+tigris-id.yaml|AWS_ACCESS_KEY_ID: $TIGRIS_ID\n|block:1:tigris-id.yaml:1  Tigris access key ID  tid_
+tigris-presigned.txt|X-Amz-Credential=$TIGRIS_ID/20260714/auto/s3/aws4_request\n|block:1:Tigris access key ID
+tigris-credentials.ini|aws_access_key_id = $TIGRIS_ID\naws_secret_access_key = $TIGRIS_SECRET\n|block:2:tigris-credentials.ini:2  Tigris secret key
+tigris-curl.sh|curl --user $TIGRIS_ID:$TIGRIS_SECRET --aws-sigv4 aws:amz:auto:s3\n|block:2:Tigris access key ID
+tigris-placeholders.md|AWS_ACCESS_KEY_ID=tid_\nAWS_SECRET_ACCESS_KEY=tsec_\nid tid_XXXX, secret tsec_...\ntid_your_access_key tsec_your_secret_key tsec_xxxxxx\ntid_AaBbCcDdEeFf tsec_XxYy tsec_YOUR_SECRET_ACCESS_KEY tsec_hunter2hunter2hunter2\n|pass
+tigris-too-short.txt|${TIGRIS_ID:0:43} ${TIGRIS_SECRET:0:64}\n|pass
+tigris-in-word.txt|x$TIGRIS_SECRET my_$TIGRIS_ID\n|pass
+tigris-secret-containing-tid.txt|$TIGRIS_SECRET_TID\n|block:1:Tigris secret key
 line-numbers.txt|one\ntwo\nthree $GOOGLE\n|block:1:line-numbers.txt:3
 plus-plus.txt|++ b/fake-header.txt\n+++ b/fake-header.txt\n$GOOGLE\n|block:1:plus-plus.txt:3
 crlf.txt|key=$GOOGLE\r\n|block:1:Google API key
