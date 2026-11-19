@@ -196,3 +196,45 @@ The background watchdog in the tests kept the test's stdout pipe open for 60 s a
 ### Future work
 
 The "Not fixed" list above. Run `bash hooks/test/test-git-hooks.sh` on the real pi3 when it's reachable.
+
+## Step 4: Show the `.env` advice only when a `.env` was found
+
+**Author:** builder
+
+### Prompt Context
+
+**Verbatim prompt:** yes
+**Interpretation:** The lead asked whether the `.env` instructions should appear only when a `.env` was actually found. The answer was yes. I applied the same rule to the "Remove each secret" line, so a `.env`-only block doesn't tell the agent to edit secrets out of a file.
+**Inferred intent:** Make the block message match what was found, so the agent isn't sent to fix a problem it doesn't have.
+
+### What I did
+
+In `/hooks/git-hooks/scan-secrets`, the report step now checks the findings file once for each kind. Record number 0 means a `.env` file, and any other record is a key. Two `awk` one-liners set `has_env` and `has_key`, and each advice line is printed only when its flag is set. The other lines (retry, `--no-verify`) are unchanged. In `/hooks/test/test-git-hooks.sh` I added three scenarios, key-only, `.env`-only, and both, with checks for each advice line and the `--no-verify` line. The fake key is still built at runtime.
+
+### Why
+
+A block caused only by a `.env` file said "Remove each secret from the file", which is wrong advice, and a block caused only by a key mentioned `.env` for no reason.
+
+### What worked
+
+`awk -F '\t' '$1 == 0 { print "yes"; exit }'` is bash 3.2 and BSD safe. The suite passes with `296 passed, 0 failed` on macOS.
+
+### What didn't work
+
+My first "no such line" checks used `check "..." ! grep -qF ...`. `check` runs its arguments as a command, so `!` was looked up as a program, and the checks failed even though the hook output was right (`294 passed, 2 failed`). A small `lacks` helper that negates the `grep` fixed it.
+
+### What I learned
+
+`check` can't take a negated command directly. A helper function is the way to assert absence.
+
+### What was tricky
+
+Nothing beyond the `check` and `!` problem above.
+
+### What warrants review
+
+The `has_env` and `has_key` block in `/hooks/git-hooks/scan-secrets` and the three new scenarios in `/hooks/test/test-git-hooks.sh` before the `--amend` test.
+
+### Future work
+
+None.

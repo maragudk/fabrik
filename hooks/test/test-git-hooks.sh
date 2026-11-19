@@ -276,6 +276,38 @@ git -C "$r" add .env
 commit "$r"
 check "modified tracked .env: passes" [ $? = 0 ]
 
+# The advice lines only appear for the kinds of findings present.
+lacks() { ! grep -qF -- "$1" "$T/err"; } # the hook's stderr must not contain this text
+REMOVE_LINE="Remove each secret from the file"
+ENV_LINE="Never commit a .env file"
+new_repo
+write "$r" key.go "const k = \"$GOOGLE\"\n"
+git -C "$r" add key.go
+commit "$r"
+check "key-only: blocked" [ $? != 0 ]
+check "key-only: has the remove-secret line" grep -qF "$REMOVE_LINE" "$T/err"
+check "key-only: no .env line" lacks "$ENV_LINE"
+check "key-only: still tells agents not to use --no-verify" grep -qF -- "--no-verify" "$T/err"
+
+new_repo
+write "$r" .env "SECRET=hunter2\n"
+git -C "$r" add .env
+commit "$r"
+check ".env-only: blocked" [ $? != 0 ]
+check ".env-only: has the .env line" grep -qF "$ENV_LINE" "$T/err"
+check ".env-only: no remove-secret line" lacks "$REMOVE_LINE"
+check ".env-only: still tells agents not to use --no-verify" grep -qF -- "--no-verify" "$T/err"
+
+new_repo
+write "$r" key.go "const k = \"$GOOGLE\"\n"
+write "$r" .env "SECRET=hunter2\n"
+git -C "$r" add key.go .env
+commit "$r"
+check "key and .env: blocked" [ $? != 0 ]
+check "key and .env: has the remove-secret line" grep -qF "$REMOVE_LINE" "$T/err"
+check "key and .env: has the .env line" grep -qF "$ENV_LINE" "$T/err"
+check "key and .env: reports both findings" [ "$(findings)" = 2 ]
+
 # --amend scans the amended commit's changes.
 new_repo
 write "$r" a.txt "a\n"
