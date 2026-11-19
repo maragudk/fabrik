@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs the repository's own hook of the same name, if any (see run-local-hook).
+# Fast path without forks: a plain repository (not a linked worktree, no Git
+# LFS) without such a hook has nothing to run.
+gd=${GIT_DIR:-.git}
+h="$gd/hooks/${0##*/}"
+if [ -d "$gd" ] && [ ! -f "$gd/commondir" ] && [ ! -d "$gd/lfs" ] && [ ! -e "$h" ] && [ ! -L "$h" ]; then
+  exit 0
+fi
+exec "${0%/*}/run-local-hook" "${0##*/}" "$@"

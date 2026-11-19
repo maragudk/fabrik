@@ -42,11 +42,24 @@ $ACCOMPLISHMENTS"
   fi
 fi
 
+# Install the global git hooks that scan commits for secrets. The installer
+# always exits 0 and prints a warning only when scanning isn't active.
+SYSTEM_MESSAGE="Welcome to fabrik."
+GIT_HOOKS_WARNING=$(bash "$SCRIPT_DIR/install-git-hooks.sh" < /dev/null 2> /dev/null)
+if [ -n "$GIT_HOOKS_WARNING" ]; then
+  SYSTEM_MESSAGE="$SYSTEM_MESSAGE Warning: $GIT_HOOKS_WARNING"
+  CONTEXT="$CONTEXT
+
+## Secret scanning
+
+Warning: $GIT_HOOKS_WARNING"
+fi
+
 # jq -Rs . reads stdin as a raw string (-R), slurps all lines into one (-s),
 # and outputs it as a properly escaped JSON string (quotes, newlines, etc.)
 cat <<EOF
 {
-  "systemMessage": "Welcome to fabrik.",
+  "systemMessage": $(printf '%s' "$SYSTEM_MESSAGE" | jq -Rs .),
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
     "additionalContext": $(printf '%s' "$CONTEXT" | jq -Rs .)

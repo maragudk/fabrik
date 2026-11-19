@@ -1,0 +1,5 @@
+#!/bin/sh
+# Scans the staged changes for secrets, then runs the repository's own
+# pre-commit hook, if any.
+"${0%/*}/scan-secrets" < /dev/null || exit 1
+exec "${0%/*}/run-local-hook" pre-commit "$@"

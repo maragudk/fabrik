@@ -10,7 +10,9 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 - `.codex/agents/` -- Codex sub-agent definitions (semantic ports of `agents/`)
 - `skills/` -- all skills (copied from maragudk/skills)
 - `agents/` -- Claude Code sub-agent definitions (builder, lead, writer)
-- `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection)
+- `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection, git hook installation)
+- `hooks/git-hooks/` -- global git hooks with secret scanning, copied to `~/.config/fabrik/git-hooks/` by the session-start hook
+- `hooks/test/` -- tests for the git hooks and their installer (`bash hooks/test/test-git-hooks.sh`)
 - `docs/diary/` -- implementation diaries
 
 ## Build in worktrees

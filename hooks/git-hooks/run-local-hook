@@ -1,0 +1,55 @@
+#!/bin/bash
+# Runs the repository's own hook of the given name, if there is one.
+#
+# Usage: run-local-hook <hook-name> [hook args...]
+#
+# When git's core.hooksPath points at this directory, git ignores the hooks in
+# the repository's own hooks directory, so they are run from here instead.
+# Args, stdin, and the exit code pass through. No repository hook means
+# success, except in a Git LFS repository, where git-lfs's own hook commands
+# run in its place (git-lfs can't install them while core.hooksPath is set).
+
+name=$1
+shift
+unset CDPATH
+
+# --git-common-dir, not --git-dir: in a linked worktree, hooks live in the main
+# repository's hooks directory. The path may be relative to the current directory.
+common=$(git rev-parse --git-common-dir 2> /dev/null) || exit 0
+hooks=$(cd "$common/hooks" 2> /dev/null && pwd -P)
+hook="$hooks/$name"
+
+if [ -z "$hooks" ] || [ ! -f "$hook" ] || [ ! -x "$hook" ]; then
+  if [ -n "$hooks" ] && [ -f "$hook" ]; then
+    echo "hint: The '$hook' hook was ignored because it's not set as executable." >&2
+  fi
+  if [ -d "$common/lfs" ]; then
+    case "$name" in
+      pre-push | post-checkout | post-commit | post-merge)
+        if command -v git-lfs > /dev/null 2>&1; then
+          exec git lfs "$name" "$@"
+        fi
+        echo "This repository uses Git LFS, but git-lfs is not installed, so git lfs $name did not run." >&2
+        [ "$name" = pre-push ] && exit 2
+        ;;
+    esac
+  fi
+  exit 0
+fi
+
+# Don't recurse into ourselves: skip if the repository's hook lives in this
+# directory, directly, through a symlinked hooks directory, or as a symlink.
+self=$(cd "$(dirname "$0")" && pwd -P)
+target=$hook
+i=0
+while [ -L "$target" ] && [ $i -lt 20 ]; do
+  link=$(readlink "$target")
+  case "$link" in
+    /*) target=$link ;;
+    *) target=$(dirname "$target")/$link ;;
+  esac
+  i=$((i + 1))
+done
+[ "$(cd "$(dirname "$target")" 2> /dev/null && pwd -P)" = "$self" ] && exit 0
+
+exec "$hook" "$@"
