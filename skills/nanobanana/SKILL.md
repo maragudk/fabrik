@@ -22,17 +22,35 @@ go install maragu.dev/nanobanana@latest
 
 The `GOOGLE_API_KEY` environment variable must be set, or a `.env` file with the key must be present in the working directory.
 
-## Generating images
-
-To generate a single image:
+## Usage
 
 ```bash
-nanobanana generate output.jpg "a beautiful sunset over mountains"
+nanobanana generate [flags] <output-path> <prompt>
 ```
+
+Flags must come before the output path, and the prompt must be a single quoted argument. Any extra argument after the prompt (including a flag placed there) is a usage error. Run `nanobanana generate -h` for the full help text.
+
+## Flags
+
+- `-i <path>` -- Input image. Repeat for up to 14 images. Inputs can be PNG, JPEG, WebP, HEIC, or HEIF.
+- `-aspect <ratio>` -- Aspect ratio: `1:1`, `1:4`, `1:8`, `2:3`, `3:2`, `3:4`, `4:1`, `4:3`, `4:5`, `5:4`, `8:1`, `9:16`, `16:9`, `21:9`. If not set, the model decides.
+- `-size <size>` -- Image size: `1K`, `2K`, or `4K` (in any case). If not set, the model decides (currently 1K).
 
 ## Output format
 
-The output is always JPEG. The output path must end in `.jpg` or `.jpeg` (in any case). Any other extension, such as `.png`, makes the CLI exit with an error before it calls the API. If the user asks for a PNG, generate a `.jpg` and convert it afterwards (for example with `sips -s format png output.jpg --out output.png` on macOS).
+The output format follows the extension of the output path: `.png` gives PNG, and `.jpg` or `.jpeg` gives JPEG. Pick the extension that matches what the user asked for.
+
+## Generating images
+
+```bash
+nanobanana generate output.png "a beautiful sunset over mountains"
+```
+
+With a specific aspect ratio and size:
+
+```bash
+nanobanana generate -aspect 16:9 -size 4K wallpaper.jpg "a misty pine forest at dawn"
+```
 
 ## Editing existing images
 
@@ -42,25 +60,32 @@ To edit or modify an existing image using a text prompt:
 nanobanana generate -i input.png output.jpg "make the sky purple and add stars"
 ```
 
-The input image can be in any format the API accepts, but the output is still JPEG.
+## Combining several images
+
+Pass `-i` multiple times (up to 14). Refer to the images by their order in the prompt:
+
+```bash
+nanobanana generate -i hat.png -i banana.jpg output.png "put the hat from the first image on the banana in the second"
+```
 
 ## Tips for effective prompts
 
 - Be specific and descriptive about what you want in the image
 - Include details about style, colors, mood, composition, and subject matter
 - For edits, clearly describe what should change while the rest remains the same
+- When combining images, say which image contributes what ("the first image", "the second image")
 - You can reference art styles, artists, or specific visual aesthetics
 
 ## Examples
 
-Generate a logo:
+Generate a square logo:
 ```bash
-nanobanana generate logo.jpg "minimalist tech company logo with geometric shapes in blue and white"
+nanobanana generate -aspect 1:1 -size 2K logo.png "minimalist tech company logo with geometric shapes in blue and white"
 ```
 
 Create concept art:
 ```bash
-nanobanana generate concept.jpg "futuristic city skyline at night with neon lights and flying vehicles, cyberpunk style"
+nanobanana generate -aspect 21:9 concept.jpg "futuristic city skyline at night with neon lights and flying vehicles, cyberpunk style"
 ```
 
 Edit an existing photo:
