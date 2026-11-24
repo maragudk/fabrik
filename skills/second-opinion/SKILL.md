@@ -92,39 +92,19 @@ codex exec review --base main -o "$DIR/review.md" </dev/null > "$DIR/review.log"
 
 `agy` has no login-status command. Check auth once per session with `agy models`: a signed-in CLI prints the model list. A sign-in error: stop and ask the user to authenticate -- suggest they type `! agy` and sign in interactively.
 
-### Read-only settings
-
-agy has no read-only sandbox flag, and its headless default lets the model edit files in the workspace. Make it read-only with per-session permission rules. Write this file once per session:
-
-```sh
-cat > "$DIR/agy-settings.json" <<'EOF'
-{"permissions": {
-  "allow": ["command(git log*)", "command(git show*)", "command(git diff*)", "command(git status*)",
-            "command(git blame*)", "command(git branch*)", "command(git tag*)", "command(git rev-parse*)",
-            "command(ls*)", "command(cat *)", "command(head *)", "command(tail *)", "command(wc *)",
-            "command(grep *)", "command(rg *)", "command(find *)"],
-  "deny": ["write_file(*)"]
-}}
-EOF
-```
-
-- `write_file(*)` denies both of agy's editing tools (`write_file` and `edit_file`). The model gets a clean "permission denied" and carries on.
-- Its own file reading, directory listing, and search tools need no permission, so the allowlist only has to cover shell commands -- mostly git.
-- A shell command outside the allowlist is not denied gracefully. Headless mode cannot ask for approval, so it auto-denies and **ends the turn with an empty `response`** and a `denied_actions` list in the JSON. Don't try to fix this with `"deny": ["command(*)"]`: deny beats allow, so that blocks every command, git included. Instead, start the prompt with the commands it may run, called directly: rules match on the command prefix, so `git -C <dir> log` or `git --no-pager diff` miss them. If a run still comes back empty, resume it (see below) and tell it which commands are available.
-- Never pass `--dangerously-skip-permissions` -- that is the opposite of read-only.
-- Don't use `--mode plan` either. It does block edits, but the model then writes an implementation plan and asks for approval instead of answering.
-
 ### Core command
 
 ```sh
-cd <repo root> && agy --settings "$DIR/agy-settings.json" --output-format json \
+cd <repo root> && agy --output-format json \
   -p "$(cat "$DIR/prompt.md")" > "$DIR/agy.json" 2> "$DIR/agy.log"
 ```
+
+- agy has no read-only mode, and headless it can edit files in the workspace. Say in the prompt that this is a read-only consultation: read and run commands freely, but change no files. Check `git status` afterwards. Don't use `--mode plan` for this: the model then writes an implementation plan and asks for approval instead of answering.
 
 - `-p` (print mode) is the non-interactive mode. It takes the prompt as its value and does **not** read stdin (`-p -` sends a literal `-`), so pass the file contents with `"$(cat ...)"`. Keep `-p` last: if another flag follows `-p` directly, agy takes that flag as the prompt and exits with an error.
 - There is no `-C`: agy's workspace is the process working directory, so `cd` as part of the same command. Add `--add-dir <dir>` for more directories.
 - **In a git worktree, also pass `--add-dir "$(git -C <repo root> rev-parse --git-common-dir)"`.** agy sandboxes shell commands to the workspace, and a worktree's git metadata lives in the main checkout's `.git`. Without it, every git command fails with `fatal: not a git repository: (null)`, and the model may go on without the history and not mention it.
-- `--output-format json` prints one object: `conversation_id`, `status`, `response` (the final answer), `usage`, and `denied_actions` when something was blocked. Extract the opinion with `jq -r .response "$DIR/agy.json" > "$DIR/answer.md"`. An empty `response` means a blocked command (see above), not a non-answer.
+- `--output-format json` prints one object: `conversation_id`, `status`, `response` (the final answer), and `usage`. Extract the opinion with `jq -r .response "$DIR/agy.json" > "$DIR/answer.md"`. If `response` is empty, check `denied_actions` in the JSON to see what was blocked.
 - Use `--output-format stream-json` if you need to see what it did: every tool call and command, one JSON event per line. Like the codex log it is large -- grep it, don't cat it.
 - Unlike codex, agy has network access (`search_web`, `read_url_content`) and can look things up itself. Paste local-only context (`gh` output, logs, conversation context) into the prompt all the same.
 - There is no image-attachment flag; give the image's file path in the prompt, and the model reads it with its file tools.
@@ -140,10 +120,10 @@ Omit `--model` and `--effort` by default; the user's configuration picks the mod
 
 ### Follow-ups
 
-Continue the conversation with the `conversation_id` from `agy.json`, using the same settings and working directory:
+Continue the conversation with the `conversation_id` from `agy.json`, from the same working directory:
 
 ```sh
-cd <repo root> && agy --settings "$DIR/agy-settings.json" --output-format json \
+cd <repo root> && agy --output-format json \
   -r <conversation-id> -p "follow-up question" > "$DIR/agy-2.json" 2> "$DIR/agy-2.log"
 ```
 
