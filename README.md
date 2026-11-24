@@ -39,6 +39,12 @@ agy plugin install https://github.com/maragudk/fabrik
 
 Re-run the command to update.
 
+To enable the custom agents (`lead`, `builder`, `writer`) globally and override the plugin's Claude Code `lead` definition, link `.antigravity/agents` from a local clone (ensure `~/.gemini/config/agents` does not already exist so `ln -s` does not nest inside it, or copy `.antigravity/agents/*.md` into `~/.gemini/config/agents/`):
+
+```shell
+ln -s "$(pwd)/.antigravity/agents" ~/.gemini/config/agents
+```
+
 ## Available Skills
 
 - **ableton-live** - Guide for making music in Ableton Live 12 on macOS: Session vs Arrangement, warping, MIDI editing and MIDI Tools, routing, automation, Racks, every stock device and instrument, Push, sync, and shortcuts (distilled from the Live 12 reference manual)
@@ -80,7 +86,7 @@ Re-run the command to update.
 
 ## Available Sub-agents
 
-Sub-agents have Claude Code definitions in `agents/` and semantic Codex ports in `.codex/agents/`.
+Sub-agents have Claude Code definitions in `agents/`, semantic Codex ports in `.codex/agents/`, and semantic Antigravity ports in `.antigravity/agents/`.
 
 - **builder** - Builder that takes requirements and ships code in the lead's worktree, or its own when running in parallel
 - **lead** - Lead that refines ideas into concrete requirements, challenges assumptions, and manages scope

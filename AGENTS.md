@@ -7,6 +7,7 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 ## Structure
 
 - `.antigravity-plugin/` -- Antigravity plugin manifest (`plugin.json`)
+- `.antigravity/agents/` -- Antigravity sub-agent definitions (semantic ports of `agents/`)
 - `.claude-plugin/` -- marketplace.json + plugin.json
 - `.codex/agents/` -- Codex sub-agent definitions (semantic ports of `agents/`)
 - `skills/` -- all skills (copied from maragudk/skills)
@@ -23,7 +24,7 @@ Always do implementation work in a git worktree under `.claude/worktrees/`, neve
 
 ## Adding a new skill, sub-agent, or hook
 
-Sub-agent definitions exist in two platform-specific formats: Claude Code uses `agents/<name>.md`, while Codex uses `.codex/agents/<name>.toml`. Every logical sub-agent MUST exist in both directories. When adding, removing, or changing an agent, update both semantic versions in the same commit/PR. Keep their names, descriptions, responsibilities, and scope boundaries aligned, while translating platform-specific metadata and terminology rather than copying it literally.
+Sub-agent definitions exist in three platform-specific formats: Claude Code uses `agents/<name>.md`, Codex uses `.codex/agents/<name>.toml`, and Antigravity uses `.antigravity/agents/<name>.md`. Every logical sub-agent MUST exist in all three directories. When adding, removing, or changing an agent, update all three semantic versions in the same commit/PR. Keep their names, descriptions, responsibilities, and scope boundaries aligned, while translating platform-specific metadata and terminology rather than copying it literally.
 
 When adding a new skill or sub-agent, you MUST also add a one-line entry to `README.md` in the same commit/PR -- skills go under "Available Skills", sub-agents under "Available Sub-agents". Both lists are alphabetical and use the format `- **name** - one-line description`. Each logical sub-agent gets one README entry, not one per platform format. Anything not listed in the README is invisible to anyone browsing the repo.
 
