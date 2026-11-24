@@ -1,29 +1,47 @@
 ---
 name: second-opinion
-description: Get a second opinion from another AI model (currently OpenAI models, via the codex CLI) on a design decision, a stubborn bug, a code review, or any question where an independent take is valuable. Use only when the user explicitly asks for one -- "get a second opinion", "ask OpenAI", "ask codex", "what does GPT think", "/second-opinion", or similar. Do not use proactively.
+description: Get a second opinion from another AI model -- OpenAI models via the codex CLI, or Google's Gemini models via the agy (Antigravity) CLI -- on a design decision, a stubborn bug, a code review, or any question where an independent take is valuable. Use only when the user explicitly asks for one -- "get a second opinion", "ask OpenAI", "ask codex", "what does GPT think", "ask Gemini", "ask Google", "ask agy", "ask Antigravity", "/second-opinion", or similar. Do not use proactively.
 license: MIT
 ---
 
 # Second opinion
 
-Consult an OpenAI model through the `codex` CLI and relay what it says. The value of a second opinion is independence: let the other model reach its own conclusion, verify what it claims, then report it faithfully -- especially where it disagrees with you.
+Consult another model -- OpenAI's through the `codex` CLI, or Google's Gemini through the `agy` (Antigravity) CLI -- and relay what it says. The value of a second opinion is independence: let the other model reach its own conclusion, verify what it claims, then report it faithfully -- especially where it disagrees with you.
 
-## Preflight
+## Pick a CLI
 
-Check auth once per session: `codex login status` should print `Logged in using ChatGPT` (or the API-key equivalent). Anything else: stop and ask the user to authenticate -- suggest they type `! codex login` (ChatGPT account, usage billed to their plan) or use `codex login --api-key <key>`.
+- **Named provider**: "ask OpenAI/codex/GPT" means codex; "ask Gemini/Google/agy/Antigravity" means agy.
+- **Unspecified**: default to codex. It has a dedicated review mode and an OS-level read-only sandbox.
+- **"Get a few opinions"** or a high-stakes call: ask both, in parallel. Two independent families disagreeing is more informative than one model at two efforts.
 
-## Core command
+The sections on writing the prompt, verifying, and relaying apply to both CLIs.
 
-Set up a working directory, write the prompt to a file (avoids shell-quoting pain and keeps a record of what was asked), then run codex in the background:
+## Shared setup
+
+Use a working directory in the session scratchpad, and write the prompt to a file. A file avoids shell-quoting pain and keeps a record of what was asked:
 
 ```sh
 DIR=<your scratchpad>/second-opinion
 mkdir -p "$DIR"
-# write $DIR/prompt.md, then, as a background Bash call:
+# write $DIR/prompt.md
+```
+
+`$DIR` is the session scratchpad, never the repository or worktree under review. Prompt, answer, and log are tooling artifacts, not project files, and a 50-300 KB log dropped into the worktree pollutes the very diff you're asking the other model to read. Sub-agent definitions that forbid writing outside the workspace -- the builder's scope boundary, say -- aren't aimed at your own scratch files.
+
+**Expect minutes, not seconds** for both CLIs -- several minutes at default effort, longer at high effort on big questions. Run the call as a background Bash task, then wait on the output file itself (e.g. a bounded `until [ -s "$DIR/answer.md" ]; do sleep 15; done` loop, backgrounded or via Monitor; for agy, wait on `$DIR/agy.json`). Don't poll with `pgrep` -- other agents may be running the same CLI.
+
+## codex (OpenAI)
+
+### Preflight
+
+Check auth once per session: `codex login status` should print `Logged in using ChatGPT` (or the API-key equivalent). Anything else: stop and ask the user to authenticate -- suggest they type `! codex login` (ChatGPT account, usage billed to their plan) or use `codex login --api-key <key>`.
+
+### Core command
+
+```sh
 codex exec -C <repo root> -s read-only -o "$DIR/answer.md" - < "$DIR/prompt.md" > "$DIR/codex.log" 2>&1
 ```
 
-- `$DIR` is the session scratchpad, never the repository or worktree under review. Prompt, answer, and log are tooling artifacts, not project files, and a 50-300 KB log dropped into the worktree pollutes the very diff you're asking codex to read. Sub-agent definitions that forbid writing outside the workspace -- the builder's scope boundary, say -- aren't aimed at your own scratch files.
 - `codex exec` is non-interactive mode; `-` reads the prompt from stdin.
 - `-C <dir>` pins codex's working root. Pass it always: your own working directory resets between Bash calls, so "run it from the repo root" is not something to rely on. Add `--skip-git-repo-check` if the target isn't a git repository.
 - `-s read-only` lets codex read the workspace and run read-only commands to explore on its own, but never write. It also blocks network access -- so paste into the prompt anything codex cannot discover locally: `gh` output, release data, error logs, conversation context, external docs.
@@ -31,20 +49,7 @@ codex exec -C <repo root> -s read-only -o "$DIR/answer.md" - < "$DIR/prompt.md" 
 - `codex.log` gets the event stream: a header (model, effort, session id), every command codex ran, and the full text of every file it read -- often 50-300 KB. Never cat it into context; `head -15` for the header, `tail -3` for the token count, and leave the rest on disk.
 - Attach screenshots or diagrams with `-i <file>` if the question is visual.
 
-**Expect minutes, not seconds** -- several minutes at default effort, longer at high effort on big questions. Run the codex call as a background Bash task, then wait on the answer file itself (e.g. a bounded `until [ -s "$DIR/answer.md" ]; do sleep 15; done` loop, backgrounded or via Monitor). Don't poll with `pgrep codex` -- other agents may be running codex too.
-
-## Writing the prompt
-
-State the question, the constraints that matter, and what shape of answer you want (a verdict with reasoning, alternatives considered, risks). Point codex at file paths and let it read them itself -- that is what `-s read-only` buys you, and its own digging through the code and git history is where the best findings come from. Ask it to verify stated premises against the repo rather than accept them; your framing may itself be wrong, and a good second opinion catches that.
-
-Pick one of two modes, depending on what the second opinion is for:
-
-- **Blind** -- for open questions and design forks. Do not reveal the conclusion you or the user currently favor; ask the open question, get an independent take, compare afterwards. An opinion that has seen your answer is anchored by it. When the user's question *is* their proposal ("should we do X?"), don't name X: describe the problem neutrally and require alternatives -- "list the options you considered and rejected, including changing nothing" -- so their option gets evaluated without being flagged as the favorite.
-- **Adversarial** -- for validating a decision already made. Show the conclusion, diff, or design and ask the model to attack it: find the flaw, argue the other side, name what would make it fail.
-
-In both modes, do not lead the witness. "We think X is right -- do you agree?" produces agreement, not an opinion.
-
-## Model and effort
+### Model and effort
 
 Omit model and effort flags by default so Codex uses the user's configuration or its built-in defaults. The header in `codex.log` confirms which model and effort ran.
 
@@ -58,15 +63,7 @@ codex exec -m gpt-6.2-sol -c model_reasoning_effort="medium" ...
 - Effort levels: `low`, `medium`, `high`, `xhigh`, plus `max` (deeper single-track reasoning) and `ultra` (parallel internal subagents) for genuinely gnarly problems -- both slow and allowance-hungry, and not available on Luna.
 - codex does not validate these values client-side; a typo silently degrades the run rather than erroring. Check the header line.
 
-## Verify before relaying
-
-A second opinion arrives with the same confidence whether it is right or wrong, and both directions occur in practice: the other model may correct a premise you fed it (and be right), or fabricate a supporting fact (a plausible misreading of git history, an invented API behavior) inside an otherwise sound argument. Faithfully relaying a false claim is still a false claim.
-
-So before relaying, check the load-bearing factual claims -- the empirical assertions the opinion stands on: git-history claims (`git log`, `git tag`, `git diff` them), tool and API mechanics (check the docs), numbers and measurements (recompute them). Skip claims that are pure judgment; verify the ones the judgment rests on. Report what you checked and what held -- a verified disagreement is worth far more than an unverified one.
-
-Then weigh each issue by its real-world impact. Codex sometimes raises problems that are more theoretical than practical: a race that needs timing no real workload produces, an input the code never receives, a failure mode that takes several unlikely events in a row. A claim can be factually true and still not matter. Ask how likely the issue is in practice and what happens if it does occur. Issues that never happen in practice or are extremely unlikely can usually be set aside -- say so when relaying, rather than passing them on with the same weight as real problems.
-
-## Follow-ups
+### Follow-ups
 
 The session id is printed in the `codex.log` header. Continue the conversation with:
 
@@ -76,7 +73,7 @@ codex exec resume <session-id> "follow-up question"
 
 This keeps the model's context, so use it when the user reacts to the opinion ("ask it about X too", "tell it we can't do that because Y"). Add `--ephemeral` to the original command only for one-shots you will never resume; it prevents the session from being saved.
 
-## Code review second opinions
+### Code review
 
 For "second opinion on this diff/branch/commit", prefer `codex exec review` over a hand-rolled prompt. It is a dedicated review mode with a strict reviewer prompt -- only definite bugs introduced by the change, pre-existing problems excluded, "prefer no findings" over speculation -- and it is read-only by construction.
 
@@ -89,13 +86,93 @@ codex exec review --base main -o "$DIR/review.md" </dev/null > "$DIR/review.log"
 - A completed review exits 0 whether or not it found problems; empty output means failure, not a clean review. The verdict is in the output. Add `--json` if you want the structured findings events instead of prose.
 - Review findings are opinions too: verify before acting on them.
 
+## agy (Google Gemini)
+
+### Preflight
+
+`agy` has no login-status command. Check auth once per session with `agy models`: a signed-in CLI prints the model list. A sign-in error: stop and ask the user to authenticate -- suggest they type `! agy` and sign in interactively.
+
+### Read-only settings
+
+agy has no read-only sandbox flag, and its headless default lets the model edit files in the workspace. Make it read-only with per-session permission rules. Write this file once per session:
+
+```sh
+cat > "$DIR/agy-settings.json" <<'EOF'
+{"permissions": {
+  "allow": ["command(git log*)", "command(git show*)", "command(git diff*)", "command(git status*)",
+            "command(git blame*)", "command(git branch*)", "command(git tag*)", "command(git rev-parse*)",
+            "command(ls*)", "command(cat *)", "command(head *)", "command(tail *)", "command(wc *)",
+            "command(grep *)", "command(rg *)", "command(find *)"],
+  "deny": ["write_file(*)"]
+}}
+EOF
+```
+
+- `write_file(*)` denies both of agy's editing tools (`write_file` and `edit_file`). The model gets a clean "permission denied" and carries on.
+- Its own file reading, directory listing, and search tools need no permission, so the allowlist only has to cover shell commands -- mostly git.
+- A shell command outside the allowlist is not denied gracefully. Headless mode cannot ask for approval, so it auto-denies and **ends the turn with an empty `response`** and a `denied_actions` list in the JSON. Don't try to fix this with `"deny": ["command(*)"]`: deny beats allow, so that blocks every command, git included. Instead, start the prompt with the commands it may run, called directly: rules match on the command prefix, so `git -C <dir> log` or `git --no-pager diff` miss them. If a run still comes back empty, resume it (see below) and tell it which commands are available.
+- Never pass `--dangerously-skip-permissions` -- that is the opposite of read-only.
+- Don't use `--mode plan` either. It does block edits, but the model then writes an implementation plan and asks for approval instead of answering.
+
+### Core command
+
+```sh
+cd <repo root> && agy --settings "$DIR/agy-settings.json" --output-format json \
+  -p "$(cat "$DIR/prompt.md")" > "$DIR/agy.json" 2> "$DIR/agy.log"
+```
+
+- `-p` (print mode) is the non-interactive mode. It takes the prompt as its value and does **not** read stdin (`-p -` sends a literal `-`), so pass the file contents with `"$(cat ...)"`. Keep `-p` last: if another flag follows `-p` directly, agy takes that flag as the prompt and exits with an error.
+- There is no `-C`: agy's workspace is the process working directory, so `cd` as part of the same command. Add `--add-dir <dir>` for more directories.
+- **In a git worktree, also pass `--add-dir "$(git -C <repo root> rev-parse --git-common-dir)"`.** agy sandboxes shell commands to the workspace, and a worktree's git metadata lives in the main checkout's `.git`. Without it, every git command fails with `fatal: not a git repository: (null)`, and the model may go on without the history and not mention it.
+- `--output-format json` prints one object: `conversation_id`, `status`, `response` (the final answer), `usage`, and `denied_actions` when something was blocked. Extract the opinion with `jq -r .response "$DIR/agy.json" > "$DIR/answer.md"`. An empty `response` means a blocked command (see above), not a non-answer.
+- Use `--output-format stream-json` if you need to see what it did: every tool call and command, one JSON event per line. Like the codex log it is large -- grep it, don't cat it.
+- Unlike codex, agy has network access (`search_web`, `read_url_content`) and can look things up itself. Paste local-only context (`gh` output, logs, conversation context) into the prompt all the same.
+- There is no image-attachment flag; give the image's file path in the prompt, and the model reads it with its file tools.
+- There is no dedicated review mode. For code review, capture the diff to a file in `$DIR`, point the prompt at it, and borrow codex's reviewer stance: only definite bugs introduced by the change, no pre-existing issues, no findings is better than speculation.
+
+### Model and effort
+
+Omit `--model` and `--effort` by default; the user's configuration picks the model. Model ids carry the effort as a suffix (e.g. `gemini-4-carbon-high`), and `agy models` lists them all. The `json` output does not name the model. To attribute it, read the `model` key in `~/.gemini/antigravity-cli/settings.json`, or check the `init` event in `stream-json` output.
+
+- The Gemini 4 line, strongest first: **Carbon**, **Neon**, **Hydrogen**. Carbon has `low`/`medium`/`high`. Neon and Hydrogen also have `xhigh`.
+- For a quick, cheap opinion: `--model gemini-3.8-flash-medium`.
+- agy also serves Claude models. Never pick one for a second opinion -- asking Claude about Claude's answer is an echo, not a second opinion.
+
+### Follow-ups
+
+Continue the conversation with the `conversation_id` from `agy.json`, using the same settings and working directory:
+
+```sh
+cd <repo root> && agy --settings "$DIR/agy-settings.json" --output-format json \
+  -r <conversation-id> -p "follow-up question" > "$DIR/agy-2.json" 2> "$DIR/agy-2.log"
+```
+
+## Writing the prompt
+
+State the question, the constraints that matter, and what shape of answer you want (a verdict with reasoning, alternatives considered, risks). Point the model at file paths and let it read them itself -- that is what read-only workspace access buys you, and its own digging through the code and git history is where the best findings come from. Ask it to verify stated premises against the repo rather than accept them; your framing may itself be wrong, and a good second opinion catches that.
+
+Pick one of two modes, depending on what the second opinion is for:
+
+- **Blind** -- for open questions and design forks. Do not reveal the conclusion you or the user currently favor; ask the open question, get an independent take, compare afterwards. An opinion that has seen your answer is anchored by it. When the user's question *is* their proposal ("should we do X?"), don't name X: describe the problem neutrally and require alternatives -- "list the options you considered and rejected, including changing nothing" -- so their option gets evaluated without being flagged as the favorite.
+- **Adversarial** -- for validating a decision already made. Show the conclusion, diff, or design and ask the model to attack it: find the flaw, argue the other side, name what would make it fail.
+
+In both modes, do not lead the witness. "We think X is right -- do you agree?" produces agreement, not an opinion.
+
+## Verify before relaying
+
+A second opinion arrives with the same confidence whether it is right or wrong, and both directions occur in practice: the other model may correct a premise you fed it (and be right), or fabricate a supporting fact (a plausible misreading of git history, an invented API behavior) inside an otherwise sound argument. Faithfully relaying a false claim is still a false claim.
+
+So before relaying, check the load-bearing factual claims -- the empirical assertions the opinion stands on: git-history claims (`git log`, `git tag`, `git diff` them), tool and API mechanics (check the docs), numbers and measurements (recompute them). Skip claims that are pure judgment; verify the ones the judgment rests on. Report what you checked and what held -- a verified disagreement is worth far more than an unverified one.
+
+Then weigh each issue by its real-world impact. Other models sometimes raise problems that are more theoretical than practical: a race that needs timing no real workload produces, an input the code never receives, a failure mode that takes several unlikely events in a row. A claim can be factually true and still not matter. Ask how likely the issue is in practice and what happens if it does occur. Issues that never happen in practice or are extremely unlikely can usually be set aside -- say so when relaying, rather than passing them on with the same weight as real problems.
+
 ## Direct or subagent?
 
 Judgment call, not a rule:
 
-- **Direct (the usual case)**: one opinion, and the question plus its context are already in your conversation. Run codex via Bash, read the answer file, relay it.
-- **Subagent**: fanning out -- several opinions in parallel (different models, efforts, or blind vs adversarial framings) -- or when assembling the prompt requires heavy repo exploration that would drown your context. Give each subagent the prompt file path and have it return the opinion verbatim, not a summary; a paraphrased second opinion is a game of telephone.
+- **Direct (the usual case)**: one opinion, and the question plus its context are already in your conversation. Run the CLI via Bash, read the answer, relay it.
+- **Subagent**: fanning out -- several opinions in parallel (codex and agy, different models or efforts, blind vs adversarial framings) -- or when assembling the prompt requires heavy repo exploration that would drown your context. Give each subagent the prompt file path and have it return the opinion verbatim, not a summary; a paraphrased second opinion is a game of telephone. Running both CLIs directly as two background Bash tasks also works when the prompt is already written.
 
 ## Relaying the opinion
 
-Report what the model actually said. Attribute it (model and effort), quote the key passages, note what you verified, and put disagreements with your own view front and center -- an inconvenient second opinion is the whole point of asking. Do not blend the two views into consensus mush; where you still disagree after reading it, say so and say why.
+Report what the model actually said. Attribute it (CLI, model, and effort), quote the key passages, note what you verified, and put disagreements with your own view front and center -- an inconvenient second opinion is the whole point of asking. When you asked both CLIs, report where they agree and where they split; don't average them. Do not blend views into consensus mush; where you still disagree after reading it, say so and say why.
