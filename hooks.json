@@ -1,0 +1,11 @@
+{
+  "fabrik": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "./hooks/scripts/session-start.sh --antigravity",
+        "timeout": 60
+      }
+    ]
+  }
+}

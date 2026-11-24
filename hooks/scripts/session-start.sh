@@ -2,6 +2,19 @@
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+MODE="default"
+if [ "${1:-}" = "--antigravity" ] || { [ -n "${PLUGIN_ROOT:-}" ] && [ -z "${CLAUDE_PLUGIN_ROOT:-}" ]; }; then
+  MODE="antigravity"
+fi
+
+# By default, the working directory is the project root. Under --antigravity
+# (or PLUGIN_ROOT without CLAUDE_PLUGIN_ROOT), stdin JSON supplies the project
+# path while the working directory may be the plugin directory.
+PROJECT_DIR="."
+if [ "$MODE" = "antigravity" ]; then
+  PROJECT_DIR=$(jq -r '([.cwd?, .workspacePaths[0]?] | map(select(type == "string" and length > 0)) | first) // empty' 2> /dev/null)
+fi
+
 CONTEXT=$(cat "$SCRIPT_DIR/AGENTS.md")
 
 # Detect which machine the harness runs on, so the "Machines" section in AGENTS.md
@@ -28,11 +41,10 @@ CONTEXT="$CONTEXT
 
 In this session, you're running on: $MACHINE (hostname \`$(hostname)\`)."
 
-# The hook runs with the project root as working directory, so this picks up
-# the current project's accomplishments file, maintained by the accomplishments
-# skill. Items are one line each, newest first, so head -5 is the five most recent.
-if [ -f docs/accomplishments.md ]; then
-  ACCOMPLISHMENTS=$(grep '^- ' docs/accomplishments.md | head -5)
+# Items in docs/accomplishments.md are one line each, newest first, so head -5
+# is the five most recent.
+if [ -n "$PROJECT_DIR" ] && [ -f "$PROJECT_DIR/docs/accomplishments.md" ]; then
+  ACCOMPLISHMENTS=$(grep '^- ' "$PROJECT_DIR/docs/accomplishments.md" | head -5)
   if [ -n "$ACCOMPLISHMENTS" ]; then
     CONTEXT="$CONTEXT
 
@@ -53,6 +65,23 @@ if [ -n "$GIT_HOOKS_WARNING" ]; then
 ## Secret scanning
 
 Warning: $GIT_HOOKS_WARNING"
+fi
+
+# Antigravity fails to process SessionStart output when systemMessage.metadata
+# is set, so prepend the welcome line into systemMessage instead.
+if [ "$MODE" = "antigravity" ]; then
+  jq -n \
+    --arg msg "$(printf '%s\n\n%s' "$SYSTEM_MESSAGE" "$CONTEXT")" \
+    '{
+      injectSteps: [
+        {
+          systemMessage: {
+            systemMessage: $msg
+          }
+        }
+      ]
+    }'
+  exit 0
 fi
 
 # jq -Rs . reads stdin as a raw string (-R), slurps all lines into one (-s),

@@ -31,6 +31,14 @@ ln -s "$(pwd)/.codex/agents" ~/.codex/agents
 
 Start a new session, then use `/hooks` to review and trust the SessionStart hook.
 
+### Antigravity
+
+```shell
+agy plugin install https://github.com/maragudk/fabrik
+```
+
+Re-run the command to update.
+
 ## Available Skills
 
 - **ableton-live** - Guide for making music in Ableton Live 12 on macOS: Session vs Arrangement, warping, MIDI editing and MIDI Tools, routing, automation, Racks, every stock device and instrument, Push, sync, and shortcuts (distilled from the Live 12 reference manual)

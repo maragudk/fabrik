@@ -25,7 +25,7 @@ export HOME="$T/home"
 export XDG_CONFIG_HOME="$T/xdg"
 export GIT_CONFIG_GLOBAL="$T/gitconfig"
 export GIT_CONFIG_NOSYSTEM=1
-unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_CEILING_DIRECTORIES
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_COMMON_DIR GIT_OBJECT_DIRECTORY GIT_CEILING_DIRECTORIES PLUGIN_ROOT CLAUDE_PLUGIN_ROOT
 mkdir -p "$HOME"
 
 git config --global user.name "Test Robot"
@@ -651,6 +651,80 @@ check "session start, no git: warns" grep -qF "git is not installed" <(system_me
 session_start env XDG_CONFIG_HOME="$T/xdg-file"
 check "session start, unwritable: valid JSON" valid_json
 check "session start, unwritable: warns" grep -qF "Secret scanning is not active" <(system_message)
+
+# --- session-start.sh --antigravity -----------------------------------------
+
+mkdir -p "$T/plugin-dir/docs" "$T/project/docs"
+printf '# Accomplishments\n\n- Decoy accomplishment from plugin dir\n' > "$T/plugin-dir/docs/accomplishments.md"
+printf '# Accomplishments\n\n- Shipped the widget\n- Fixed the gizmo\n' > "$T/project/docs/accomplishments.md"
+
+agy_session_start() {
+  local input=$1
+  shift
+  (cd "$T/plugin-dir" && printf '%s' "$input" | "$@" "$SCRIPTS/session-start.sh" --antigravity > "$T/out" 2> "$T/err")
+}
+agy_valid_json() {
+  jq -e '(.injectSteps | length == 1) and (.injectSteps[0].systemMessage.systemMessage | length > 0) and (.injectSteps[0].systemMessage.metadata == null)' "$T/out" > /dev/null
+}
+agy_first_line() { jq -r '.injectSteps[0].systemMessage.systemMessage | split("\n")[0]' "$T/out"; }
+agy_context() { jq -r '.injectSteps[0].systemMessage.systemMessage' "$T/out"; }
+agy_lacks_context() { ! grep -qF -- "$1" <(agy_context); }
+
+git config --global --unset core.hooksPath 2> /dev/null || true
+export XDG_CONFIG_HOME="$T/xdg-agy"
+agy_session_start "$(jq -n --arg cwd "$T/project" '{cwd: $cwd}')" env
+check "agy session start: exits 0" [ $? = 0 ]
+check "agy session start: valid injectSteps JSON without metadata" agy_valid_json
+check "agy session start: plain welcome on first line" [ "$(agy_first_line)" = "Welcome to fabrik." ]
+check "agy session start: reads accomplishments from stdin cwd" grep -qF -- "- Shipped the widget" <(agy_context)
+check "agy session start: ignores plugin-dir decoy accomplishments" agy_lacks_context "Decoy accomplishment"
+check "agy session start: installs hooks in XDG_CONFIG_HOME" [ "$(global_hooks_path)" = "$T/xdg-agy/fabrik/git-hooks" ]
+check "agy session start: copies hooks to XDG_CONFIG_HOME" diff -rq "$HOOKS" "$T/xdg-agy/fabrik/git-hooks"
+git config --global --unset core.hooksPath
+export XDG_CONFIG_HOME="$T/xdg"
+
+agy_session_start "$(jq -n --arg ws "$T/project" '{cwd: "", workspacePaths: [$ws]}')" env
+check "agy session start, empty cwd fallback: reads workspacePaths accomplishments" grep -qF -- "- Fixed the gizmo" <(agy_context)
+check "agy session start, empty cwd fallback: ignores decoy" agy_lacks_context "Decoy accomplishment"
+
+agy_session_start "$(jq -n --arg ws "$T/project" '{cwd: null, workspacePaths: [$ws]}')" env
+check "agy session start, null cwd fallback: reads workspacePaths accomplishments" grep -qF -- "- Fixed the gizmo" <(agy_context)
+
+agy_session_start "$(jq -n --arg cwd "$T/project" '{cwd: $cwd, workspacePaths: "not-an-array"}')" env
+check "agy session start, malformed workspacePaths: keeps cwd accomplishments" grep -qF -- "- Shipped the widget" <(agy_context)
+
+agy_session_start "" env
+check "agy session start, empty stdin: exits 0" [ $? = 0 ]
+check "agy session start, empty stdin: valid JSON without metadata" agy_valid_json
+check "agy session start, empty stdin: ignores decoy" agy_lacks_context "Decoy accomplishment"
+
+agy_session_start "{bad json" env
+check "agy session start, invalid JSON stdin: exits 0" [ $? = 0 ]
+check "agy session start, invalid JSON stdin: valid JSON without metadata" agy_valid_json
+check "agy session start, invalid JSON stdin: ignores decoy" agy_lacks_context "Decoy accomplishment"
+
+agy_session_start "$(jq -n --arg cwd "$T/project" '{cwd: $cwd}')" env CLAUDE_PLUGIN_ROOT=/some/claude
+check "agy session start, --antigravity overrides CLAUDE_PLUGIN_ROOT: valid JSON" agy_valid_json
+
+(cd "$T/plugin-dir" && jq -n --arg cwd "$T/project" '{cwd: $cwd}' | PLUGIN_ROOT=/some/plugin bash "$SCRIPTS/session-start.sh" > "$T/out" 2> "$T/err")
+check "agy session start, PLUGIN_ROOT: exits 0" [ $? = 0 ]
+check "agy session start, PLUGIN_ROOT: valid injectSteps JSON without metadata" agy_valid_json
+check "agy session start, PLUGIN_ROOT: plain welcome on first line" [ "$(agy_first_line)" = "Welcome to fabrik." ]
+check "agy session start, PLUGIN_ROOT: reads accomplishments from stdin cwd" grep -qF -- "- Shipped the widget" <(agy_context)
+check "agy session start, PLUGIN_ROOT: ignores decoy" agy_lacks_context "Decoy accomplishment"
+
+(cd "$T/project" && jq -n --arg cwd "$T/project" '{cwd: $cwd}' | PLUGIN_ROOT=/some/plugin CLAUDE_PLUGIN_ROOT=/some/claude bash "$SCRIPTS/session-start.sh" > "$T/out" 2> "$T/err")
+check "session start, PLUGIN_ROOT + CLAUDE_PLUGIN_ROOT: exits 0" [ $? = 0 ]
+check "session start, PLUGIN_ROOT + CLAUDE_PLUGIN_ROOT: stays in default mode" valid_json
+check "session start, PLUGIN_ROOT + CLAUDE_PLUGIN_ROOT: plain welcome" [ "$(system_message)" = "Welcome to fabrik." ]
+check "session start, PLUGIN_ROOT + CLAUDE_PLUGIN_ROOT: no injectSteps" jq -e '.injectSteps == null' "$T/out" > /dev/null
+
+git config --global core.hooksPath /opt/other-hooks
+agy_session_start "$(jq -n --arg cwd "$T/project" '{cwd: $cwd}')" env
+check "agy session start, foreign path: valid JSON without metadata" agy_valid_json
+check "agy session start, foreign path: warns on first line" jq -e '.injectSteps[0].systemMessage.systemMessage | split("\n")[0] | startswith("Welcome to fabrik. Warning: Secret scanning is not active")' "$T/out" > /dev/null
+check "agy session start, foreign path: warns in context" grep -qF "Secret scanning is not active" <(agy_context)
+git config --global --unset core.hooksPath
 
 check "tests left the source hooks directory untouched" [ "$(ls -l "$HOOKS")" = "$HOOKS_BEFORE" ]
 

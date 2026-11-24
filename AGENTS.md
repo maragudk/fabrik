@@ -6,11 +6,13 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 
 ## Structure
 
+- `.antigravity-plugin/` -- Antigravity plugin manifest (`plugin.json`)
 - `.claude-plugin/` -- marketplace.json + plugin.json
 - `.codex/agents/` -- Codex sub-agent definitions (semantic ports of `agents/`)
 - `skills/` -- all skills (copied from maragudk/skills)
 - `agents/` -- Claude Code sub-agent definitions (builder, lead, writer)
-- `hooks/` -- hooks.json + scripts (session start welcome message, AGENTS.md injection, git hook installation)
+- `hooks.json` -- Antigravity lifecycle hooks pointing at `hooks/scripts/session-start.sh`
+- `hooks/` -- `hooks.json` (Claude Code and Codex) + scripts (session start welcome message, AGENTS.md injection, git hook installation)
 - `hooks/git-hooks/` -- global git hooks with secret scanning, copied to `~/.config/fabrik/git-hooks/` by the session-start hook
 - `hooks/test/` -- tests for the git hooks and their installer (`bash hooks/test/test-git-hooks.sh`)
 - `docs/diary/` -- implementation diaries
@@ -24,6 +26,8 @@ Always do implementation work in a git worktree under `.claude/worktrees/`, neve
 Sub-agent definitions exist in two platform-specific formats: Claude Code uses `agents/<name>.md`, while Codex uses `.codex/agents/<name>.toml`. Every logical sub-agent MUST exist in both directories. When adding, removing, or changing an agent, update both semantic versions in the same commit/PR. Keep their names, descriptions, responsibilities, and scope boundaries aligned, while translating platform-specific metadata and terminology rather than copying it literally.
 
 When adding a new skill or sub-agent, you MUST also add a one-line entry to `README.md` in the same commit/PR -- skills go under "Available Skills", sub-agents under "Available Sub-agents". Both lists are alphabetical and use the format `- **name** - one-line description`. Each logical sub-agent gets one README entry, not one per platform format. Anything not listed in the README is invisible to anyone browsing the repo.
+
+Lifecycle hooks live in both `hooks/hooks.json` (Claude Code and Codex) and `hooks.json` at the repo root (Antigravity); keep hook additions or changes in sync across both.
 
 ## Vendored skills
 
