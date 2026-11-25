@@ -68,9 +68,7 @@ ln -s "$(pwd)/.antigravity/agents" ~/.gemini/config/agents
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
 - **observability** - Guide for instrumenting and operating observable systems (wide structured events, OpenTelemetry, the core analysis loop, SLOs, sampling, and observability for AI/LLMs)
 - **one-at-a-time** - Output-pacing discipline that presents one unit at a time instead of dumping a list or wall of text
-- **save-web-page** - Guide for saving a web page for offline use using the [monolith CLI](https://github.com/Y2Z/monolith)
 - **second-opinion** - Get a second opinion from another AI model (OpenAI via the [codex CLI](https://github.com/openai/codex), or Google Gemini via the agy CLI) on designs, bugs, and code
-- **simple-english** - Write or check technical text with the rules of ASD-STE100 Simplified Technical English (copied from [AminBlg/SimpleEnglish](https://github.com/AminBlg/SimpleEnglish))
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **turbopuffer** - Guide for building search on turbopuffer, the object-storage-native vector and full-text search engine (namespaces, schemas, BM25, hybrid search with RRF), with Go examples first-class
 - **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)
