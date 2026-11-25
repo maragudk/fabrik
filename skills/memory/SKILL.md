@@ -61,24 +61,32 @@ When you save feedback, record the specifics -- what, who, when, why, and how fa
 
 ### Format
 
-One bullet per memory, one fact per bullet:
+Each memory is a `###` subsection: a short heading, then freeform text.
 
 ```markdown
 ## Memory
 
 Agent memory for this project. Use the `memory` skill before adding, changing, or removing entries.
 
-- **Package tests only during iteration** (feedback, 2026-11-25): Run only the tests of the package being changed; the user runs the full suite before merging. **Why:** the full suite takes nine minutes. **How to apply:** `go test ./internal/queue/...` rather than `go test ./...`, unless asked.
-- **Deploys frozen until the PostgreSQL 17 migration** (project, 2026-11-20): Don't deploy or suggest deploying. **Why:** the migration needs a quiet database. **How to apply:** drop this entry once the migration has landed.
-- **Queue dashboard** (reference, 2026-10-02): https://example.com/dashboards/queue shows retry rates per job type.
+### Run only package tests while iterating
+
+Run `go test ./internal/queue/...` for the package being changed, not `go test ./...`. On 2026-11-25 the user said the full suite takes nine minutes and that they run it themselves before merging.
+
+### Deploys are frozen until the PostgreSQL 17 migration
+
+Don't deploy or suggest deploying until the migration has landed, because it needs a quiet database (2026-11-20). Remove this once it has.
+
+### Queue dashboard
+
+https://example.com/dashboards/queue shows retry rates per job type (2026-10-02).
 ```
 
-- Start with a short bold title, so entries can be scanned and referred to.
-- Follow with the kind and an absolute date in parentheses. Convert relative dates ("yesterday", "next Friday") to absolute ones, in the entry text too: the entry will be read on a different day. When you update an entry, update its date.
-- For **feedback** and **project** entries, add **Why:** and **How to apply:**. The why is what lets a later agent judge edge cases, and notice when the entry no longer holds.
-- Keep each entry to a few lines. If it needs more, the detail belongs in the diary, with a pointer here.
-- Add new entries at the end of the section, so the order stays oldest first.
-- Keep the section at the very bottom of the file, and keep its introductory line.
+- Keep the heading short and unique, so entries can be scanned and referred to by name.
+- Write the body however reads best, but keep it to a few lines. If it needs more, the detail belongs in the diary, with a pointer here.
+- For feedback and project entries, say why. The reason is what lets a later agent judge edge cases, and notice when the entry no longer holds.
+- Include an absolute date. Convert relative dates ("yesterday", "next Friday") to absolute ones, since the entry will be read on a different day.
+- Add new subsections at the end of the section, so the order stays oldest first.
+- Keep the section at the very bottom of the file, and keep its introductory line. Since the subsections are `###` headings, anything after them would read as part of memory.
 
 ### Updating and pruning
 
