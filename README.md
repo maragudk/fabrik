@@ -84,3 +84,4 @@ Sub-agents have Claude Code definitions in `agents/`, semantic Codex ports in `.
 
 ## Available Hooks
 
+- **SessionStart** - Shows a welcome message, injects `hooks/scripts/AGENTS.md` (the session context that tells the agent who you are and how you work), and installs the secret-scanning git hooks
