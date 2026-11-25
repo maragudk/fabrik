@@ -1,0 +1,93 @@
+ ▐▛███▛█   Claude Code v2.1.332
+▝▜██████▀  Opus 5.5 · Claude Ultra
+ ▝▝   ▝▝   ~/Developer/fabrik
+
+  ⎿  SessionStart:startup says: Welcome to fabrik.
+
+❯ Do we already have a note that when I export a conversation, it gets saved    
+  verbatim to docs/conversations/YYYY-MM-DD-topic.txt and committed?            
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ No. Nothing in the repo, the injected AGENTS.md, CLAUDE.md, or my memory
+  mentions docs/conversations/ or saving exported conversations, and that
+  directory doesn't exist yet.
+
+  I can add the rule in one of three places:
+  - fabrik's CLAUDE.md, if it should only apply in this repo.
+  - The injected AGENTS.md, if it should apply in every project.
+  - A memory file, which is the lightest option and also only applies to this
+    project.
+
+  Which one do you want?
+
+✻ Brewed for 10s · done 10:44 AM
+
+❯ The injected file                                                             
+
+  Ran 1 shell command (ctrl+o to expand)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ Or would it be better as a skill? I suspect not.                              
+
+⏺ I agree, it shouldn't be a skill. A skill only earns its place when it carries
+  a procedure and needs a trigger description to load it on demand. This is a
+  single standing rule with a path convention. As a skill it could also fail to
+  trigger, while a line in the injected AGENTS.md is always in context. It only
+  becomes skill-shaped if the steps grow, for example redaction rules, how to
+  pick the topic slug, or splitting long exports.
+
+  Want me to go ahead and add the line to hooks/scripts/AGENTS.md?
+
+✻ Worked for 7s · done 10:45 AM
+
+❯ Yes                                                                           
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ Update(.claude/worktrees/conversation-export/hooks/scripts/AGENTS.md)
+  ⎿  Added 2 lines
+      51 
+      52  I prefer lightweight web apps with server-side rendered HTML an
+          d HTMX/Datastar for interactivity. I've built gomponents, a pur
+          e Go HTML component library.
+      53 
+      54 +When I export a conversation, save it verbatim to `docs/convers
+         +ations/YYYY-MM-DD-topic.txt` in the current project and commit 
+         +it.                                                            
+      55 +                                                               
+      56  ## Pep talk
+      57 
+      58  You're awesome! I believe in you! You can do this, whatever the
+           task ahead is! :D
+
+⏺ Bash(cd
+      /Users/maragubot/Developer/fabrik/.claude/worktrees/conversation-export &&
+      git add hooks/scripts/AGENTS.md && git commit -q -m 'Add conversation
+      export rule…)
+  ⎿  c0f9cd9 Add conversation export rule to the injected `AGENTS.md`
+     ## main...origin/main [ahead 1]
+  ⎿  Updated hooks/scripts/AGENTS.md +2
+  ⎿  (a git step in this command can move the working tree, so these may be
+     its changes, not edits) (ctrl+o to expand)
+
+⏺ I added the rule to hooks/scripts/AGENTS.md and committed it to main as
+  c0f9cd9. It's not pushed yet. The new line reads:
+
+  ▎ When I export a conversation, save it verbatim to 
+  ▎ docs/conversations/YYYY-MM-DD-topic.txt in the current project and commit 
+  ▎ it.
+
+  I put it at the end of the Software development section. New sessions pick it
+  up once it's on main in the main checkout. Should I push?
+
+✻ Cooked for 17s · done 10:45 AM
+
+❯ Yeah, push                                                                    
+
+  Ran 1 shell command (ctrl+o to expand)
+
+⏺ I pushed c0f9cd9, so main now matches origin. From now on, every session gets
+  the conversation export rule from the injected AGENTS.md.
+
+✻ Baked for 8s · done 10:45 AM
