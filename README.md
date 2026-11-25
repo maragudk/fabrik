@@ -64,6 +64,7 @@ ln -s "$(pwd)/.antigravity/agents" ~/.gemini/config/agents
 - **go** - Guide for developing Go apps and modules/libraries (code style, testing, dependency injection, package structure)
 - **improve-skill** - Review the current conversation for fabrik skills that could be improved and ship the improvements back as PRs (concrete fixes) or issues (fuzzy observations / redesigns)
 - **marimo** - Guide for creating and working with marimo notebooks, the reactive Python notebook that stores as pure .py files
+- **memory** - Keep agent memory in a `## Memory` section at the bottom of the project's `AGENTS.md` instead of the harness's built-in memory: when and what to save, format, pruning, and opt-in setup
 - **modal** - Official Modal skill (vendored from `modal skills install`) for the Modal cloud platform: serverless compute, GPUs, batch jobs, and sandboxes, with the Modal docs bundled under `references/`
 - **nanobanana** - Guide for generating and editing images using generative AI with the nanobanana CLI
 - **observability** - Guide for instrumenting and operating observable systems (wide structured events, OpenTelemetry, the core analysis loop, SLOs, sampling, and observability for AI/LLMs)
