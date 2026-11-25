@@ -22,6 +22,12 @@ This is built for Markus's own use -- others are free to use and copy it, but de
 
 Always do implementation work in a git worktree under `.claude/worktrees/`, never directly in the main project directory on `main`. Running sessions load fabrik's skills, hooks, and agents from the main checkout, so half-finished edits there leak into them immediately. When the work is done, merge it into `main` (fast-forward where possible), then remove the worktree and its branch.
 
+## Committing
+
+Pull requests are disabled on this repo. Commit on the worktree's local branch and fast-forward it into `main`; don't open PRs. Never push until Markus has approved the commit: the push gate replaces PR review as the last checkpoint, and approval of one commit doesn't carry over to the next.
+
+Fabrik doesn't use GitHub issues, so skip the `git` skill's question about which issues to reference, and leave out the "See #" footer.
+
 ## Adding a new skill, sub-agent, or hook
 
 Sub-agent definitions exist in three platform-specific formats: Claude Code uses `agents/<name>.md`, Codex uses `.codex/agents/<name>.toml`, and Antigravity uses `.antigravity/agents/<name>.md`. Every logical sub-agent MUST exist in all three directories. When adding, removing, or changing an agent, update all three semantic versions in the same commit/PR. Keep their names, descriptions, responsibilities, and scope boundaries aligned, while translating platform-specific metadata and terminology rather than copying it literally.
@@ -33,3 +39,7 @@ Lifecycle hooks live in both `hooks/hooks.json` (Claude Code and Codex) and `hoo
 ## Vendored skills
 
 `skills/modal/` is Modal's official skill, copied verbatim from `modal skills install`. Don't edit it by hand. To refresh it, run `modal skills install -y` in an empty temporary directory and replace `skills/modal/` with the resulting `.agents/skills/modal/`. GitHub push protection rejects the example Docker token in `references/guide/existing-images.md`, so redact that one value (`dckr_pat_<your-token>`) after copying.
+
+## Memory
+
+Agent memory for this project. Use the `memory` skill before adding, changing, or removing entries.
