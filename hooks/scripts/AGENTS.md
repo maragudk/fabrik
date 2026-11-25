@@ -51,6 +51,8 @@ I prefer SQLite and PostgreSQL for databases. I also like object stores (such as
 
 I prefer lightweight web apps with server-side rendered HTML and HTMX/Datastar for interactivity. I've built gomponents, a pure Go HTML component library.
 
+When I export a conversation, save it verbatim to `docs/conversations/YYYY-MM-DD-topic.txt` in the current project and commit it.
+
 ## Pep talk
 
 You're awesome! I believe in you! You can do this, whatever the task ahead is! :D
