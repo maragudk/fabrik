@@ -84,32 +84,3 @@ Sub-agents have Claude Code definitions in `agents/`, semantic Codex ports in `.
 
 ## Available Hooks
 
-- **SessionStart** - Shows a welcome message, injects `hooks/scripts/AGENTS.md` (the session context that tells the agent who you are and how you work), and installs the secret-scanning git hooks described below
-
-### Secret scanning
-
-A dependency-free bash pre-commit hook blocks commits that contain secrets. It scans the added lines of the staged diff for:
-
-- Anthropic API keys (`sk-ant-...`, including admin keys and OAuth tokens)
-- OpenAI API keys (`sk-proj-`, `sk-svcacct-`, `sk-admin-`, and the legacy `sk-` format)
-- AWS access key IDs (`AKIA...`, `ASIA...`) and AWS secret access keys (only as the value of a name like `aws_secret_access_key` on the same line)
-- Google API keys (`AIza...`)
-- Tigris access key IDs (`tid_...`) and secret access keys (`tsec_...`)
-
-It also blocks a commit that adds a file named exactly `.env`; `.env.example`, `.env.local`, and the like pass. Findings are printed redacted.
-
-The hook covers every repository on the machine. At session start, fabrik copies its git hooks to `~/.config/fabrik/git-hooks/` (or `$XDG_CONFIG_HOME/fabrik/git-hooks/`) and, if `core.hooksPath` is unset, points the global `core.hooksPath` there. To opt out, set `core.hooksPath` to another directory in the global git config, a file it includes, or the system config: fabrik leaves it alone and warns at session start that scanning is inactive.
-
-A global `core.hooksPath` makes git ignore a repository's own `.git/hooks`, so fabrik's hooks run the repository's client-side hook of the same name. The pre-commit hook runs it after the scan passes. git-lfs cannot install its hooks while `core.hooksPath` is set, so in a Git LFS repository with no hook of its own, the pre-push, post-checkout, post-commit, and post-merge hooks run `git lfs <hook>` in its place.
-
-Known gaps:
-
-- `git commit --no-verify` skips the scan.
-- A repository that sets its own `core.hooksPath` (as husky v9 does) overrides the global one, so its commits go unscanned.
-- Clean merges, cherry-picks, rebases, and `git am` don't run pre-commit, so they go unscanned. Concluding a conflicted merge with `git commit` does scan everything incoming from the other branch.
-- Files git treats as binary, including those marked `-diff` or `binary` in `.gitattributes`, are not scanned.
-- A repository's own `reference-transaction`, `post-index-change`, and `push-to-checkout` hooks stop running. fabrik deliberately leaves them unchained: the first two fire so often that chaining them made git many times slower, and the mere presence of the third changes what git does.
-- Server-side hooks (`pre-receive`, `update`, `post-receive`, `post-update`) stop running too, which affects push-to-deploy repositories on the machine.
-- `git lfs install` reports "Hook already exists", and the pre-commit framework refuses to install, while `core.hooksPath` is set.
-
-Run the tests with `bash hooks/test/test-git-hooks.sh`.
