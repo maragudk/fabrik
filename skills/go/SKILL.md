@@ -179,6 +179,10 @@ In tests, use `t.Context()` instead of `context.Background()`, and always use it
 
 Tests that exercise timing -- timeouts, retries, tickers, anything sleeping or waiting on a clock -- should use the `testing/synctest` package (stable since Go 1.25). It runs the test against a fake clock, making timing tests fast and deterministic instead of slow and flaky.
 
+No test may depend on timing, with or without `synctest`: it passes or fails for the same reason on every machine, however slow or loaded. Set up fakes before the code that uses them starts. Where two orders of events are both legal, accept both or force one. Where a test bounds real time, bound it only from the side a slower machine can't break.
+
+A test never skips itself, except under `-short`: `testing.Short()` is the only reason to call `t.Skip`. A test that can't run, for example because a credential, an environment variable, or a service is missing, fails with a message that says what is missing. A skipped test looks like a passing one, so a missing variable would silently turn the check off.
+
 ### Miscellaneous
 
 - Variable naming:

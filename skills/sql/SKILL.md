@@ -40,3 +40,7 @@ Use this skill when:
     update table_name set updated = strftime('%Y-%m-%dT%H:%M:%fZ') where id = old.id;
   end;
   ```
+
+### Database Files
+
+- When deleting or resetting a SQLite database file, ALWAYS remove its `-wal` and `-shm` files with it: `rm -f app.db app.db-wal app.db-shm`. A leftover WAL file belongs to the old database and causes trouble when the app starts again with a fresh one.

@@ -17,6 +17,10 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 - Ask me about any Github issues that should be referenced, and wait for my response before committing. Reference them at the end of the commit message like this: "See #123, #234". If the commit fixes one or more issues, use "Fixes #123, fixes #234" instead (the double "fixes" is important for Github to actually close the issue).
 - Don't mention that you've updated tests, that's assumed.
 
+## Using `gh`
+
+- In a repository with both `origin` and `upstream` remotes, such as one made from a template, `gh` can resolve to the upstream repository when no default is set. `gh pr create` then fails with "No commits between main and ...", and commands like `gh pr edit` act on the upstream repository's pull request instead. Check with `gh repo set-default --view` before the first `gh` command, and either set the default (`gh repo set-default <owner>/<repo>`) or pass `-R <owner>/<repo>`.
+
 ## Creating pull requests
 
 - Assign Markus as reviewer by default: `gh pr create --reviewer markuswustenberg` (or `gh pr edit <n> --add-reviewer markuswustenberg` for an existing PR).
@@ -38,11 +42,14 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 ## Merging pull requests
 
 - Merge only on an explicit, standalone instruction that names the PR ("merge #123"). A "yes" to a question that bundled the merge with something else, a conditional ("merge once CI is green"), or an earlier grant on a different PR is not one -- ask again, on its own, naming the PR, and wait. Every PR is reviewed by a person first.
+- Even with that instruction, merge only after the checks have run and passed. Confirm that the PR has checks (`gh pr checks <n>`) and that every one passed. An empty list means the checks haven't registered yet, never that they passed, so count them against the jobs CI runs. Don't put a pipe between a check and the command that depends on it (`gh pr checks <n> | tail -5 && gh pr merge ...`): a pipeline's exit status is that of its last command, so a failed check reads as success.
 - Prefer merge commits: `gh pr merge --merge`. Merge settings vary by repo -- some disallow squash merging entirely, some still use it -- so don't reach for `--squash` by default; if a merge method is rejected, check the repo's recent history for what it actually uses.
 
 ## Cleaning up after a merge
 
-Always clean up local state after work merges -- whether through a merged pull request or a local merge into the main branch, in a repo that commits straight to main:
+Always clean up local state after work merges -- whether through a merged pull request or a local merge into the main branch, in a repo that commits straight to main. First confirm the merge actually happened (`gh pr view <n> --json state` shows `MERGED`, or the branch is in the main branch's history): after a refused or failed merge, the branch may be the only copy of the work.
+
+Once the merge is confirmed, removing the worktree and the merged local and remote branches is part of finishing the work, so don't ask the user about it. If a tool or command balks because the worktree changed branch or has commits its starting point lacks, check for yourself that every commit is on the main branch and nothing is uncommitted, then go ahead; ask only if something isn't merged or is uncommitted.
 
 - Pull the main branch in the project directory, if it tracks a remote.
 - Remove any worktree used for the work (`git worktree remove <path>`).
