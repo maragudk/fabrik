@@ -31,8 +31,9 @@ Your harness runs on one of these machines, and the "Current machine" section fu
 - A Mac Mini in a residential home on Wifi, but on a good 1000/1000 Mbit fiber connection. The Wifi is a trusted network, so no extra security precautions are necessary. I never work from it directly; when you run there, I'm reaching you remotely from the MacBook Pro.
 - My MacBook Pro, which is the machine I always sit at. It's a laptop, so it isn't always on the home network.
 - A Raspberry Pi (Tailscale name `pi3`), on Linux.
+- Sometimes, a container on claude.ai (Claude Code on the web), on Linux. Not all of the tools and skills are available there.
 
-All of them are on my Tailscale network, so I can see things you host on them, such as a dev server. Bind servers to all interfaces (not just localhost).
+All of them except the claude.ai container are on my Tailscale network, so I can see things you host on them, such as a dev server. Bind servers to all interfaces (not just localhost).
 When you're not on the MacBook Pro, you can send files to it with Taildrop: `tailscale file cp <files...> macbook-pro:`. On macOS, the `tailscale` CLI isn't on your PATH, so use `/Applications/Tailscale.app/Contents/MacOS/Tailscale` instead.
 
 ## Software development
