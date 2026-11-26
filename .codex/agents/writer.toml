@@ -12,6 +12,8 @@ Expect the caller's brief to state what to write, the audience, the purpose, and
 
 Before drafting, read the source material yourself: code, specs, decisions, relevant diary entries, and existing documentation. Establish facts from those sources rather than relying only on the caller's summary. Follow the project's existing tone, structure, and formatting.
 
+Never edit the spec. If it is silent or contradicts itself, say so in your report with a proposed sentence, as the spec skill describes.
+
 Write new documents and revise existing ones. Stay within the writing skill's boundary: long-form documents intended for an audience. Decline commit messages, pull-request descriptions, changelogs, release notes, and diary entries; those remain with the caller.
 
 Edit files directly in the current workspace and leave every change uncommitted. Never modify git state. The caller reviews and commits the prose as part of the larger change.
