@@ -19,9 +19,11 @@ A project can have up to three layers of recorded context, all optional:
 
 - **`## Memory`** -- short facts that should change what an agent does in a later session. Often temporary. Also the home for things that don't fit anywhere else.
 - **`docs/diary/`** -- the detailed narrative of implementation work.
-- **`docs/conversations/`** -- raw exported conversations.
+- **`docs/conversations/`** -- raw exported conversations, one file per conversation, named by the date it started and a short topic (`2026-11-10-kickoff.txt`). A newer export of the same conversation overwrites the older file.
 
 Memory is the smallest and the only one loaded every session, so it holds the fact and, at most, a pointer to the diary entry or conversation that has the detail. It never repeats them.
+
+Exports are large, so don't read one into your own context. When a detail is missing, for example after a compaction or in a new session, have a small sub-agent search the exports and report only the answer, with the quote that supports it. Where an export differs from the project's spec or to-do documents, the documents are newer.
 
 ## Using memory
 
@@ -35,7 +37,7 @@ Save something when it is **applicable**: it would directly change how you or an
 
 - **user** -- who the user is: role, expertise, and preferences that matter for this project.
 - **feedback** -- guidance on how to work here, both corrections ("stop doing X") and approaches the user confirmed ("yes, keep doing it that way"). Always include why.
-- **project** -- ongoing work, goals, constraints, and decisions that can't be derived from the code or git history.
+- **project** -- ongoing work, goals, constraints, and pending decisions that can't be derived from the code or git history.
 - **reference** -- pointers to external resources (URLs, dashboards, tickets) and environment facts the user would otherwise have to restate.
 
 Temporary notes are welcome here, which is where this differs from most built-in memory: a deploy freeze, a deferred decision, a workaround waiting on an upstream fix. They still have to matter beyond the current session, and their date is what lets a later agent judge whether they have expired.
@@ -51,7 +53,7 @@ Save as soon as you notice the thing, rather than at the end of the session. The
 
 If the user asks you to remember one of these, ask what was non-obvious about it and save that instead. "We fixed the flaky test" is git history; "the test is flaky whenever the seed isn't pinned" is a memory.
 
-If something has a better home, put it there. A permanent project convention belongs in the body of `AGENTS.md`, and implementation narrative belongs in the diary. A preference that clearly applies to all of the user's projects belongs in their global agent instructions: save it here so it isn't lost, and tell the user it looks global so they can move it.
+If something has a better home, put it there. A permanent project convention belongs in the body of `AGENTS.md`, and implementation narrative belongs in the diary. `AGENTS.md`, memory included, holds guidance on how to work in the repository and is kept lean; it is no record of decisions. What was decided about the product or its design, and why, belongs in a spec, a to-do list, or the diary, with at most a pointer from memory. A preference that clearly applies to all of the user's projects belongs in their global agent instructions: save it here so it isn't lost, and tell the user it looks global so they can move it.
 
 ### Weighing feedback
 
