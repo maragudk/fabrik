@@ -22,12 +22,12 @@ Use the user's name and your own. Then fill it the way any change is made, below
 
 ## Making a change
 
-1. **Check that it belongs** (see the next section). If it doesn't, say where it goes instead and put it there.
+1. **Check that it belongs** (see the next section). If it doesn't, say where it goes instead and offer to put it there.
 2. **Propose the exact wording** in a quote block, with where it goes, and ask for agreement:
 
-   > Under **Storage**, after **Backups are daily**:
+   > Under **Groups**, after **Anyone can start a group**:
    >
-   > > **Deleted data is gone after 30 days.** A deleted record can be restored for 30 days. After that, it is removed from the database and from backups.
+   > > **Members can leave a group at any time.** Leaving stops their digests at once. Their past messages stay in the group.
    >
    > Agree to that wording?
 
@@ -41,9 +41,9 @@ Put one change to the user at a time, and wait for the answer before raising the
 Agreed rules about what the product is and guarantees: behaviour a user can rely on, architecture and formats that are expensive to change, and goals. Each entry is a bold short name followed by one to a few sentences, grouped under a few headings.
 
 ```markdown
-## Storage
+## Groups
 
-- **Deleted data is gone after 30 days.** A deleted record can be restored for 30 days. After that, it is removed from the database and from backups.
+- **Members can leave a group at any time.** Leaving stops their digests at once. Their past messages stay in the group.
 ```
 
 Before proposing, ask yourself: would the user call this a spec thing, or is it too low-level? These belong elsewhere:
