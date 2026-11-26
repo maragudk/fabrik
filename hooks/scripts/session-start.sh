@@ -21,17 +21,23 @@ CONTEXT=$(cat "$SCRIPT_DIR/AGENTS.md")
 # can be resolved to one of them. On macOS, the model name is "Mac mini" or
 # "MacBook Pro". On a Raspberry Pi, the device tree model is something like
 # "Raspberry Pi 5 Model B Rev 1.0" (NUL-terminated, hence the tr).
+# Cloud sessions on claude.ai set CLAUDE_CODE_REMOTE=true, as documented at
+# https://code.claude.com/docs/en/env-vars.
 MACHINE=""
-case "$(uname -s)" in
-  Darwin)
-    MACHINE=$(system_profiler SPHardwareDataType 2>/dev/null | awk -F': ' '/Model Name/ {print $2; exit}')
-    ;;
-  Linux)
-    if [ -r /proc/device-tree/model ]; then
-      MACHINE=$(tr -d '\0' < /proc/device-tree/model)
-    fi
-    ;;
-esac
+if [ "${CLAUDE_CODE_REMOTE:-}" = "true" ]; then
+  MACHINE="a container on claude.ai (Claude Code on the web)"
+else
+  case "$(uname -s)" in
+    Darwin)
+      MACHINE=$(system_profiler SPHardwareDataType 2>/dev/null | awk -F': ' '/Model Name/ {print $2; exit}')
+      ;;
+    Linux)
+      if [ -r /proc/device-tree/model ]; then
+        MACHINE=$(tr -d '\0' < /proc/device-tree/model)
+      fi
+      ;;
+  esac
+fi
 if [ -z "$MACHINE" ]; then
   MACHINE="an unknown machine ($(uname -sm))"
 fi
