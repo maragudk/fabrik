@@ -26,7 +26,7 @@ Always do implementation work in a git worktree under `.claude/worktrees/`, neve
 
 Pull requests are disabled on this repo. Commit on the worktree's local branch and fast-forward it into `main`; don't open PRs. Never push until Markus has approved the commit: the push gate replaces PR review as the last checkpoint, and approval of one commit doesn't carry over to the next.
 
-Fabrik doesn't use GitHub issues, so skip the `git` skill's question about which issues to reference, and leave out the "See #" footer.
+Fabrik doesn't use GitHub issues, so don't ask about issues to reference in commits.
 
 ## Adding a new skill, sub-agent, or hook
 
