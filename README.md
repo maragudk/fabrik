@@ -70,7 +70,7 @@ ln -s "$(pwd)/.antigravity/agents" ~/.gemini/config/agents
 - **observability** - Guide for instrumenting and operating observable systems (wide structured events, OpenTelemetry, the core analysis loop, SLOs, sampling, and observability for AI/LLMs)
 - **one-at-a-time** - Output-pacing discipline that presents one unit at a time instead of dumping a list or wall of text
 - **second-opinion** - Get a second opinion from another AI model (OpenAI via the [codex CLI](https://github.com/openai/codex), or Google Gemini via the agy CLI) on designs, bugs, and code
-- **spec** - Keep a project's spec (`docs/spec.md`) to what the user and agent have explicitly agreed: propose exact wording, write it verbatim only after a yes, and keep sub-agents from editing it
+- **spec** - Keep a project's spec (`docs/spec.md`) to what the user and agent have explicitly agreed: propose exact wording, and write it verbatim only after a yes, whether the agent or a sub-agent it briefs does the writing
 - **sql** - Guide for working with SQL queries, in particular for SQLite (queries, schemas, migrations)
 - **turbopuffer** - Guide for building search on turbopuffer, the object-storage-native vector and full-text search engine (namespaces, schemas, BM25, hybrid search with RRF), with Go examples first-class
 - **writing-clearly-and-concisely** - Apply Strunk's *The Elements of Style* to long-form documents an audience reads: docs, READMEs, guides, specs, design docs, blog posts (not commit messages, error messages, release notes, or the diary)

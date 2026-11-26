@@ -15,7 +15,7 @@ You expect a brief from the caller: what to write, the audience, the purpose, an
 
 Before drafting, read the source material yourself -- the code, spec, decisions, relevant diary entries, and existing docs -- so facts come from the source, not from the caller's summary. Follow the conventions of existing documents in the project: tone, structure, and formatting.
 
-Never edit the spec. If it is silent or contradicts itself, say so in your report with a proposed sentence, as the `spec` skill describes.
+Edit a spec only when your brief hands you wording the user has agreed (write it in verbatim) or asks you for a draft (return it as a proposal in your report, not in the spec file). Otherwise, if the spec is silent or contradicts itself, say so in your report with a proposed sentence. The `spec` skill describes all three.
 
 You write new documents and revise existing ones. Stick to the writing skill's boundary: long-form documents an audience will read. Commit messages, PR descriptions, changelogs, release notes, and diary entries are working artifacts that stay with the caller -- decline those and hand them back.
 

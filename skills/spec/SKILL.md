@@ -1,6 +1,6 @@
 ---
 name: spec
-description: Propose, agree, and write changes to a project's spec -- a short document, by default `docs/spec.md`, that holds only what the user and the agent working with them have explicitly agreed -- and to any other document the project says is treated the same way. Use whenever you are about to add to, change, or remove from such a document, even a single word; when the user says "let's put that in the spec", "add it to the spec", "is that in the spec?", or "should the spec say..."; when a sub-agent's work finds the spec silent on something, contradicting itself, or ruling out what the work needs; and when the user asks to start a spec. Consult it before touching the file. Not for ordinary documentation (README, guides, the diary, to-do notes) or for just reading the spec at the start of work.
+description: Propose, agree, and write changes to a project's spec -- a short document, by default `docs/spec.md`, that holds only what the user and the agent working with them have explicitly agreed -- and to any other document the project says is treated the same way. Use whenever you are about to add to, change, or remove from such a document, even a single word; when the user says "let's put that in the spec", "add it to the spec", "is that in the spec?", or "should the spec say..."; when a sub-agent's work finds the spec silent on something, contradicting itself, or ruling out what the work needs; when briefing a sub-agent to write agreed wording into a spec or to draft some; and when the user asks to start a spec. Consult it before touching the file. Not for ordinary documentation (README, guides, the diary, to-do notes) or for just reading the spec at the start of work.
 license: MIT
 ---
 
@@ -62,4 +62,8 @@ If the work turns out to need something the spec rules out, that is not a detail
 
 ## Who edits it
 
-Only the agent talking with the user, and only after the user agrees. Builders, writers, and other sub-agents never edit the spec. When one finds it silent or contradictory, or in the way of the work, it says so in its report and includes a proposed sentence; the agent talking with the user takes that to the user as a proposal. When you brief a sub-agent on a project with a spec, tell it this.
+Nothing goes into the spec without the user's explicit agreement on the exact wording, and the agent talking with the user is the one who gets it. That agent may write the agreed wording itself, or hand it to a writer or another small sub-agent: the brief then quotes the wording exactly and says where it goes, and the sub-agent writes it in verbatim, changes nothing else in the spec, and does not improve the wording.
+
+A writer may also be asked to draft wording, or a first spec. A draft is a proposal: it comes back in the writer's report, never in the spec file, and goes to the user through the agent talking with them.
+
+Otherwise, sub-agents do not edit the spec. A builder, or a writer working on something else, that finds it silent, contradictory, or in the way of the work says so in its report with a proposed sentence, for the agent talking with the user to propose. When you brief a sub-agent on a project with a spec, tell it this.
