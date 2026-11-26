@@ -49,6 +49,8 @@ Most of git usage is what you already know, so depend on that. This skill is jus
 
 Always clean up local state after work merges -- whether through a merged pull request or a local merge into the main branch, in a repo that commits straight to main. First confirm the merge actually happened (`gh pr view <n> --json state` shows `MERGED`, or the branch is in the main branch's history): after a refused or failed merge, the branch may be the only copy of the work.
 
+Once the merge is confirmed, removing the worktree and the merged local and remote branches is part of finishing the work, so don't ask the user about it. If a tool or command balks because the worktree changed branch or has commits its starting point lacks, check for yourself that every commit is on the main branch and nothing is uncommitted, then go ahead; ask only if something isn't merged or is uncommitted.
+
 - Pull the main branch in the project directory, if it tracks a remote.
 - Remove any worktree used for the work (`git worktree remove <path>`).
 - Delete the merged local branches.
