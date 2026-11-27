@@ -54,7 +54,7 @@ I prefer SQLite and PostgreSQL for databases. I also like object stores (such as
 
 I prefer lightweight web apps with server-side rendered HTML and HTMX/Datastar for interactivity. I've built gomponents, a pure Go HTML component library.
 
-When I export a conversation, save it verbatim to `docs/conversations/YYYY-MM-DD-topic.txt` in the current project and commit it without asking. The date is the day the conversation started, and a newer export of the same conversation overwrites the older file.
+When I export a conversation, save it verbatim to `docs/conversations/YYYY-MM-DD-topic.txt` in the current project and commit it without asking. The date is the day the conversation started. A newer export of the same conversation can sometimes overwrite the older file, but session compaction may mean the newer export is missing earlier parts of the conversation, in which case it's better to save it as a new file and commit that. Use your judgment to choose which.
 
 ## Pep talk
 
