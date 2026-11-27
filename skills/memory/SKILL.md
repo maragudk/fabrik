@@ -19,7 +19,7 @@ A project can have up to three layers of recorded context, all optional:
 
 - **`## Memory`** -- short facts that should change what an agent does in a later session. Often temporary. Also the home for things that don't fit anywhere else.
 - **`docs/diary/`** -- the detailed narrative of implementation work.
-- **`docs/conversations/`** -- raw exported conversations, one file per conversation, named by the date it started and a short topic (`2026-11-10-kickoff.txt`). A newer export of the same conversation overwrites the older file.
+- **`docs/conversations/`** -- raw exported conversations, usually one file per conversation, named by the date it started and a short topic (`2026-11-10-kickoff.txt`). A newer export of the same conversation either overwrites the older file or, when a compaction has left it without earlier parts of the conversation, is saved as a new file beside it.
 
 Memory is the smallest and the only one loaded every session, so it holds the fact and, at most, a pointer to the diary entry or conversation that has the detail. It never repeats them.
 
